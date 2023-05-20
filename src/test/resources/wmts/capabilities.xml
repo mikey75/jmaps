@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Capabilities xmlns="http://www.opengis.net/wmts/1.0"
+              xmlns:ows="http://www.opengis.net/ows/1.1"
+              xmlns:xlink="http://www.w3.org/1999/xlink"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xmlns:inspire_common="http://inspire.ec.europa.eu/schemas/common/1.0"
+              xmlns:inspire_vs="http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0"
+              version="1.0.0"
+              xsi:schemaLocation="http://www.opengis.net/wmts/1.0
+http://schemas.opengis.net/wmts/1.0/wmtsGetCapabilities_response.xsd
+http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0
+http://inspire.ec.europa.eu/schemas/inspire_vs_ows11/1.0/inspire_vs_ows_11.xsd">
+    <ows:ServiceIdentification>
+        <ows:Title>Usługa przeglądania WMTS dla urządzeń mobilnych (G2_MOBILE500)</ows:Title>
+        <ows:Abstract>Usługa przeglądania (Web Map Tile Service,WMTS) umożliwiająca przeglądanie kompozycji topograficznej danych G2 przeznaczona dla urządzeń mobilnych i API. Usługa oferuje wsparcie dla interfejsu WMTS 1.0.0.</ows:Abstract>
+        <ows:Keywords>
+            <ows:Keyword>WMTS</ows:Keyword>
+            <ows:Keyword>Tiled</ows:Keyword>
+            <ows:Keyword>Web Map Tile Service</ows:Keyword>
+            <ows:Keyword>Usługa przeglądania</ows:Keyword>
+            <ows:Keyword>Transport network</ows:Keyword>
+        </ows:Keywords>
+        <ows:ServiceType>OGC WMTS</ows:ServiceType>
+        <ows:ServiceTypeVersion>1.0.0</ows:ServiceTypeVersion>
+        <ows:Fees>Brak opłat / none</ows:Fees>
+        <ows:AccessConstraints>Wykorzystanie usługi nie podlega żadnym ograniczeniom z wyłączeniem automatycznego pobierania i kolekcjonowania obrazów lub informacji opisowych pobieranych funkcją GetFeatureInfo (tzw. harvesting). Nie podlega też ograniczeniom wytwarzanie i dalsze wykorzystywanie informacji, która wynika z bezpośredniego użycia usługi lub kompilacji prezentowanych przez nią treści z innymi danymi przestrzennymi.</ows:AccessConstraints>
+    </ows:ServiceIdentification>
+    <ows:ServiceProvider>
+        <ows:ProviderName>Główny Urząd Geodezji i Kartografii </ows:ProviderName>
+        <ows:ProviderSite xlink:type="simple" xlink:href="www.geoportal.gov.pl"/>
+        <ows:ServiceContact>
+            <ows:IndividualName>Główny Urząd Geodezji i Kartografii</ows:IndividualName>
+            <ows:ContactInfo>
+                <ows:Phone>
+                    <ows:Voice>+48225631444</ows:Voice>
+                </ows:Phone>
+                <ows:Address>
+                    <ows:DeliveryPoint>ul. Wspólna 2</ows:DeliveryPoint>
+                    <ows:City>Warszawa</ows:City>
+                    <ows:AdministrativeArea>mazowieckie</ows:AdministrativeArea>
+                    <ows:PostalCode>00-926</ows:PostalCode>
+                    <ows:Country>Polska</ows:Country>
+                    <ows:ElectronicMailAddress>geoportal@geoportal.gov.pl</ows:ElectronicMailAddress>
+                </ows:Address>
+            </ows:ContactInfo>
+        </ows:ServiceContact>
+    </ows:ServiceProvider>
+    <ows:OperationsMetadata>
+        <ows:Operation name="GetCapabilities">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/G2_MOBILE_500?">
+                        <ows:Constraint name="GetEncoding">
+                            <ows:AllowedValues>
+                                <ows:Value>KVP</ows:Value>
+                            </ows:AllowedValues>
+                        </ows:Constraint>
+                    </ows:Get>
+                </ows:HTTP>
+            </ows:DCP>
+        </ows:Operation>
+        <ows:Operation name="GetTile">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/G2_MOBILE_500?">
+                        <ows:Constraint name="GetEncoding">
+                            <ows:AllowedValues>
+                                <ows:Value>KVP</ows:Value>
+                            </ows:AllowedValues>
+                        </ows:Constraint>
+                    </ows:Get>
+                </ows:HTTP>
+            </ows:DCP>
+        </ows:Operation>
+        <ows:Operation name="GetFeatureInfo">
+            <ows:DCP>
+                <ows:HTTP>
+                    <ows:Get xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/G2_MOBILE_500?">
+                        <ows:Constraint name="GetEncoding">
+                            <ows:AllowedValues>
+                                <ows:Value>KVP</ows:Value>
+                            </ows:AllowedValues>
+                        </ows:Constraint>
+                    </ows:Get>
+                </ows:HTTP>
+            </ows:DCP>
+        </ows:Operation>
+        <inspire_vs:ExtendedCapabilities>
+            <inspire_common:ResourceLocator>
+                <inspire_common:URL>http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/G2_MOBILE_500?REQUEST=GetCapabilities&amp;SERVICE=WMTS</inspire_common:URL>
+                <inspire_common:MediaType>text/xml</inspire_common:MediaType>
+            </inspire_common:ResourceLocator>
+            <inspire_common:ResourceType>service</inspire_common:ResourceType>
+            <inspire_common:TemporalReference>
+                <inspire_common:DateOfPublication>2012-10-24</inspire_common:DateOfPublication>
+            </inspire_common:TemporalReference>
+            <inspire_common:Conformity>
+                <inspire_common:Specification xsi:type="inspire_common:citationInspireInteroperabilityRegulation_pol">
+                    <inspire_common:Title>ROZPORZĄDZENIE KOMISJI (UE) NR 1089/2010 z dnia 23 listopada 2010 r. w sprawie wykonania dyrektywy 2007/2/WE Parlamentu Europejskiego i Rady w zakresie interoperacyjności zbiorów i usług danych przestrzennych</inspire_common:Title>
+                    <inspire_common:DateOfPublication>2010-12-08</inspire_common:DateOfPublication>
+                    <inspire_common:URI>OJ:L:2010:323:0011:0102:PL:PDF</inspire_common:URI>
+                    <inspire_common:ResourceLocator>
+                        <inspire_common:URL>http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2010:323:0011:0102:PL:PDF</inspire_common:URL>
+                        <inspire_common:MediaType>application/pdf</inspire_common:MediaType>
+                    </inspire_common:ResourceLocator>
+                </inspire_common:Specification>
+                <inspire_common:Degree>notConformant</inspire_common:Degree>
+            </inspire_common:Conformity>
+            <inspire_common:MetadataPointOfContact>
+                <inspire_common:OrganisationName>Główny Urząd Geodezji i Kartografii</inspire_common:OrganisationName>
+                <inspire_common:EmailAddress>geoportal@geoportal.gov.pl</inspire_common:EmailAddress>
+            </inspire_common:MetadataPointOfContact>
+            <inspire_common:MetadataDate>2012-10-24</inspire_common:MetadataDate>
+            <inspire_common:SpatialDataServiceType>view</inspire_common:SpatialDataServiceType>
+            <inspire_common:MandatoryKeyword>
+                <inspire_common:KeywordValue>infoMapAccessService</inspire_common:KeywordValue>
+            </inspire_common:MandatoryKeyword>
+            <inspire_common:Keyword xsi:type="inspire_common:inspireTheme_pol">
+                <inspire_common:OriginatingControlledVocabulary>
+                    <inspire_common:Title>GEMET - INSPIRE themes</inspire_common:Title>
+                    <inspire_common:DateOfPublication>2008-06-01</inspire_common:DateOfPublication>
+                </inspire_common:OriginatingControlledVocabulary>
+                <inspire_common:KeywordValue>Użytkowanie terenu</inspire_common:KeywordValue>
+            </inspire_common:Keyword>
+            <inspire_common:Keyword>
+                <inspire_common:KeywordValue>WMTS</inspire_common:KeywordValue>
+            </inspire_common:Keyword>
+            <inspire_common:Keyword>
+                <inspire_common:KeywordValue>Tiled</inspire_common:KeywordValue>
+            </inspire_common:Keyword>
+            <inspire_common:Keyword>
+                <inspire_common:KeywordValue>View service</inspire_common:KeywordValue>
+            </inspire_common:Keyword>
+            <inspire_common:Keyword>
+                <inspire_common:KeywordValue>Web Map Tile Service</inspire_common:KeywordValue>
+            </inspire_common:Keyword>
+            <inspire_common:Keyword>
+                <inspire_common:KeywordValue>Usługa przeglądania</inspire_common:KeywordValue>
+            </inspire_common:Keyword>
+            <inspire_common:Keyword>
+                <inspire_common:KeywordValue>Transport Network</inspire_common:KeywordValue>
+            </inspire_common:Keyword>
+            <inspire_common:Keyword>
+                <inspire_common:KeywordValue>Boundaries</inspire_common:KeywordValue>
+            </inspire_common:Keyword>
+            <inspire_common:SupportedLanguages xmlns="http://inspire.ec.europa.eu/schemas/common/1.0">
+                <inspire_common:DefaultLanguage>
+                    <inspire_common:Language>pol</inspire_common:Language>
+                </inspire_common:DefaultLanguage>
+            </inspire_common:SupportedLanguages>
+            <inspire_common:ResponseLanguage xmlns="http://inspire.ec.europa.eu/schemas/common/1.0">
+                <inspire_common:Language>pol</inspire_common:Language>
+            </inspire_common:ResponseLanguage>
+            <inspire_common:MetadataUrl>
+                <inspire_common:URL>http://mapy.geoportal.gov.pl/wss/service/CSW/guest/CSWStartup?SERVICE=CSW&amp;REQUEST=GetRecordById&amp;VERSION=2.0.2&amp;OUTPUTSCHEMA=http://www.isotc211.org/2005/gmd&amp;ID=</inspire_common:URL>
+                <inspire_common:MediaType>text/xml</inspire_common:MediaType>
+            </inspire_common:MetadataUrl>
+        </inspire_vs:ExtendedCapabilities>
+    </ows:OperationsMetadata>
+    <Contents>
+        <Layer>
+            <ows:Title>G2Mobile500</ows:Title>
+            <ows:Abstract>Kompozycja przeznaczona dla urządzeń mobilnych i API</ows:Abstract>
+            <ows:Keywords>
+                <ows:Keyword>dzialki</ows:Keyword>
+            </ows:Keywords>
+            <ows:WGS84BoundingBox>
+                <ows:LowerCorner>13.800 48.800</ows:LowerCorner>
+                <ows:UpperCorner>24.400 55.000</ows:UpperCorner>
+            </ows:WGS84BoundingBox>
+            <ows:Identifier>G2_MOBILE_500</ows:Identifier>
+            <Style isDefault="true">
+                <ows:Title>Styl domyślny dla kompozycjaG2_MOBILE</ows:Title>
+                <ows:Identifier>default</ows:Identifier>
+                <LegendURL format="image/png" xlink:href="http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/G2_MOBILE_500/legenda.png" />
+            </Style>
+            <Format>image/png</Format>
+            <InfoFormat>text/html</InfoFormat>
+            <InfoFormat>text/xml; subtype=gml/3.2</InfoFormat>
+            <InfoFormat>application/gml+xml; version=3.2</InfoFormat>
+
+
+
+
+            <TileMatrixSetLink>
+                <TileMatrixSet>EPSG:2180</TileMatrixSet>
+                <TileMatrixSetLimits>
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:0</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>0</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>0</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:1</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>0</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>0</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:2</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>0</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>1</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:3</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>1</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>2</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:4</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>3</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>4</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:5</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>7</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>8</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:6</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>14</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>16</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:7</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>29</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>33</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:8</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>72</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>84</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:9</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>145</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>168</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:10</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>290</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>336</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:11</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>726</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>841</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:12</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>1453</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>1682</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:13</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>3634</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>4206</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:14</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>7269</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>8413</MaxTileCol>
+                    </TileMatrixLimits>
+
+                    <TileMatrixLimits>
+                        <TileMatrix>EPSG:2180:15</TileMatrix>
+                        <MinTileRow>0</MinTileRow>
+                        <MaxTileRow>14538</MaxTileRow>
+                        <MinTileCol>0</MinTileCol>
+                        <MaxTileCol>16827</MaxTileCol>
+                    </TileMatrixLimits>
+
+                </TileMatrixSetLimits>
+            </TileMatrixSetLink>
+
+        </Layer>
+
+        <TileMatrixSet>
+            <ows:Identifier>EPSG:2180</ows:Identifier>
+            <ows:SupportedCRS>urn:ogc:def:crs:EPSG::2180</ows:SupportedCRS>
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:0</ows:Identifier>
+                <ScaleDenominator>3.0238155714285716E7</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>1</MatrixWidth>
+                <MatrixHeight>1</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:1</ows:Identifier>
+                <ScaleDenominator>1.5119077857142858E7</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>1</MatrixWidth>
+                <MatrixHeight>1</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:2</ows:Identifier>
+                <ScaleDenominator>7559538.928571429</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>2</MatrixWidth>
+                <MatrixHeight>1</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:3</ows:Identifier>
+                <ScaleDenominator>3779769.4642857146</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>3</MatrixWidth>
+                <MatrixHeight>2</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:4</ows:Identifier>
+                <ScaleDenominator>1889884.7321428573</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>5</MatrixWidth>
+                <MatrixHeight>4</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:5</ows:Identifier>
+                <ScaleDenominator>944942.3660714286</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>9</MatrixWidth>
+                <MatrixHeight>8</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:6</ows:Identifier>
+                <ScaleDenominator>472471.1830357143</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>17</MatrixWidth>
+                <MatrixHeight>15</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:7</ows:Identifier>
+                <ScaleDenominator>236235.59151785716</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>34</MatrixWidth>
+                <MatrixHeight>30</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:8</ows:Identifier>
+                <ScaleDenominator>94494.23660714286</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>85</MatrixWidth>
+                <MatrixHeight>73</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:9</ows:Identifier>
+                <ScaleDenominator>47247.11830357143</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>169</MatrixWidth>
+                <MatrixHeight>146</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:10</ows:Identifier>
+                <ScaleDenominator>23623.559151785714</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>337</MatrixWidth>
+                <MatrixHeight>291</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:11</ows:Identifier>
+                <ScaleDenominator>9449.423660714287</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>842</MatrixWidth>
+                <MatrixHeight>727</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:12</ows:Identifier>
+                <ScaleDenominator>4724.711830357143</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>1683</MatrixWidth>
+                <MatrixHeight>1454</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:13</ows:Identifier>
+                <ScaleDenominator>1889.8847321428573</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>4207</MatrixWidth>
+                <MatrixHeight>3635</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:14</ows:Identifier>
+                <ScaleDenominator>944.9423660714286</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>8414</MatrixWidth>
+                <MatrixHeight>7270</MatrixHeight>
+            </TileMatrix>
+
+            <TileMatrix>
+                <ows:Identifier>EPSG:2180:15</ows:Identifier>
+                <ScaleDenominator>472.4711830357143</ScaleDenominator>
+                <TopLeftCorner>850000.0 100000.0</TopLeftCorner>
+                <TileWidth>512</TileWidth>
+                <TileHeight>512</TileHeight>
+                <MatrixWidth>16828</MatrixWidth>
+                <MatrixHeight>14539</MatrixHeight>
+            </TileMatrix>
+
+
+        </TileMatrixSet>
+
+
+    </Contents>
+</Capabilities>
