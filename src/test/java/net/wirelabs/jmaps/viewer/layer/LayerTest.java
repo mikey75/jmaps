@@ -1,6 +1,6 @@
 package net.wirelabs.jmaps.viewer.layer;
 
-import net.wirelabs.jmaps.example.maps.OpenStreetMap;
+import net.wirelabs.jmaps.viewer.TestHttpServer;
 import net.wirelabs.jmaps.viewer.geo.Coordinate;
 import net.wirelabs.jmaps.viewer.geo.ProjectionEngine;
 import net.wirelabs.jmaps.viewer.map.layer.Layer;
@@ -12,8 +12,6 @@ import org.junit.jupiter.api.Test;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,24 +20,20 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 class LayerTest {
 
+    private String testUrl;
+
     @BeforeEach
     void before() throws IOException {
-        // stuff fake capabilites.xml to cache so that
-        // wmts test will not connect to network
 
-        //MapViewerConfig.setWmtsCacheDir("target/testcache/wmts-cache");
+        // serve fake capabilities
+        File testCapabilitiesFile = new File("src/test/resources/wmts/capabilities.xml");
+        TestHttpServer server = new TestHttpServer(TestHttpServer.getRandomFreeTcpPort(), testCapabilitiesFile);
+        testUrl = "http://localhost:"+ server.getListeningPort()+"/wmts";
 
-        File src = new File("src/test/resources/wmts/capabilities.xml");
-        File dst = new File("target/testcache/wmts-cache/localhost/wmts/capabilities.xml");
-        // create dst if not exist
-        if (!dst.exists()) {
-            Files.createDirectories(dst.toPath());
-        }
-        Files.copy(src.toPath(), dst.toPath(), StandardCopyOption.REPLACE_EXISTING);
     }
 
     @Test
-    void shouldProperlyInitializeDefaultXYZLayer() throws IOException {
+    void shouldProperlyInitializeDefaultXYZLayer()  {
 
         // xyz layer with defaults
         Layer xyz = new XYZLayer("TestXYZ", "http://localhost/{z}/{x}/{y}.png");
@@ -79,7 +73,7 @@ class LayerTest {
     @Test
     void shouldProperlyInitializeDefaultWMTSLayer() {
         // example of wmts map
-        Layer wmts = new WMTSLayer("TestWmts", "http://localhost/wmts");
+        Layer wmts = new WMTSLayer("TestWmts", testUrl);
 
         assertThat(wmts.getProjectionEngine().getCrs().getName()).isEqualTo("EPSG:2180");
         assertThat(wmts.getMaxZoom()).isEqualTo(15);
@@ -90,10 +84,11 @@ class LayerTest {
 
 
         assertThat(wmts.createTileUrl(10, 11, 15)).isEqualTo(
-                "http://localhost/wmts" +
+                testUrl +
                         "?Service=WMTS" +
                         "&Request=GetTile" +
                         "&Layer=G2_MOBILE_500" +
+                        "&Version=1.0.0&format=image/png&style=default" +
                         "&TileMatrixSet=EPSG:2180" +
                         "&TileMatrix=EPSG:2180:15" +
                         "&TileRow=11&TileCol=10"
@@ -104,7 +99,7 @@ class LayerTest {
     @Test
     void shouldProperlyInitializeCustomWMTSLayer() {
         // example of wmts map
-        Layer wmts = new WMTSLayer("TestWmts", "http://localhost/wmts", "A2", "SET1");
+        Layer wmts = new WMTSLayer("TestWmts", testUrl, "A2", "SET1");
         wmts.setMinZoom(3);
 
 
@@ -117,10 +112,11 @@ class LayerTest {
 
 
         assertThat(wmts.createTileUrl(10, 11, 15)).isEqualTo(
-                "http://localhost/wmts" +
+                testUrl +
                         "?Service=WMTS" +
                         "&Request=GetTile" +
                         "&Layer=A2" +
+                        "&Version=1.0.0&format=image/png&style=default" +
                         "&TileMatrixSet=SET1" +
                         "&TileMatrix=EPSG:2180:15" +
                         "&TileRow=11&TileCol=10"
@@ -137,7 +133,6 @@ class LayerTest {
         layer = new WMTSLayer("x", "http://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/G2_MOBILE_500");
         layer.setProjectionEngine(new ProjectionEngine("ESri:32620"));
         assertThat(layer.getProjectionEngine().getCrs().getName()).isEqualTo("ESri:32620");
-
 
     }
 
