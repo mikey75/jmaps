@@ -22,8 +22,10 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -149,9 +151,44 @@ public class MapViewer extends JPanel {
      * @param route route
      */
     public void setRoute(List<Coordinate> route) {
+       // Rectangle2D bbox = calculateBBox(route);
+
         defaultRoutePainter.clearRoute(); // clear current route if any
         defaultRoutePainter.setRoute(route);
+
+
+        topLeftCornerPoint.setLocation(0,0);
+        setHomePositionSet(false);
+        setHomePosition(calculateCenter(route));
+        repaint();
+
     }
+
+    private Coordinate calculateCenter(List<Coordinate> route) {
+        log.info("Start calcylate");
+        double minX =  route.stream().min(Comparator.comparing(c -> c.longitude)).get().longitude;
+        double maxX =  route.stream().max(Comparator.comparing(c -> c.longitude)).get().longitude;
+        double minY =  route.stream().min(Comparator.comparing(c ->c.latitude)).get().latitude;
+        double maxY =  route.stream().max(Comparator.comparing(c ->c.latitude)).get().latitude;
+        double cx = (maxX-minX) / 2.0;
+        double cy = (maxY-minY) / 2.0;
+        log.info("End calculate");
+        return new Coordinate(minX+ cx, minY+cy);
+    }
+
+   /* private Rectangle2D calculateBBox(List<Coordinate> route) {
+        Layer baseLayer = getMapManager().getBaseLayer();
+
+        double minX =  route.stream().min(Comparator.comparing(c -> c.longitude)).get().longitude;
+        double maxX =  route.stream().max(Comparator.comparing(c -> c.longitude)).get().longitude;
+        double minY =  route.stream().min(Comparator.comparing(c ->c.latitude)).get().latitude;
+        double maxY =  route.stream().max(Comparator.comparing(c ->c.latitude)).get().latitude;
+
+
+
+        return new Rectangle2D.Double(minX,minY,maxY-minY, maxX - minX);
+    }*/
+
 
     /**
      * Set route stroke color
