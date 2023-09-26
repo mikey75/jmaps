@@ -2,6 +2,7 @@ package net.wirelabs.jmaps.map;
 
 import lombok.Getter;
 import net.wirelabs.jmaps.MapViewer;
+import net.wirelabs.jmaps.TileDebugger;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.painters.Painter;
 
@@ -27,7 +28,7 @@ public class MapRenderer {
     private final MapViewer mapViewer;
     @Getter
     private final List<Painter<MapViewer>> painters = new ArrayList<>();
-    private final Font font = new Font("Dialog", Font.BOLD, 10);
+
 
     public MapRenderer(MapViewer mapViewer) {
         this.mapViewer = mapViewer;
@@ -81,7 +82,7 @@ public class MapRenderer {
 
 
                 if (mapViewer.isTileDebug()) {
-                    drawTileDebugInfo(g, tileSize, itpx, itpy, ox, oy, zoom);
+                    TileDebugger.drawTileDebugInfo(g, tileSize, itpx, itpy, ox, oy, zoom);
                 }
 
 
@@ -119,24 +120,6 @@ public class MapRenderer {
         if (baseLayer.getTileProvider().isTileInCache(tileUrl)) {
             g.drawImage(b, ox, oy, null);
         }
-    }
-
-    private void drawTileDebugInfo(Graphics g, int tileSize, int itpx, int itpy, int ox, int oy, int zoom) {
-
-        g.setFont(font);
-        FontMetrics fontMetrics = g.getFontMetrics();
-
-        String text = itpx + "/" + itpy + "/" + zoom;
-        Rectangle2D textBounds = fontMetrics.getStringBounds(text, g);
-        // ramka i tlo na debug info
-        g.setColor(Color.WHITE);
-        g.fillRect(ox, oy, (int) (textBounds.getWidth() + 5), (int) (textBounds.getHeight() + 2));
-        g.setColor(Color.BLACK);
-        g.drawRect(ox, oy, (int) (textBounds.getWidth() + 5), (int) (textBounds.getHeight() + 2));
-
-        // draw ramki na caly kafel
-        g.drawRect(ox, oy, tileSize, tileSize);
-        g.drawString(text, (ox + 2), (int) (oy + textBounds.getHeight()));
     }
 
     public void runPainters(Graphics2D graphics) {

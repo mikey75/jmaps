@@ -29,7 +29,7 @@ public class ExampleApplication extends JFrame {
 
                 map = new MapPanel();
 
-                JPanel config = new ConfigPanel(map.getMapViewer());
+                JPanel config = new ConfigPanel(map);
                 JFrame frame = new JFrame();
                 frame.getContentPane().setLayout(new MigLayout("","[85%, grow][15%,grow]","[grow]"));
                 frame.getContentPane().add(map,"cell 0 0, grow");
@@ -41,8 +41,8 @@ public class ExampleApplication extends JFrame {
                 frame.setVisible(true);
 
                 Coordinate home = new Coordinate( 22.49004,51.23264);
-                map.getMapViewer().setHome(home);
-                map.getMapViewer().setMap(mapfile);
+                map.setHome(home);
+                map.setMap(mapfile);
 
             } catch (Exception e) {
                 e.printStackTrace();
