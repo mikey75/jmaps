@@ -8,13 +8,10 @@ import net.wirelabs.jmaps.map.painters.Painter;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +35,12 @@ public class MapRenderer {
     public void drawTiles(final Graphics g, final int zoom, Point topLeftCorner) {
 
 
-        int tileSize = mapViewer.getMapManager().getBaseLayer().getTileSize();
+        int tileSize = mapViewer.getLayerManager().getBaseLayer().getTileSize();
         int width = mapViewer.getWidth();
         int height = mapViewer.getHeight();
 
-        List<Layer> layers = mapViewer.getMapManager().getLayers();
-        Layer baseLayer = mapViewer.getMapManager().getBaseLayer();
+        List<Layer> layers = mapViewer.getLayerManager().getLayers();
+        Layer baseLayer = mapViewer.getLayerManager().getBaseLayer();
 
         BufferedImage finalImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
 
@@ -81,7 +78,7 @@ public class MapRenderer {
                     }
 
 
-                if (mapViewer.isTileDebug()) {
+                if (MapViewer.developerMode) {
                     TileDebugger.drawTileDebugInfo(g, tileSize, itpx, itpy, ox, oy, zoom);
                 }
 
@@ -101,8 +98,8 @@ public class MapRenderer {
         for (Layer layer: layers) {
             AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, layer.getOpacity());
             String tileUrl = layer.createTileUrl(itpx, itpy, zoom +layer.getZoomOffset());
-            BufferedImage b = layer.getTileProvider().getTile(tileUrl);
-            if (layer.getTileProvider().isTileInCache(tileUrl)) {
+            BufferedImage b = mapViewer.getTileDownloader().getTile(tileUrl);
+            if (mapViewer.getTileDownloader().isTileInCache(tileUrl)) {
                 if (layer.getOpacity() < 1.0f) {
                     finalImageG2D.setComposite(ac);
                 }
@@ -115,9 +112,9 @@ public class MapRenderer {
 
     private void drawSingleLayerTile(Graphics g, int zoom, int itpx, int itpy, int ox, int oy, Layer baseLayer) {
         String tileUrl = baseLayer.createTileUrl(itpx, itpy, zoom);
-        BufferedImage b = baseLayer.getTileProvider().getTile(tileUrl);
+        BufferedImage b = mapViewer.getTileDownloader().getTile(tileUrl);
         // only draw if it is already in cache (went throuh download)
-        if (baseLayer.getTileProvider().isTileInCache(tileUrl)) {
+        if (mapViewer.getTileDownloader().isTileInCache(tileUrl)) {
             g.drawImage(b, ox, oy, null);
         }
     }

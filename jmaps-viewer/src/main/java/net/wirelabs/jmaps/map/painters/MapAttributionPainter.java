@@ -26,28 +26,29 @@ public class MapAttributionPainter implements Painter<MapViewer> {
 
     @Override
     public void doPaint(Graphics2D graphics, MapViewer mapViewer, int width, int height) {
-        if (mapViewer.isShowCopyright()) {
+
             // get attribution text
-            String attributionText =  mapViewer.getMapManager().getMapDefinition().getCopyright();
+            String attributionText =  mapViewer.getMapDefinition().getCopyright();
+            if (!attributionText.isBlank()) {
+                // set font and calculate attribution text bounding box
+                graphics.setFont(font);
+                FontMetrics fontMetrics = graphics.getFontMetrics();
+                Rectangle2D textBounds = fontMetrics.getStringBounds(attributionText, graphics);
+                int attributionWidth = (int) textBounds.getWidth() + margin;
+                int attributionHeight = (int) textBounds.getHeight() + margin;
 
-            // set font and calculate attribution text bounding box
-            graphics.setFont(font);
-            FontMetrics fontMetrics = graphics.getFontMetrics();
-            Rectangle2D textBounds = fontMetrics.getStringBounds(attributionText, graphics);
-            int attributionWidth = (int) textBounds.getWidth() + margin;
-            int attributionHeight = (int) textBounds.getHeight() + margin;
+                // apply position
+                Point position = getPosition(width, height, attributionWidth, attributionHeight);
+                // draw container frame
+                graphics.setColor(backgroundColor);
+                graphics.fillRect(position.x, position.y, attributionWidth, attributionHeight);
+                graphics.setColor(Color.BLACK);
+                graphics.drawRect(position.x, position.y, attributionWidth, attributionHeight);
+                // paint string
+                graphics.setColor(fontColor);
+                graphics.drawString(attributionText, position.x, position.y + fontMetrics.getAscent());
+            }
 
-            // apply position
-            Point position = getPosition(width, height, attributionWidth, attributionHeight);
-            // draw container frame
-            graphics.setColor(backgroundColor);
-            graphics.fillRect(position.x, position.y, attributionWidth, attributionHeight);
-            graphics.setColor(Color.BLACK);
-            graphics.drawRect(position.x, position.y, attributionWidth, attributionHeight);
-            // paint string
-            graphics.setColor(fontColor);
-            graphics.drawString(attributionText, position.x, position.y + fontMetrics.getAscent());
-        }
     }
 
     private Point getPosition(int width, int height, int attributionWidth, int attributionHeight) {

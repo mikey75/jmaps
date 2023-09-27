@@ -1,6 +1,6 @@
 package net.wirelabs.jmaps.utils;
 
-import net.wirelabs.jmaps.map.MapDefinition;
+import net.wirelabs.jmaps.map.model.MapDefinition;
 
 import net.wirelabs.jmaps.map.layer.LayerType;
 import org.assertj.core.api.Assertions;

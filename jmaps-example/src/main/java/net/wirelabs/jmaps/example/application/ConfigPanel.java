@@ -6,10 +6,7 @@ import net.wirelabs.jmaps.MapViewer;
 import net.wirelabs.jmaps.example.GPXParser;
 import net.wirelabs.jmaps.viewer.geo.Coordinate;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.File;
 import java.util.List;
@@ -23,8 +20,8 @@ public class ConfigPanel extends JPanel {
     private final JButton btnAddLayer = new JButton("Add Map");
     private final JButton btnLoadGPX = new JButton("Load gpx");
 
-    private final JCheckBox debugTiles = new JCheckBox("debugTiles");
-    private final JCheckBox chckbxShowPosition = new JCheckBox("show position");
+    private final JCheckBox devMode = new JCheckBox("Developer mode");
+
 
     /**
      * Create the panel.
@@ -38,29 +35,20 @@ public class ConfigPanel extends JPanel {
         add(btnAddLayer, "cell 0 1,growx");
         add(btnLoadGPX, "cell 0 2, growx");
 
-        add(debugTiles, "flowx,cell 0 3");
-        add(chckbxShowPosition, "cell 0 4");
+        add(devMode, "flowx,cell 0 3");
 
-        debugTiles.setSelected(mapViewer.isTileDebug());
-        chckbxShowPosition.setSelected(mapViewer.isShowCoordinates());
-
+        devMode.setSelected(MapViewer.developerMode);
 
         setAddMapListener(mapViewer);
         setLoadGPXListener(mapViewer);
-        setTileDebugListener(mapViewer);
-        setShowCoordinatesListener(mapViewer);
+        setDevModeListener(mapViewer);
+
     }
 
-    private void setShowCoordinatesListener(MapViewer mapViewer) {
-        chckbxShowPosition.addActionListener(e -> {
-            mapViewer.setShowCoordinates(chckbxShowPosition.isSelected());
-            mapViewer.repaint();
-        });
-    }
 
-    private void setTileDebugListener(MapViewer mapViewer) {
-        debugTiles.addActionListener(e -> {
-            mapViewer.setTileDebug(debugTiles.isSelected());
+    private void setDevModeListener(MapViewer mapViewer) {
+        devMode.addActionListener(e -> {
+            MapViewer.developerMode = devMode.isSelected();
             mapViewer.repaint();
         });
     }

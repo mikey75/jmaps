@@ -24,15 +24,17 @@ import java.nio.file.Paths;
 
 public class CapabilitiesReader {
 
-
     private  final String wmtsCacheDir;
+
+    private static final String DEFAULT_WMTS_DESCRIPTOR_CACHE = Paths.get(System.getProperty("user.home"),
+            ".jmaps-cache","wmts-cache").toString();
 
     public CapabilitiesReader(String wmtsCacheDir) {
         this.wmtsCacheDir = wmtsCacheDir;
     }
 
     public CapabilitiesReader() {
-        this.wmtsCacheDir = Paths.get(System.getProperty("user.home"), ".jmaps-cache","wmts-cache").toString();
+        this(DEFAULT_WMTS_DESCRIPTOR_CACHE);
     }
 
     public Capabilities getCapabilities(String getCapabilitiesUrl) {

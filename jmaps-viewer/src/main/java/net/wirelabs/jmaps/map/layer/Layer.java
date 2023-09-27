@@ -3,7 +3,6 @@ package net.wirelabs.jmaps.map.layer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.map.tiler.TileProvider;
 import net.wirelabs.jmaps.viewer.geo.Coordinate;
 import net.wirelabs.jmaps.viewer.geo.ProjectionEngine;
 
@@ -25,8 +24,7 @@ public abstract class Layer {
     @Getter @Setter protected float opacity = 1.0f;
     @Getter @Setter protected int zoomOffset = 0;
     @Getter @Setter protected boolean swapAxis = false;
-    
-    @Getter @Setter protected TileProvider tileProvider;
+
     @Getter @Setter protected ProjectionEngine projectionEngine;
 
     

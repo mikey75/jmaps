@@ -52,7 +52,7 @@ public class RoutePainter implements Painter<MapViewer> {
 
         for (Coordinate gp : routePoints) {
             // convert geo-coordinate to world bitmap pixel
-            Point2D pt = map.getMapManager().getBaseLayer().latLonToPixel(gp, map.getZoom());
+            Point2D pt = map.getLayerManager().getBaseLayer().latLonToPixel(gp, map.getZoom());
             pt.setLocation(pt.getX() - map.getTopLeftCornerPoint().x, pt.getY() - map.getTopLeftCornerPoint().y);
             //!!!! trzeba odjac topleftcorner zeby uzyskac pixel na aktualnym g canvas !!!
             if (firstPoint) {

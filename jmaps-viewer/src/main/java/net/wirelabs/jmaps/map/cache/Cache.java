@@ -1,5 +1,4 @@
-package net.wirelabs.jmaps.map.tiler;
-
+package net.wirelabs.jmaps.map.cache;
 
 /**
  * Created 1/4/23 by Michał Szwaczko (mikey@wirelabs.net)

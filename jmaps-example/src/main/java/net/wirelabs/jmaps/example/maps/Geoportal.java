@@ -1,8 +1,8 @@
 package net.wirelabs.jmaps.example.maps;
 
 
-import net.wirelabs.jmaps.map.LayerDefinition;
-import net.wirelabs.jmaps.map.MapDefinition;
+import net.wirelabs.jmaps.map.model.LayerDefinition;
+import net.wirelabs.jmaps.map.model.MapDefinition;
 
 public class Geoportal extends MapDefinition {
 

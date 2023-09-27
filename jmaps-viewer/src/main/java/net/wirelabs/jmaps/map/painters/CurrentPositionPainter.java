@@ -14,7 +14,7 @@ public class CurrentPositionPainter implements Painter<MapViewer> {
 
     @Override
     public void doPaint(Graphics2D graphics, MapViewer mapViewer, int width, int height) {
-        if (mapViewer.isShowCoordinates()) {
+        if (MapViewer.developerMode) {
             drawFrame(graphics, mapViewer);
             drawText(graphics, mapViewer);
         }
@@ -23,7 +23,7 @@ public class CurrentPositionPainter implements Painter<MapViewer> {
 
     private void drawText(Graphics2D graphics, MapViewer mapViewer) {
 
-        Coordinate c = mapViewer.getMapManager().getBaseLayer().pixelToLatLon(mapViewer.getMouseHandler().getMousePoint(), mapViewer.getZoom());
+        Coordinate c = mapViewer.getLayerManager().getBaseLayer().pixelToLatLon(mapViewer.getMouseHandler().getMousePoint(), mapViewer.getZoom());
         String lon = String.format("Lon: %6f", c.longitude);
         String lat = String.format("Lat: %6f", c.latitude);
 

@@ -1,7 +1,5 @@
-package net.wirelabs.jmaps.tiler;
+package net.wirelabs.jmaps.example.application;
 
-
-import net.wirelabs.jmaps.map.tiler.DirectoryBasedCache;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -10,8 +8,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created 5/28/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -48,13 +44,13 @@ class DirectoryBasedCacheTest {
     @Test
     void testCachePutXYZWithoutQuery() {
         cache.put(URL1, TEST_IMAGE);
-        assertThat(EXPECTED_XYZ_FILE1).exists().isFile();
+        Assertions.assertThat(EXPECTED_XYZ_FILE1).exists().isFile();
     }
 
     @Test
     void testCachePutXYZWithQuery() {
         cache.put(URL2, TEST_IMAGE);
-        assertThat(EXPECTED_XYZ_FILE2).exists().isFile();
+        Assertions.assertThat(EXPECTED_XYZ_FILE2).exists().isFile();
     }
     @Test
     void testCacheKeyExists() {
@@ -65,7 +61,7 @@ class DirectoryBasedCacheTest {
     @Test
     void testCachePutWMTS() {
         cache.put(URL3, TEST_IMAGE);
-        assertThat(EXPECTED_WMTS_FILE).exists().isFile();
+        Assertions.assertThat(EXPECTED_WMTS_FILE).exists().isFile();
     }
 
     @Test

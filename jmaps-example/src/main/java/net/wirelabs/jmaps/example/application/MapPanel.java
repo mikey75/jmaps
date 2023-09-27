@@ -1,11 +1,10 @@
 package net.wirelabs.jmaps.example.application;
 
 import lombok.Getter;
-import net.miginfocom.swing.MigLayout;
-
 import net.wirelabs.jmaps.MapViewer;
+import net.wirelabs.jmaps.map.painters.RoutePainter;
 
-import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 import java.awt.Color;
 
 /**
@@ -15,14 +14,17 @@ public class MapPanel extends MapViewer {
 
 
 
-
-
     public MapPanel() {
         // override defaults
-        setCacheDebug(true);
+        setDeveloperMode(true);
         setZoom(12);
-        setThreadCount(12);
         setRouteColor(Color.BLUE);
+        setTilerThreads(32);
+        setImageCacheSize(16000);
+        setLocalCache(new DirectoryBasedCache());
+
+
+
 
 
 

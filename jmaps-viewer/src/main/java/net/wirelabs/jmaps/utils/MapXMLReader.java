@@ -2,7 +2,7 @@ package net.wirelabs.jmaps.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import net.wirelabs.jmaps.map.MapDefinition;
+import net.wirelabs.jmaps.map.model.MapDefinition;
 
 
 import javax.xml.bind.JAXBContext;

@@ -1,8 +1,7 @@
-package net.wirelabs.jmaps.map.tiler;
+package net.wirelabs.jmaps.example.application;
 
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
+import net.wirelabs.jmaps.map.cache.Cache;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -19,13 +18,19 @@ import java.nio.file.Paths;
 @Slf4j
 public class DirectoryBasedCache implements Cache<String, BufferedImage> {
 
-    @Setter
-    private Path baseDir;
+    private final Path baseDir;
+
+    private static final String DEFAULT_CACHE_DIR = Paths.get(System.getProperty("user.home"),
+            ".jmaps-cache","tile-cache").toString();
+
+    public DirectoryBasedCache() {
+        this(DEFAULT_CACHE_DIR);
+    }
 
     public DirectoryBasedCache(String cacheDir) {
         this.baseDir = Paths.get(cacheDir);
+        log.info("Local cache directory: {} ", cacheDir);
     }
-
 
     @Override
     public BufferedImage get(String key) {
@@ -75,8 +80,7 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
         return Files.exists(Paths.get(key));
     }
 
-    public File getLocalFile(String remoteUri)
-    {
+    private File getLocalFile(String remoteUri) {
         URI uri = URI.create(remoteUri);
         StringBuilder sb = new StringBuilder();
 
