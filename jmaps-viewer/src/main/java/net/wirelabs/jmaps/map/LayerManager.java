@@ -50,7 +50,7 @@ public class LayerManager {
         switch (layerDefinition.getType()) {
             case WMTS: {
                 layer = new WMTSLayer(layerDefinition.getName(),layerDefinition.getUrl());
-                layer.setMaxZoom(layerDefinition.getMaxZoom());
+                //layer.setMaxZoom(layerDefinition.getMaxZoom()); maxZoom has no sense in wmts
                 layer.setMinZoom(layerDefinition.getMinZoom());
                 layer.setSwapAxis(layerDefinition.isSwapAxis());
                 layer.setOpacity(layerDefinition.getOpacity());

@@ -61,7 +61,7 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
     @Override
     public void mouseMoved(MouseEvent mouseEvent) {
         updateMousePoint(mouseEvent);
-        mapViewer.repaint();
+
     }
 
     @Override
