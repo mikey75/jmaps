@@ -13,6 +13,7 @@ import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
 import net.wirelabs.jmaps.map.painters.Painter;
 import net.wirelabs.jmaps.map.painters.RoutePainter;
 import net.wirelabs.jmaps.map.tiler.TileDownloader;
+import net.wirelabs.jmaps.utils.MapUtils;
 import net.wirelabs.jmaps.utils.MapXMLReader;
 import net.wirelabs.jmaps.viewer.geo.Coordinate;
 
@@ -69,7 +70,8 @@ public class MapViewer extends JPanel {
     public static String userAgent = "JMaps Tiler v.1.0";
     public static int tilerThreads = 8;
     @Getter
-    private MapDefinition mapDefinition;
+   // private MapDefinition mapDefinition;
+    private String copyright;
 
 
     public MapViewer() {
@@ -136,15 +138,6 @@ public class MapViewer extends JPanel {
     }
 
     /**
-     * Set visible map
-     *
-     * @param md map definition class object
-     */
-    public void setMap(MapDefinition md) {
-        createMap(md);
-    }
-
-    /**
      * Set visible map from xml file
      *
      * @param xmlMapFile map xml definition
@@ -152,7 +145,7 @@ public class MapViewer extends JPanel {
     public void setMap(File xmlMapFile) {
         try {
             MapDefinition map = MapXMLReader.parse(xmlMapFile);
-            setMap(map);
+            createMap(map);
             repaint();
 
         } catch (JAXBException ex) {
@@ -175,43 +168,16 @@ public class MapViewer extends JPanel {
      * @param route route
      */
     public void setRoute(List<Coordinate> route) {
-        // Rectangle2D bbox = calculateBBox(route);
 
         defaultRoutePainter.clearRoute(); // clear current route if any
         defaultRoutePainter.setRoute(route);
 
-
         topLeftCornerPoint.setLocation(0, 0);
         setHomePositionSet(false);
-        setHomePosition(calculateCenter(route));
+        setHomePosition(MapUtils.calculateCenterOfCoordinateSet(route));
         repaint();
 
     }
-
-    private Coordinate calculateCenter(List<Coordinate> route) {
-        log.info("Start calcylate");
-        double minX = route.stream().min(Comparator.comparing(c -> c.longitude)).get().longitude;
-        double maxX = route.stream().max(Comparator.comparing(c -> c.longitude)).get().longitude;
-        double minY = route.stream().min(Comparator.comparing(c -> c.latitude)).get().latitude;
-        double maxY = route.stream().max(Comparator.comparing(c -> c.latitude)).get().latitude;
-        double cx = (maxX - minX) / 2.0;
-        double cy = (maxY - minY) / 2.0;
-        log.info("End calculate");
-        return new Coordinate(minX + cx, minY + cy);
-    }
-
-   /* private Rectangle2D calculateBBox(List<Coordinate> route) {
-        Layer baseLayer = getMapManager().getBaseLayer();
-
-        double minX =  route.stream().min(Comparator.comparing(c -> c.longitude)).get().longitude;
-        double maxX =  route.stream().max(Comparator.comparing(c -> c.longitude)).get().longitude;
-        double minY =  route.stream().min(Comparator.comparing(c ->c.latitude)).get().latitude;
-        double maxY =  route.stream().max(Comparator.comparing(c ->c.latitude)).get().latitude;
-
-
-
-        return new Rectangle2D.Double(minX,minY,maxY-minY, maxX - minX);
-    }*/
 
 
     /**
@@ -227,7 +193,7 @@ public class MapViewer extends JPanel {
         tileDownloader.shutdown();
     }
 
-    public void setTilerThreads(int threads) {
+    public synchronized void setTilerThreads(int threads) {
         log.info("Setting thrad count to {}", threads);
         tilerThreads = threads;
     }
@@ -239,8 +205,9 @@ public class MapViewer extends JPanel {
      */
     public void createMap(MapDefinition mapDefinition) {
 
-        this.mapDefinition =  mapDefinition;
+        copyright = mapDefinition.getCopyright();
         log.info("Setting map to {}", mapDefinition.getName());
+        log.info("Copyright: {}", copyright);
         // there can be only one map rendered at a time
         // so remove existing if any
         layerManager.removeAllLayers();
