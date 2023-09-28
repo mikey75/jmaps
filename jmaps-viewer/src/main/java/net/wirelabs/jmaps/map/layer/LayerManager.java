@@ -1,11 +1,11 @@
-package net.wirelabs.jmaps.map;
+package net.wirelabs.jmaps.map.layer;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.layer.LayerType;
 import net.wirelabs.jmaps.map.layer.WMTSLayer;
 import net.wirelabs.jmaps.map.layer.XYZLayer;
-import net.wirelabs.jmaps.map.model.LayerDefinition;
+import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -86,8 +86,9 @@ public class LayerManager {
     private void addLayer(Layer layer) {
         if (layerMatches(layer)) {
             layers.add(layer);
-          //  layer.setTileProvider(new TileProvider(mapViewer, layer, mapViewer.getThreadCount()));
             log.info("Added layer {}, CRS:{}, TileSize:{}", layer.getName(), layer.getProjectionEngine().getCrs(), layer.getTileSize());
+        } else {
+            log.error("Layer not added!");
         }
 
     }

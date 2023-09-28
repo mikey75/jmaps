@@ -1,7 +1,7 @@
 package net.wirelabs.jmaps.map.painters;
 
-import net.wirelabs.jmaps.MapViewer;
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
+import net.wirelabs.jmaps.map.MapViewer;
+import net.wirelabs.jmaps.map.geo.Coordinate;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

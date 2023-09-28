@@ -2,11 +2,11 @@ package net.wirelabs.jmaps.map.layer;
 
 
 import com.squareup.okhttp.HttpUrl;
-import net.wirelabs.jmaps.map.layer.wmts.Capabilities;
-import net.wirelabs.jmaps.utils.CapabilitiesReader;
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
-import net.wirelabs.jmaps.viewer.geo.ProjectionEngine;
-import net.wirelabs.jmaps.viewer.geo.GeoUtils;
+import net.wirelabs.jmaps.map.model.wmts.Capabilities;
+import net.wirelabs.jmaps.map.utils.CapabilitiesReader;
+import net.wirelabs.jmaps.map.geo.Coordinate;
+import net.wirelabs.jmaps.map.geo.ProjectionEngine;
+import net.wirelabs.jmaps.map.utils.GeoUtils;
 
 
 import java.awt.Dimension;

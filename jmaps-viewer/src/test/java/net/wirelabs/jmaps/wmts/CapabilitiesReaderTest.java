@@ -2,8 +2,8 @@ package net.wirelabs.jmaps.wmts;
 
 
 import net.wirelabs.jmaps.TestHttpServer;
-import net.wirelabs.jmaps.map.layer.wmts.Capabilities;
-import net.wirelabs.jmaps.utils.CapabilitiesReader;
+import net.wirelabs.jmaps.map.model.wmts.Capabilities;
+import net.wirelabs.jmaps.map.utils.CapabilitiesReader;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

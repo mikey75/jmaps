@@ -1,8 +1,9 @@
 package net.wirelabs.jmaps.utils;
 
-import net.wirelabs.jmaps.map.model.MapDefinition;
+import net.wirelabs.jmaps.map.model.map.MapDefinition;
 
 import net.wirelabs.jmaps.map.layer.LayerType;
+import net.wirelabs.jmaps.map.utils.MapXMLReader;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

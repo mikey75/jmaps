@@ -1,4 +1,4 @@
-package net.wirelabs.jmaps.map.tiler;
+package net.wirelabs.jmaps.map.downloader;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -6,7 +6,7 @@ import com.squareup.okhttp.Response;
 import com.squareup.okhttp.ResponseBody;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.cache.DummyCache;
-import net.wirelabs.jmaps.MapViewer;
+import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.cache.InMemoryTileCache;
 
@@ -32,9 +32,9 @@ public class TileDownloader {
     private final OkHttpClient httpClient = new OkHttpClient();
     private final List<String> tilesLoading = new CopyOnWriteArrayList<>();
     private final InMemoryTileCache inMemoryTileCache = new InMemoryTileCache(8000); // this cache is always on
-    private ExecutorService executorService;
 
     private Cache<String,BufferedImage> localCache = new DummyCache();
+    private ExecutorService executorService;
     private final MapViewer mapViewer;
 
     public TileDownloader(MapViewer mapViewer) {

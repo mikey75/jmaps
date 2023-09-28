@@ -1,15 +1,13 @@
 package net.wirelabs.jmaps.example.application;
 
 import net.miginfocom.swing.MigLayout;
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
+import net.wirelabs.jmaps.map.geo.Coordinate;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import java.awt.EventQueue;
 import java.io.File;
-import java.io.InputStream;
-
 
 
 public class ExampleApplication extends JFrame {

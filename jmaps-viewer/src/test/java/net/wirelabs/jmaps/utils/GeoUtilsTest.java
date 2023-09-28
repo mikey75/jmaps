@@ -1,12 +1,10 @@
 package net.wirelabs.jmaps.utils;
 
-import net.wirelabs.jmaps.viewer.geo.GeoUtils;
+import net.wirelabs.jmaps.map.utils.GeoUtils;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;
 
-import static net.wirelabs.jmaps.viewer.geo.GeoUtils.deg2rad;
-import static net.wirelabs.jmaps.viewer.geo.GeoUtils.rad2deg;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**

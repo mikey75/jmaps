@@ -1,7 +1,6 @@
 package net.wirelabs.jmaps.map;
 
 import lombok.Getter;
-import net.wirelabs.jmaps.MapViewer;
 import net.wirelabs.jmaps.TileDebugger;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.painters.Painter;

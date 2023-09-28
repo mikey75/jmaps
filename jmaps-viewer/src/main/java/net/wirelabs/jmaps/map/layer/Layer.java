@@ -3,8 +3,8 @@ package net.wirelabs.jmaps.map.layer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
-import net.wirelabs.jmaps.viewer.geo.ProjectionEngine;
+import net.wirelabs.jmaps.map.geo.Coordinate;
+import net.wirelabs.jmaps.map.geo.ProjectionEngine;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;

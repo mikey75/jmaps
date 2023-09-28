@@ -1,10 +1,7 @@
 package net.wirelabs.jmaps.example.application;
 
-import lombok.Getter;
-import net.wirelabs.jmaps.MapViewer;
-import net.wirelabs.jmaps.map.painters.RoutePainter;
+import net.wirelabs.jmaps.map.MapViewer;
 
-import javax.swing.border.TitledBorder;
 import java.awt.Color;
 
 /**

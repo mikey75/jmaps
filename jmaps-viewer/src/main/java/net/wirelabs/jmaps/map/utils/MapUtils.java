@@ -1,8 +1,8 @@
-package net.wirelabs.jmaps.utils;
+package net.wirelabs.jmaps.map.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
+import net.wirelabs.jmaps.map.geo.Coordinate;
 
 import java.util.Comparator;
 import java.util.List;

@@ -1,8 +1,9 @@
-package net.wirelabs.jmaps;
+package net.wirelabs.jmaps.map;
 
 import lombok.Getter;
+import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.layer.Layer;
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
+import net.wirelabs.jmaps.map.geo.Coordinate;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;

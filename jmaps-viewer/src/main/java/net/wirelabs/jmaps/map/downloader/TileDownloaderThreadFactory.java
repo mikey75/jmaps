@@ -1,4 +1,4 @@
-package net.wirelabs.jmaps.map.tiler;
+package net.wirelabs.jmaps.map.downloader;
 
 import java.util.concurrent.ThreadFactory;
 

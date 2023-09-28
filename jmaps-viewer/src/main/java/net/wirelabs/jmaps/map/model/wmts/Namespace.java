@@ -1,4 +1,4 @@
-package net.wirelabs.jmaps.map.layer.wmts;
+package net.wirelabs.jmaps.map.model.wmts;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

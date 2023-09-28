@@ -1,8 +1,8 @@
-package net.wirelabs.jmaps.utils;
+package net.wirelabs.jmaps.map.utils;
 
 
 import lombok.Getter;
-import net.wirelabs.jmaps.map.layer.wmts.Capabilities;
+import net.wirelabs.jmaps.map.model.wmts.Capabilities;
 
 
 import javax.xml.bind.JAXBContext;

@@ -1,7 +1,7 @@
-package net.wirelabs.jmaps.viewer.geo;
+package net.wirelabs.jmaps.map.geo;
 
 import lombok.NoArgsConstructor;
-import net.wirelabs.jmaps.utils.NumberUtils;
+import net.wirelabs.jmaps.map.utils.NumberUtils;
 
 
 import static java.lang.Double.NaN;

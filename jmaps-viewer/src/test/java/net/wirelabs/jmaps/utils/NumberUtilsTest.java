@@ -1,6 +1,7 @@
 package net.wirelabs.jmaps.utils;
 
 
+import net.wirelabs.jmaps.map.utils.NumberUtils;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

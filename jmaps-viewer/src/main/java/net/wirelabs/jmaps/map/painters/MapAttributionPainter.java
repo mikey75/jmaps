@@ -1,6 +1,6 @@
 package net.wirelabs.jmaps.map.painters;
 
-import net.wirelabs.jmaps.MapViewer;
+import net.wirelabs.jmaps.map.MapViewer;
 
 import javax.swing.SwingConstants;
 import java.awt.Color;

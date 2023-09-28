@@ -2,9 +2,9 @@ package net.wirelabs.jmaps.example.application;
 
 import lombok.extern.slf4j.Slf4j;
 import net.miginfocom.swing.MigLayout;
-import net.wirelabs.jmaps.MapViewer;
+import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.example.GPXParser;
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
+import net.wirelabs.jmaps.map.geo.Coordinate;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;

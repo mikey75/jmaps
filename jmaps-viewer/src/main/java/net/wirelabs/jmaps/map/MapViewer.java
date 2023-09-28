@@ -1,21 +1,20 @@
-package net.wirelabs.jmaps;
+package net.wirelabs.jmaps.map;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.map.model.LayerDefinition;
-import net.wirelabs.jmaps.map.model.MapDefinition;
-import net.wirelabs.jmaps.map.LayerManager;
-import net.wirelabs.jmaps.map.MapRenderer;
+import net.wirelabs.jmaps.map.model.map.LayerDefinition;
+import net.wirelabs.jmaps.map.model.map.MapDefinition;
+import net.wirelabs.jmaps.map.layer.LayerManager;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
 import net.wirelabs.jmaps.map.painters.Painter;
 import net.wirelabs.jmaps.map.painters.RoutePainter;
-import net.wirelabs.jmaps.map.tiler.TileDownloader;
-import net.wirelabs.jmaps.utils.MapUtils;
-import net.wirelabs.jmaps.utils.MapXMLReader;
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
+import net.wirelabs.jmaps.map.downloader.TileDownloader;
+import net.wirelabs.jmaps.map.utils.MapUtils;
+import net.wirelabs.jmaps.map.utils.MapXMLReader;
+import net.wirelabs.jmaps.map.geo.Coordinate;
 
 import javax.swing.*;
 import javax.xml.bind.JAXBException;
@@ -24,7 +23,6 @@ import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.Comparator;
 import java.util.List;
 
 @Slf4j

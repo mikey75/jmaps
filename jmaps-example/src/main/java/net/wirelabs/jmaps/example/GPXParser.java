@@ -15,7 +15,7 @@ import net.wirelabs.jmaps.gpx.GpxType;
 import net.wirelabs.jmaps.gpx.TrkType;
 import net.wirelabs.jmaps.gpx.TrksegType;
 import net.wirelabs.jmaps.gpx.WptType;
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
+import net.wirelabs.jmaps.map.geo.Coordinate;
 
 /**
  * Created 8/3/22 by Michał Szwaczko (mikey@wirelabs.net)

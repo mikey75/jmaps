@@ -1,4 +1,4 @@
-package net.wirelabs.jmaps.map.model;
+package net.wirelabs.jmaps.map.model.map;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
