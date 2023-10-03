@@ -4,8 +4,9 @@ import lombok.Getter;
 import net.wirelabs.jmaps.TileDebugger;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.layer.Layer;
+import net.wirelabs.jmaps.map.layer.LayerManager;
 import net.wirelabs.jmaps.map.painters.Painter;
-import net.wirelabs.jmaps.map.tiler.TileDownloader;
+import net.wirelabs.jmaps.map.downloader.TileDownloader;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
