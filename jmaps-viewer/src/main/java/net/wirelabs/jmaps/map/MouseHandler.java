@@ -1,9 +1,9 @@
-package net.wirelabs.jmaps.map;
+package net.wirelabs.jmaps;
 
 import lombok.Getter;
-import net.wirelabs.jmaps.map.MapViewer;
+import net.wirelabs.jmaps.map.LayerManager;
 import net.wirelabs.jmaps.map.layer.Layer;
-import net.wirelabs.jmaps.map.geo.Coordinate;
+import net.wirelabs.jmaps.viewer.geo.Coordinate;
 
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
@@ -19,14 +19,16 @@ import java.awt.geom.Point2D;
  */
 public class MouseHandler extends MouseInputAdapter implements MouseWheelListener {
 
+    private final LayerManager layerManager;
     private Point prevMousePosition;
     private Cursor priorCursor;
     private final MapViewer mapViewer;
     @Getter
     private final Point mousePoint = new Point();
 
-    public MouseHandler(MapViewer mapViewer) {
+    public MouseHandler(MapViewer mapViewer, LayerManager layerManager) {
         this.mapViewer = mapViewer;
+        this.layerManager = layerManager;
         mapViewer.addMouseMotionListener(this);
         mapViewer.addMouseListener(this);
         mapViewer.addMouseWheelListener(this);
@@ -36,8 +38,8 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
     public void mouseWheelMoved(MouseWheelEvent evt) {
 
 
-        if (mapViewer.getLayerManager().hasLayers()) {
-            Layer baseLayer = mapViewer.getLayerManager().getBaseLayer();
+        if (layerManager.hasLayers()) {
+            Layer baseLayer = layerManager.getBaseLayer();
             // location of mouse at current zoom
             Coordinate mouseLatLon = baseLayer.pixelToLatLon(mousePoint, mapViewer.getZoom());
 
@@ -113,8 +115,8 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
     }
 
     private void clipToBounds(Point topLeftCornerPoint) {
-        if (mapViewer.getLayerManager().hasLayers()) {
-            Layer baseLayer = mapViewer.getLayerManager().getBaseLayer();
+        if (layerManager.hasLayers()) {
+            Layer baseLayer = layerManager.getBaseLayer();
 
             int zoom = mapViewer.getZoom();
             int maxX = baseLayer.getMapSizeInPixels(zoom).width - mapViewer.getWidth();

@@ -1,20 +1,19 @@
-package net.wirelabs.jmaps.map;
+package net.wirelabs.jmaps;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.map.model.map.LayerDefinition;
-import net.wirelabs.jmaps.map.model.map.MapDefinition;
-import net.wirelabs.jmaps.map.layer.LayerManager;
+import net.wirelabs.jmaps.map.model.LayerDefinition;
+import net.wirelabs.jmaps.map.model.MapDefinition;
+import net.wirelabs.jmaps.map.LayerManager;
+import net.wirelabs.jmaps.map.MapRenderer;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
 import net.wirelabs.jmaps.map.painters.Painter;
-import net.wirelabs.jmaps.map.painters.RoutePainter;
-import net.wirelabs.jmaps.map.downloader.TileDownloader;
-import net.wirelabs.jmaps.map.utils.MapUtils;
-import net.wirelabs.jmaps.map.utils.MapXMLReader;
-import net.wirelabs.jmaps.map.geo.Coordinate;
+import net.wirelabs.jmaps.utils.MapUtils;
+import net.wirelabs.jmaps.utils.MapXMLReader;
+import net.wirelabs.jmaps.viewer.geo.Coordinate;
 
 import javax.swing.*;
 import javax.xml.bind.JAXBException;
@@ -28,11 +27,9 @@ import java.util.List;
 @Slf4j
 public class MapViewer extends JPanel {
 
-    @Getter
+
     private final transient LayerManager layerManager;
-    @Getter
     private final transient MapRenderer mapRenderer;
-    @Getter
     private final transient MouseHandler mouseHandler;
 
     // current map top left corner in pixels
@@ -50,47 +47,40 @@ public class MapViewer extends JPanel {
     @Getter
     @Setter
     private boolean homePositionSet;
-
-
-
     @Setter
     @Getter
     private String wmtsCacheDir = Paths.get(System.getProperty("user.home"), ".jmaps-cache", "wmts-cache").toString();
+    //private final transient RoutePainter defaultRoutePainter = new RoutePainter();
+    //private final transient MapAttributionPainter attributionPainter = new MapAttributionPainter();
 
-    private final transient RoutePainter defaultRoutePainter = new RoutePainter();
-    private final transient MapAttributionPainter attributionPainter = new MapAttributionPainter();
-
-    @Getter
-    private final TileDownloader tileDownloader;
 
     @Setter
     public static boolean developerMode = false; // developer mode enables cache debug, tile debug and position tracking
     public static String userAgent = "JMaps Tiler v.1.0";
     public static int tilerThreads = 8;
     @Getter
-   // private MapDefinition mapDefinition;
     private String copyright;
 
 
     public MapViewer() {
-        mapRenderer = new MapRenderer(this);
         layerManager = new LayerManager();
-        mouseHandler = new MouseHandler(this);
-        tileDownloader = new TileDownloader(this);
+        mapRenderer = new MapRenderer(this, layerManager);
+        mouseHandler = new MouseHandler(this, layerManager);
+       // tileDownloader = new TileDownloader(this);
 
         // default map has these painters (map attribution painter, and route painter)
-        addPainter(attributionPainter);
-        addPainter(defaultRoutePainter);
+       // addPainter(attributionPainter);
+       // addPainter(defaultRoutePainter);
 
     }
 
 
     protected void setLocalCache(Cache<String, BufferedImage> cache) {
-        tileDownloader.setLocalCache(cache);
+        mapRenderer.setLocalCache(cache);
     }
 
     protected void setImageCacheSize(int size) {
-        tileDownloader.setImageCacheSize(size);
+        mapRenderer.setImageCacheSize(size);
     }
 
     // the method that does the actual painting
@@ -98,7 +88,7 @@ public class MapViewer extends JPanel {
     protected void paintComponent(Graphics graphicsContext) {
         super.paintComponent(graphicsContext);
 
-        if (getLayerManager().hasLayers()) {
+        if (layerManager.hasLayers()) {
             setZoom(zoom);
             setHomePosition(home);
             mapRenderer.drawTiles(graphicsContext, zoom, topLeftCornerPoint);
@@ -110,8 +100,8 @@ public class MapViewer extends JPanel {
     }
 
     public void setZoom(int zoom) {
-        if (getLayerManager().hasLayers()) {
-            Layer baseLayer = getLayerManager().getBaseLayer();
+        if (layerManager.hasLayers()) {
+            Layer baseLayer = layerManager.getBaseLayer();
             if (zoom < baseLayer.getMinZoom()) zoom = baseLayer.getMinZoom();
             if (zoom > baseLayer.getMaxZoom()) zoom = baseLayer.getMaxZoom();
         }
@@ -121,7 +111,7 @@ public class MapViewer extends JPanel {
     // sets location on the map at current zoom
     public void setHomePosition(Coordinate location) {
         if (!isHomePositionSet()) {
-            Layer baseLayer = getLayerManager().getBaseLayer();
+            Layer baseLayer = layerManager.getBaseLayer();
             if (location != null) { // if location given center on it
                 Point2D p = baseLayer.latLonToPixel(location, zoom);
                 topLeftCornerPoint.translate((int) (p.getX() - getWidth() / 2d), (int) (p.getY() - getHeight() / 2d));
@@ -165,7 +155,7 @@ public class MapViewer extends JPanel {
      *
      * @param route route
      */
-    public void setRoute(List<Coordinate> route) {
+   /* public void setRoute(List<Coordinate> route) {
 
         defaultRoutePainter.clearRoute(); // clear current route if any
         defaultRoutePainter.setRoute(route);
@@ -175,21 +165,17 @@ public class MapViewer extends JPanel {
         setHomePosition(MapUtils.calculateCenterOfCoordinateSet(route));
         repaint();
 
-    }
+    }*/
 
 
-    /**
+  /*  *//**
      * Set route stroke color
      *
      * @param color color
-     */
+     *//*
     public void setRouteColor(Color color) {
         defaultRoutePainter.setColor(color);
-    }
-
-    public void shutdownTileProvider() {
-        tileDownloader.shutdown();
-    }
+    }*/
 
     public synchronized void setTilerThreads(int threads) {
         log.info("Setting thrad count to {}", threads);

@@ -65,7 +65,7 @@ public class ConfigPanel extends JPanel {
                 File gpx = fileChooser.getSelectedFile();// user selects a file
                 GPXParser p = new GPXParser();
                 List<Coordinate> gpxCoordinates = p.parseToGeoPosition(gpx);
-                mapViewer.setRoute(gpxCoordinates);
+              //  mapViewer.setRoute(gpxCoordinates);
             }
         });
     }

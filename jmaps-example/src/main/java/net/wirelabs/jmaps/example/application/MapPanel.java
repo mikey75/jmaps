@@ -1,6 +1,6 @@
 package net.wirelabs.jmaps.example.application;
 
-import net.wirelabs.jmaps.map.MapViewer;
+import net.wirelabs.jmaps.MapViewer;
 
 import java.awt.Color;
 
@@ -15,7 +15,7 @@ public class MapPanel extends MapViewer {
         // override defaults
         setDeveloperMode(true);
         setZoom(12);
-        setRouteColor(Color.BLUE);
+        //setRouteColor(Color.BLUE);
         setTilerThreads(32);
         setImageCacheSize(16000);
         setLocalCache(new DirectoryBasedCache());
