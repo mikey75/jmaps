@@ -1,4 +1,4 @@
-package net.wirelabs.jmaps;
+package net.wirelabs.jmaps.map.utils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

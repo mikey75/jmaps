@@ -9,18 +9,18 @@ import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.layer.LayerManager;
 import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
-import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
 import net.wirelabs.jmaps.map.painters.Painter;
 import net.wirelabs.jmaps.map.utils.MapXMLReader;
 
-import javax.swing.*;
+import javax.swing.JPanel;
 import javax.xml.bind.JAXBException;
-import java.awt.*;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.nio.file.Paths;
-import java.util.List;
 
 @Slf4j
 public class MapViewer extends JPanel {
@@ -48,9 +48,6 @@ public class MapViewer extends JPanel {
     @Setter
     @Getter
     private String wmtsCacheDir = Paths.get(System.getProperty("user.home"), ".jmaps-cache", "wmts-cache").toString();
-    //private final transient RoutePainter defaultRoutePainter = new RoutePainter();
-    //private final transient MapAttributionPainter attributionPainter = new MapAttributionPainter();
-
 
     @Setter
     public static boolean developerMode = false; // developer mode enables cache debug, tile debug and position tracking
@@ -64,12 +61,6 @@ public class MapViewer extends JPanel {
         layerManager = new LayerManager();
         mapRenderer = new MapRenderer(this, layerManager);
         mouseHandler = new MouseHandler(this, layerManager);
-       // tileDownloader = new TileDownloader(this);
-
-        // default map has these painters (map attribution painter, and route painter)
-       // addPainter(attributionPainter);
-       // addPainter(defaultRoutePainter);
-
     }
 
 
@@ -147,33 +138,6 @@ public class MapViewer extends JPanel {
     public void addPainter(Painter<MapViewer> painter) {
         mapRenderer.addPainter(painter);
     }
-
-    /**
-     * Set route to be painted on map
-     *
-     * @param route route
-     */
-   /* public void setRoute(List<Coordinate> route) {
-
-        defaultRoutePainter.clearRoute(); // clear current route if any
-        defaultRoutePainter.setRoute(route);
-
-        topLeftCornerPoint.setLocation(0, 0);
-        setHomePositionSet(false);
-        setHomePosition(MapUtils.calculateCenterOfCoordinateSet(route));
-        repaint();
-
-    }*/
-
-
-  /*  *//**
-     * Set route stroke color
-     *
-     * @param color color
-     *//*
-    public void setRouteColor(Color color) {
-        defaultRoutePainter.setColor(color);
-    }*/
 
     public synchronized void setTilerThreads(int threads) {
         log.info("Setting thrad count to {}", threads);

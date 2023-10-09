@@ -1,7 +1,7 @@
 package net.wirelabs.jmaps.map;
 
 import lombok.Getter;
-import net.wirelabs.jmaps.TileDebugger;
+import net.wirelabs.jmaps.map.utils.TileDebugger;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.layer.LayerManager;
@@ -29,7 +29,9 @@ public class MapRenderer {
     private final LayerManager layerManager;
     @Getter
     private final List<Painter<MapViewer>> painters = new ArrayList<>();
-
+    private final Color fillColor = new Color(0, 0, 0, 0);
+    private BufferedImage finalImage;
+    private Graphics2D finalImageG2D;
 
     public MapRenderer(MapViewer mapViewer, LayerManager layerManager) {
         this.mapViewer = mapViewer;
@@ -46,7 +48,11 @@ public class MapRenderer {
         List<Layer> layers = layerManager.getLayers();
         Layer baseLayer = layerManager.getBaseLayer();
 
-        BufferedImage finalImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
+        // for layered final image create only when not already created or differs in size
+        if (finalImage == null || finalImage.getHeight() != tileSize || finalImage.getWidth() != tileSize) {
+            finalImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
+            finalImageG2D = finalImage.createGraphics();
+        }
 
         // calculate the "visible" viewport area in tiles
         int numWide = width / tileSize + 2;
@@ -95,8 +101,8 @@ public class MapRenderer {
 }
 
     private void drawMultipleLayerTile(Graphics g, int zoom, BufferedImage finalImage, int itpx, int itpy, int ox, int oy, List<Layer> layers) {
-        Graphics2D finalImageG2D = finalImage.createGraphics();
-        finalImageG2D.setBackground(new Color(0, 0, 0, 0));
+        //Graphics2D finalImageG2D = finalImage.createGraphics();
+        finalImageG2D.setBackground(fillColor);
         finalImageG2D.clearRect(0, 0, finalImage.getWidth(), finalImage.getHeight());
 
         for (Layer layer: layers) {
