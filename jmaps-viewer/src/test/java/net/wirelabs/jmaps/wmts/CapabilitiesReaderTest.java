@@ -3,7 +3,7 @@ package net.wirelabs.jmaps.wmts;
 
 import net.wirelabs.jmaps.TestHttpServer;
 import net.wirelabs.jmaps.map.model.wmts.Capabilities;
-import net.wirelabs.jmaps.map.utils.CapabilitiesReader;
+import net.wirelabs.jmaps.map.utils.MapReader;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,11 +20,11 @@ class CapabilitiesReaderTest {
 
     private final File testCapabilities = new File("src/test/resources/wmts/capabilities.xml");
     private final File expectedCachedFile = new File("target/testcache/wmts-cache/localhost/wmts/capabilities.xml");
-    private CapabilitiesReader capabilitiesReader;
+    private MapReader mapReader;
 
     @BeforeEach
     void before() throws IOException {
-        capabilitiesReader = new CapabilitiesReader(("target/testcache/wmts-cache"));
+        mapReader = new MapReader("target/testcache/wmts-cache");
         // delete cached file if any -> simulate file is not in cache
         Files.deleteIfExists(expectedCachedFile.toPath());
     }
@@ -39,7 +39,7 @@ class CapabilitiesReaderTest {
         Files.deleteIfExists(expectedCachedFile.toPath());
 
 
-        Capabilities caps = capabilitiesReader.getCapabilities(testUrl);
+        Capabilities caps = mapReader.loadCapabilities(testUrl);
         assertFileIsCreatedAndHasCorrectContent(caps);
         server.stop();
 
@@ -53,7 +53,7 @@ class CapabilitiesReaderTest {
         String testUrl = "http://localhost/wmts";
         //
        // CapabilitiesReader cr = new CapabilitiesReader();
-        Capabilities caps = capabilitiesReader.getCapabilities(testUrl);
+        Capabilities caps = mapReader.loadCapabilities(testUrl);
 
         assertFileIsCreatedAndHasCorrectContent(caps);
     }

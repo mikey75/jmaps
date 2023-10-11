@@ -3,10 +3,10 @@ package net.wirelabs.jmaps.map.layer;
 
 import com.squareup.okhttp.HttpUrl;
 import net.wirelabs.jmaps.map.model.wmts.Capabilities;
-import net.wirelabs.jmaps.map.utils.CapabilitiesReader;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.ProjectionEngine;
-import net.wirelabs.jmaps.map.utils.GeoUtils;
+import net.wirelabs.jmaps.map.geo.GeoUtils;
+import net.wirelabs.jmaps.map.utils.MapReader;
 
 
 import java.awt.Dimension;
@@ -23,7 +23,7 @@ import java.awt.geom.Point2D;
 public class WMTSLayer extends Layer {
 
     private static final String DEFAULT_GET_CAPABILITIES_PATH = "?service=WMTS&request=GetCapabilities";
-    private final CapabilitiesReader capabilitiesReader;
+    private final MapReader mapReader;
     private Capabilities capabilities;
 
     protected String tileMatrixSetName;
@@ -35,7 +35,7 @@ public class WMTSLayer extends Layer {
         super(name, url);
         this.tileMatrixSetName = tileMatrixSet;
         this.wmtsLayerName = layer;
-        this.capabilitiesReader = new CapabilitiesReader();
+        this.mapReader = new MapReader();
         configureFromCapabilities();
     }
 
@@ -54,7 +54,7 @@ public class WMTSLayer extends Layer {
     private void configureFromCapabilities() {
 
 
-        capabilities = capabilitiesReader.getCapabilities(getCapabilitiesUrl());
+        capabilities = mapReader.loadCapabilities(getCapabilitiesUrl());
 
         // defaults to first layer and first tms when not specified
         if (wmtsLayerName == null) wmtsLayerName = capabilities.getContents().getLayer(0).getIdentifier();

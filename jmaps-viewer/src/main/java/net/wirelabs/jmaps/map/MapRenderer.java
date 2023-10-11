@@ -35,18 +35,27 @@ public class MapRenderer {
 
     public MapRenderer(MapViewer mapViewer, LayerManager layerManager) {
         this.mapViewer = mapViewer;
-        this.tileDownloader = new TileDownloader(mapViewer);
         this.layerManager = layerManager;
+        this.tileDownloader = new TileDownloader(mapViewer);
     }
 
-    public void drawTiles(final Graphics g, final int zoom, Point topLeftCorner) {
+    public void renderMap(Graphics graphicsContext) {
+        if (layerManager.layersPresent()) {
+            mapViewer.setZoom(mapViewer.getZoom());
+            mapViewer.setHomePosition(mapViewer.getHome());
+            drawTiles(graphicsContext, mapViewer.getZoom(), mapViewer.getTopLeftCornerPoint());
+            runPainters((Graphics2D) graphicsContext);
+        }
+    }
 
-        int tileSize = layerManager.getBaseLayer().getTileSize();
+    private void drawTiles(final Graphics g, final int zoom, Point topLeftCorner) {
+
+        Layer baseLayer = layerManager.getBaseLayer();
+        List<Layer> layers = layerManager.getLayers();
+
+        int tileSize = baseLayer.getTileSize();
         int width = mapViewer.getWidth();
         int height = mapViewer.getHeight();
-
-        List<Layer> layers = layerManager.getLayers();
-        Layer baseLayer = layerManager.getBaseLayer();
 
         // for layered final image create only when not already created or differs in size
         if (finalImage == null || finalImage.getHeight() != tileSize || finalImage.getWidth() != tileSize) {
@@ -88,9 +97,10 @@ public class MapRenderer {
                     }
 
 
-                if (MapViewer.developerMode) {
+                if (mapViewer.isDeveloperMode()) {
                     TileDebugger.drawTileDebugInfo(g, tileSize, itpx, itpy, ox, oy, zoom);
                 }
+
 
 
             }
@@ -129,9 +139,9 @@ public class MapRenderer {
         }
     }
 
-    public void runPainters(Graphics2D graphics) {
-        for (Painter<MapViewer> p : painters) {
-            p.doPaint(graphics, mapViewer, mapViewer.getWidth(), mapViewer.getHeight());
+    private void runPainters(Graphics2D graphics) {
+        for (Painter<MapViewer> painter : painters) {
+            painter.doPaint(graphics, mapViewer, mapViewer.getWidth(), mapViewer.getHeight());
         }
     }
 
@@ -143,7 +153,7 @@ public class MapRenderer {
         tileDownloader.setLocalCache(cache);
     }
 
-    public void setImageCacheSize(int size) {
-        tileDownloader.setImageCacheSize(size);
+    public void shutdownTileDownloader() {
+        tileDownloader.shutdown();
     }
 }

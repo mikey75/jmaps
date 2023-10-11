@@ -9,30 +9,38 @@ import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.layer.LayerManager;
 import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
+import net.wirelabs.jmaps.map.painters.CurrentPositionPainter;
+import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
 import net.wirelabs.jmaps.map.painters.Painter;
-import net.wirelabs.jmaps.map.utils.MapXMLReader;
+import net.wirelabs.jmaps.map.utils.MapReader;
 
 import javax.swing.JPanel;
 import javax.xml.bind.JAXBException;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.nio.file.Paths;
 
 @Slf4j
 public class MapViewer extends JPanel {
 
-
+    @Getter
     private final transient LayerManager layerManager;
     private final transient MapRenderer mapRenderer;
+    @Getter
     private final transient MouseHandler mouseHandler;
+    private final transient MapReader mapReader;
 
     // current map top left corner in pixels
     @Getter
     private final Point topLeftCornerPoint = new Point();
+    @Getter
+    private final int tileCacheSize;
+    @Getter
+    private final int tilerThreads;
+    @Getter
+    private final String userAgent;
 
     // zoom level
     @Getter
@@ -45,51 +53,54 @@ public class MapViewer extends JPanel {
     @Getter
     @Setter
     private boolean homePositionSet;
-    @Setter
-    @Getter
-    private String wmtsCacheDir = Paths.get(System.getProperty("user.home"), ".jmaps-cache", "wmts-cache").toString();
+
 
     @Setter
-    public static boolean developerMode = false; // developer mode enables cache debug, tile debug and position tracking
-    public static String userAgent = "JMaps Tiler v.1.0";
-    public static int tilerThreads = 8;
     @Getter
-    private String copyright;
+    private boolean developerMode = false; // developer mode enables cache debug, tile debug and position tracking
 
+    private static final String DEFAULT_USER_AGENT = "JMaps Tiler v.1.0";
+    private static final int DEFAULT_TILER_THREADS = 16;
+    private static final int DEFAULT_IMGCACHE_SIZE = 8000;
+    @Getter
+    private String copyright = "";
 
     public MapViewer() {
+        this(DEFAULT_USER_AGENT, DEFAULT_TILER_THREADS, DEFAULT_IMGCACHE_SIZE);
+    }
+
+    public MapViewer(String userAgent, int tilerThreads, int tileCacheSize) {
+        this.userAgent = userAgent;
+        this.tilerThreads = tilerThreads;
+        this.tileCacheSize = tileCacheSize;
+
+        mapReader = new MapReader();
         layerManager = new LayerManager();
         mapRenderer = new MapRenderer(this, layerManager);
         mouseHandler = new MouseHandler(this, layerManager);
+
+        addPainter(createAttributionPainter());
+
     }
 
+    protected void showCoordinates() {
+        addPainter(createCurrentPositionPainter());
+    }
 
     protected void setLocalCache(Cache<String, BufferedImage> cache) {
         mapRenderer.setLocalCache(cache);
-    }
-
-    protected void setImageCacheSize(int size) {
-        mapRenderer.setImageCacheSize(size);
     }
 
     // the method that does the actual painting
     @Override
     protected void paintComponent(Graphics graphicsContext) {
         super.paintComponent(graphicsContext);
-
-        if (layerManager.hasLayers()) {
-            setZoom(zoom);
-            setHomePosition(home);
-            mapRenderer.drawTiles(graphicsContext, zoom, topLeftCornerPoint);
-            mapRenderer.runPainters((Graphics2D) graphicsContext);
-        }
-
+        mapRenderer.renderMap(graphicsContext);
         super.paintBorder(graphicsContext);
-
     }
 
     public void setZoom(int zoom) {
-        if (layerManager.hasLayers()) {
+        if (layerManager.layersPresent()) {
             Layer baseLayer = layerManager.getBaseLayer();
             if (zoom < baseLayer.getMinZoom()) zoom = baseLayer.getMinZoom();
             if (zoom > baseLayer.getMaxZoom()) zoom = baseLayer.getMaxZoom();
@@ -121,7 +132,7 @@ public class MapViewer extends JPanel {
      */
     public void setMap(File xmlMapFile) {
         try {
-            MapDefinition map = MapXMLReader.parse(xmlMapFile);
+            MapDefinition map = mapReader.loadMapDefinitionFile(xmlMapFile);
             createMap(map);
             repaint();
 
@@ -139,17 +150,13 @@ public class MapViewer extends JPanel {
         mapRenderer.addPainter(painter);
     }
 
-    public synchronized void setTilerThreads(int threads) {
-        log.info("Setting thrad count to {}", threads);
-        tilerThreads = threads;
-    }
-
     /**
-     * Creates map (layers) from map definition and sets the map definition object
+     * Creates map object (layers) from map definition and sets the map definition object
      * Also sets the home position, initial zoom and map position (corner)
+     *
      * @param mapDefinition map definition
      */
-    public void createMap(MapDefinition mapDefinition) {
+    private void createMap(MapDefinition mapDefinition) {
 
         copyright = mapDefinition.getCopyright();
         log.info("Setting map to {}", mapDefinition.getName());
@@ -166,6 +173,22 @@ public class MapViewer extends JPanel {
         setZoom(getZoom());
         setHomePositionSet(false);
         setHomePosition(getHome());
+    }
+
+    // configure copyright overlay painter
+    // override to set your own or configure existing
+    protected Painter<MapViewer> createAttributionPainter() {
+        return new MapAttributionPainter();
+    }
+
+    protected Painter<MapViewer> createCurrentPositionPainter() {
+        return new CurrentPositionPainter();
+    }
+
+    // call this when disposing the mapviewer, or override and write your own
+    // or connect to some application close event
+    protected void onExit() {
+        mapRenderer.shutdownTileDownloader();
     }
 }
 

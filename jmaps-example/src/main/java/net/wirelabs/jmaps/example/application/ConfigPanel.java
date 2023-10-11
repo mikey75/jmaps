@@ -37,7 +37,7 @@ public class ConfigPanel extends JPanel {
 
         add(devMode, "flowx,cell 0 3");
 
-        devMode.setSelected(MapViewer.developerMode);
+        devMode.setSelected(mapViewer.isDeveloperMode());
 
         setAddMapListener(mapViewer);
         setLoadGPXListener(mapViewer);
@@ -48,7 +48,7 @@ public class ConfigPanel extends JPanel {
 
     private void setDevModeListener(MapViewer mapViewer) {
         devMode.addActionListener(e -> {
-            MapViewer.developerMode = devMode.isSelected();
+            mapViewer.setDeveloperMode(devMode.isSelected());
             mapViewer.repaint();
         });
     }

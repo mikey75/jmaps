@@ -22,13 +22,6 @@ public class InMemoryTileCache implements Cache<String,BufferedImage> {
         this.map = new ConcurrentLinkedHashMap.Builder<String,BufferedImage>()
                 .maximumWeightedCapacity(initialCapacity)
                 .build();
-
-        log.info("TileCache: initial capacity {} entries, LRU", initialCapacity);
-    }
-
-    public void newSize(int size) {
-        log.info("TileCache: setting new capacity {} entries, LRU", size);
-        map.setCapacity(size);
     }
 
     @Override

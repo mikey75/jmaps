@@ -1,6 +1,6 @@
 package net.wirelabs.jmaps.utils;
 
-import net.wirelabs.jmaps.map.utils.GeoUtils;
+import net.wirelabs.jmaps.map.geo.GeoUtils;
 import org.assertj.core.api.Assertions;
 import org.assertj.core.data.Offset;
 import org.junit.jupiter.api.Test;

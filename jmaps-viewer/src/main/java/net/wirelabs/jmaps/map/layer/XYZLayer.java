@@ -6,7 +6,7 @@ import net.wirelabs.jmaps.map.geo.ProjectionEngine;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
 
-import static net.wirelabs.jmaps.map.utils.GeoUtils.*;
+import static net.wirelabs.jmaps.map.geo.GeoUtils.*;
 
 /**
  * XYZ layer, also called basic layer, slippy map,  tile layer etc

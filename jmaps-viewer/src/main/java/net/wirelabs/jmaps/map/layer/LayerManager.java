@@ -1,10 +1,6 @@
 package net.wirelabs.jmaps.map.layer;
 
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.map.layer.Layer;
-import net.wirelabs.jmaps.map.layer.LayerType;
-import net.wirelabs.jmaps.map.layer.WMTSLayer;
-import net.wirelabs.jmaps.map.layer.XYZLayer;
 import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 
 import java.util.List;
@@ -24,7 +20,7 @@ public class LayerManager {
         return layers.get(0);
     }
 
-    public boolean hasLayers() {
+    public boolean layersPresent() {
         return !layers.isEmpty();
     }
 

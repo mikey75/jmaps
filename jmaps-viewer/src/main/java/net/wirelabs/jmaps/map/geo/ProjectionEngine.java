@@ -5,7 +5,7 @@ import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.locationtech.proj4j.ProjCoordinate;
 
-import static net.wirelabs.jmaps.map.utils.GeoUtils.TWO_PI;
+import static net.wirelabs.jmaps.map.geo.GeoUtils.TWO_PI;
 
 /**
  * Created 5/22/23 by Michał Szwaczko (mikey@wirelabs.net)

@@ -31,25 +31,32 @@ public class TileDownloader {
 
     private final OkHttpClient httpClient = new OkHttpClient();
     private final List<String> tilesLoading = new CopyOnWriteArrayList<>();
-    private final InMemoryTileCache inMemoryTileCache = new InMemoryTileCache(8000); // this cache is always on
-
-    private Cache<String,BufferedImage> localCache = new DummyCache();
-    private ExecutorService executorService;
+    private final InMemoryTileCache inMemoryTileCache;
+    private final ExecutorService executorService;
     private final MapViewer mapViewer;
+
+    private Cache<String, BufferedImage> localCache = new DummyCache();
 
     public TileDownloader(MapViewer mapViewer) {
         this.mapViewer = mapViewer;
+        this.inMemoryTileCache = new InMemoryTileCache(mapViewer.getTileCacheSize());
+        this.executorService = Executors.newFixedThreadPool(mapViewer.getTilerThreads(), new TileDownloaderThreadFactory());
+
+        log.info("Started tile downloader:[User-Agent: {}, Memory cache size: {}, Tiler threads: {}]",
+                mapViewer.getUserAgent(),
+                mapViewer.getTileCacheSize(),
+                mapViewer.getTilerThreads());
     }
 
     private void download(String tileUrl) {
 
-        if (MapViewer.developerMode) {
+        if (mapViewer.isDeveloperMode()) {
             log.info("Getting from: {}", tileUrl);
         }
 
         Request r = new Request.Builder()
                 .url(tileUrl)
-                .header("User-Agent", MapViewer.userAgent)
+                .header("User-Agent", mapViewer.getUserAgent())
                 .get().build();
 
         try {
@@ -93,14 +100,6 @@ public class TileDownloader {
         }
     }
 
-    private ExecutorService getExecutorService() {
-
-        if (executorService == null) {
-            executorService = Executors.newFixedThreadPool(MapViewer.tilerThreads, new TileDownloaderThreadFactory());
-        }
-        return executorService;
-    }
-
     public BufferedImage getTile(String url) {
 
         // check local memory cache
@@ -111,38 +110,31 @@ public class TileDownloader {
 
         // now check configured local cache
 
-            BufferedImage image = localCache.get(url);
-            if (image != null) {
-                inMemoryTileCache.put(url, image);
-                return inMemoryTileCache.get(url);
-            }
-
+        BufferedImage image = localCache.get(url);
+        if (image != null) {
+            inMemoryTileCache.put(url, image);
+            return inMemoryTileCache.get(url);
+        }
 
         // else submit tile for download from the web
         // but don't submit if it is already submitted
         if (!tilesLoading.contains(url)) {
             tilesLoading.add(url);
-            getExecutorService().submit(() -> download(url));
+            executorService.submit(() -> download(url));
         }
 
         return null;
     }
 
     public void shutdown() {
-        if (executorService != null) {
-            executorService.shutdown();
-        }
+        executorService.shutdown();
     }
 
     public boolean isTileInCache(String url) {
         return inMemoryTileCache.contains(url);
     }
 
-    public void setImageCacheSize(int size) {
-        inMemoryTileCache.newSize(size);
-    }
-
-    public void setLocalCache(Cache<String,BufferedImage> localCache) {
+    public void setLocalCache(Cache<String, BufferedImage> localCache) {
         this.localCache = localCache;
     }
 }
