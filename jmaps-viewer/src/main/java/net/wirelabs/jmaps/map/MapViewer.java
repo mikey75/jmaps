@@ -21,16 +21,16 @@ import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.List;
 
 @Slf4j
 public class MapViewer extends JPanel {
 
-    @Getter
-    private final transient LayerManager layerManager;
+    private final transient LayerManager layerManager = new LayerManager();
+    private final transient MapReader mapReader = new MapReader();
+
     private final transient MapRenderer mapRenderer;
-    @Getter
     private final transient MouseHandler mouseHandler;
-    private final transient MapReader mapReader;
 
     // current map top left corner in pixels
     @Getter
@@ -41,6 +41,7 @@ public class MapViewer extends JPanel {
     private final int tilerThreads;
     @Getter
     private final String userAgent;
+
 
     // zoom level
     @Getter
@@ -63,7 +64,7 @@ public class MapViewer extends JPanel {
     private static final int DEFAULT_TILER_THREADS = 16;
     private static final int DEFAULT_IMGCACHE_SIZE = 8000;
     @Getter
-    private String copyright = "";
+    private String mapCopyrightAttribution = "";
 
     public MapViewer() {
         this(DEFAULT_USER_AGENT, DEFAULT_TILER_THREADS, DEFAULT_IMGCACHE_SIZE);
@@ -74,21 +75,11 @@ public class MapViewer extends JPanel {
         this.tilerThreads = tilerThreads;
         this.tileCacheSize = tileCacheSize;
 
-        mapReader = new MapReader();
-        layerManager = new LayerManager();
-        mapRenderer = new MapRenderer(this, layerManager);
-        mouseHandler = new MouseHandler(this, layerManager);
+        mapRenderer = new MapRenderer(this);
+        mouseHandler = new MouseHandler(this);
 
         addPainter(createAttributionPainter());
 
-    }
-
-    protected void showCoordinates() {
-        addPainter(createCurrentPositionPainter());
-    }
-
-    protected void setLocalCache(Cache<String, BufferedImage> cache) {
-        mapRenderer.setLocalCache(cache);
     }
 
     // the method that does the actual painting
@@ -99,9 +90,17 @@ public class MapViewer extends JPanel {
         super.paintBorder(graphicsContext);
     }
 
+    protected void showCoordinates() {
+        addPainter(createCurrentPositionPainter());
+    }
+
+    protected void setLocalCache(Cache<String, BufferedImage> cache) {
+        mapRenderer.setLocalCache(cache);
+    }
+
     public void setZoom(int zoom) {
-        if (layerManager.layersPresent()) {
-            Layer baseLayer = layerManager.getBaseLayer();
+        if (isMultilayer()) {
+            Layer baseLayer = getBaseLayer();
             if (zoom < baseLayer.getMinZoom()) zoom = baseLayer.getMinZoom();
             if (zoom > baseLayer.getMaxZoom()) zoom = baseLayer.getMaxZoom();
         }
@@ -111,7 +110,7 @@ public class MapViewer extends JPanel {
     // sets location on the map at current zoom
     public void setHomePosition(Coordinate location) {
         if (!isHomePositionSet()) {
-            Layer baseLayer = layerManager.getBaseLayer();
+            Layer baseLayer = getBaseLayer();
             if (location != null) { // if location given center on it
                 Point2D p = baseLayer.latLonToPixel(location, zoom);
                 topLeftCornerPoint.translate((int) (p.getX() - getWidth() / 2d), (int) (p.getY() - getHeight() / 2d));
@@ -132,8 +131,9 @@ public class MapViewer extends JPanel {
      */
     public void setMap(File xmlMapFile) {
         try {
-            MapDefinition map = mapReader.loadMapDefinitionFile(xmlMapFile);
-            createMap(map);
+            MapDefinition mapDefinition = mapReader.loadMapDefinitionFile(xmlMapFile);
+            parseMapDefinition(mapDefinition);
+            setInitialPositionAndZoom();
             repaint();
 
         } catch (JAXBException ex) {
@@ -141,26 +141,15 @@ public class MapViewer extends JPanel {
         }
     }
 
-    /**
-     * Add new painter
-     *
-     * @param painter new Painter
-     */
     public void addPainter(Painter<MapViewer> painter) {
         mapRenderer.addPainter(painter);
     }
 
-    /**
-     * Creates map object (layers) from map definition and sets the map definition object
-     * Also sets the home position, initial zoom and map position (corner)
-     *
-     * @param mapDefinition map definition
-     */
-    private void createMap(MapDefinition mapDefinition) {
+    private void parseMapDefinition(MapDefinition mapDefinition) {
 
-        copyright = mapDefinition.getCopyright();
+        mapCopyrightAttribution = mapDefinition.getCopyright();
         log.info("Setting map to {}", mapDefinition.getName());
-        log.info("Copyright: {}", copyright);
+        log.info("Copyright: {}", mapCopyrightAttribution);
         // there can be only one map rendered at a time
         // so remove existing if any
         layerManager.removeAllLayers();
@@ -169,14 +158,16 @@ public class MapViewer extends JPanel {
             layerManager.createLayer(layer);
         }
 
+
+    }
+
+    private void setInitialPositionAndZoom() {
         getTopLeftCornerPoint().setLocation(0, 0);
         setZoom(getZoom());
         setHomePositionSet(false);
         setHomePosition(getHome());
     }
 
-    // configure copyright overlay painter
-    // override to set your own or configure existing
     protected Painter<MapViewer> createAttributionPainter() {
         return new MapAttributionPainter();
     }
@@ -185,10 +176,20 @@ public class MapViewer extends JPanel {
         return new CurrentPositionPainter();
     }
 
-    // call this when disposing the mapviewer, or override and write your own
-    // or connect to some application close event
-    protected void onExit() {
-        mapRenderer.shutdownTileDownloader();
+    public boolean isMultilayer() {
+        return layerManager.layersPresent();
+    }
+
+    public Layer getBaseLayer() {
+        return layerManager.getBaseLayer();
+    }
+
+    public List<Layer> getLayers() {
+        return layerManager.getLayers();
+    }
+
+    public Point2D getCurrentMousePosition() {
+        return mouseHandler.getMousePoint();
     }
 }
 

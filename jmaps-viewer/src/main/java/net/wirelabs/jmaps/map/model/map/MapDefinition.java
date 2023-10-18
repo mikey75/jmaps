@@ -3,7 +3,6 @@ package net.wirelabs.jmaps.map.model.map;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

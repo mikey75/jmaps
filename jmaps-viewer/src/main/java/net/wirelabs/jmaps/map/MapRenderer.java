@@ -4,7 +4,6 @@ import lombok.Getter;
 import net.wirelabs.jmaps.map.utils.TileDebugger;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.layer.Layer;
-import net.wirelabs.jmaps.map.layer.LayerManager;
 import net.wirelabs.jmaps.map.painters.Painter;
 import net.wirelabs.jmaps.map.downloader.TileDownloader;
 
@@ -26,21 +25,20 @@ public class MapRenderer {
 
     private final MapViewer mapViewer;
     private final TileDownloader tileDownloader;
-    private final LayerManager layerManager;
+
     @Getter
     private final List<Painter<MapViewer>> painters = new ArrayList<>();
     private final Color fillColor = new Color(0, 0, 0, 0);
     private BufferedImage finalImage;
     private Graphics2D finalImageG2D;
 
-    public MapRenderer(MapViewer mapViewer, LayerManager layerManager) {
+    public MapRenderer(MapViewer mapViewer) {
         this.mapViewer = mapViewer;
-        this.layerManager = layerManager;
         this.tileDownloader = new TileDownloader(mapViewer);
     }
 
     public void renderMap(Graphics graphicsContext) {
-        if (layerManager.layersPresent()) {
+        if (mapViewer.isMultilayer()) {
             mapViewer.setZoom(mapViewer.getZoom());
             mapViewer.setHomePosition(mapViewer.getHome());
             drawTiles(graphicsContext, mapViewer.getZoom(), mapViewer.getTopLeftCornerPoint());
@@ -50,8 +48,8 @@ public class MapRenderer {
 
     private void drawTiles(final Graphics g, final int zoom, Point topLeftCorner) {
 
-        Layer baseLayer = layerManager.getBaseLayer();
-        List<Layer> layers = layerManager.getLayers();
+        Layer baseLayer = mapViewer.getBaseLayer();
+        List<Layer> layers = mapViewer.getLayers();
 
         int tileSize = baseLayer.getTileSize();
         int width = mapViewer.getWidth();
@@ -111,7 +109,7 @@ public class MapRenderer {
 }
 
     private void drawMultipleLayerTile(Graphics g, int zoom, BufferedImage finalImage, int itpx, int itpy, int ox, int oy, List<Layer> layers) {
-        //Graphics2D finalImageG2D = finalImage.createGraphics();
+
         finalImageG2D.setBackground(fillColor);
         finalImageG2D.clearRect(0, 0, finalImage.getWidth(), finalImage.getHeight());
 

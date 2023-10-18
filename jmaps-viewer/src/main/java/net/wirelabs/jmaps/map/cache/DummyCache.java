@@ -14,7 +14,7 @@ public class DummyCache implements Cache<String, BufferedImage> {
 
     @Override
     public void put(String key, BufferedImage value) {
-
+        // dummy no op
     }
 
     @Override
@@ -24,7 +24,7 @@ public class DummyCache implements Cache<String, BufferedImage> {
 
     @Override
     public void clear() {
-
+        // dummy no op
     }
 
     @Override

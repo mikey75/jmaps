@@ -28,7 +28,7 @@ public class MapAttributionPainter implements Painter<MapViewer> {
     public void doPaint(Graphics2D graphics, MapViewer mapViewer, int width, int height) {
 
             // get attribution text
-            String attributionText =  mapViewer.getCopyright();
+            String attributionText =  mapViewer.getMapCopyrightAttribution();
             if (!attributionText.isBlank()) {
                 // set font and calculate attribution text bounding box
                 graphics.setFont(font);

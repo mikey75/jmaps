@@ -4,7 +4,6 @@ import lombok.Getter;
 
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.layer.Layer;
-import net.wirelabs.jmaps.map.layer.LayerManager;
 
 
 import javax.swing.SwingUtilities;
@@ -21,16 +20,14 @@ import java.awt.geom.Point2D;
  */
 public class MouseHandler extends MouseInputAdapter implements MouseWheelListener {
 
-    private final LayerManager layerManager;
     private Point prevMousePosition;
     private Cursor priorCursor;
     private final MapViewer mapViewer;
     @Getter
     private final Point mousePoint = new Point();
 
-    public MouseHandler(MapViewer mapViewer, LayerManager layerManager) {
+    public MouseHandler(MapViewer mapViewer) {
         this.mapViewer = mapViewer;
-        this.layerManager = layerManager;
         mapViewer.addMouseMotionListener(this);
         mapViewer.addMouseListener(this);
         mapViewer.addMouseWheelListener(this);
@@ -40,8 +37,8 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
     public void mouseWheelMoved(MouseWheelEvent evt) {
 
 
-        if (layerManager.layersPresent()) {
-            Layer baseLayer = layerManager.getBaseLayer();
+        if (mapViewer.isMultilayer()) {
+            Layer baseLayer = mapViewer.getBaseLayer();
             // location of mouse at current zoom
             Coordinate mouseLatLon = baseLayer.pixelToLatLon(mousePoint, mapViewer.getZoom());
 
@@ -117,8 +114,8 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
     }
 
     private void clipToBounds(Point topLeftCornerPoint) {
-        if (layerManager.layersPresent()) {
-            Layer baseLayer = layerManager.getBaseLayer();
+        if (mapViewer.isMultilayer()) {
+            Layer baseLayer = mapViewer.getBaseLayer();
 
             int zoom = mapViewer.getZoom();
             int maxX = baseLayer.getMapSizeInPixels(zoom).width - mapViewer.getWidth();

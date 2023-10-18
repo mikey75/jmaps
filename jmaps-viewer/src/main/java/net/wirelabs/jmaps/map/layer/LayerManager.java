@@ -75,10 +75,6 @@ public class LayerManager {
         layers.remove(layer);
     }
 
-    private void removeLayer(int idx) {
-        removeLayer(layers.get(idx));
-    }
-
     private void addLayer(Layer layer) {
         if (layerMatches(layer)) {
             layers.add(layer);
