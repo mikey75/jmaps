@@ -73,7 +73,7 @@ public class MapRenderer {
                 // pixel x,y of tile being drawn
                 int px = (tileX * tileSize - topLeftCorner.x);
                 int py = (tileY * tileSize - topLeftCorner.y);
-                Rectangle currentTileBounds = new Rectangle(tileX * tileSize - topLeftCorner.x, tileY * tileSize - topLeftCorner.y, tileSize, tileSize);
+                Rectangle currentTileBounds = new Rectangle(px, py, tileSize, tileSize);
                 // only proceed if the specified tile point lies within the area being painted
                 if (g.getClipBounds().intersects(currentTileBounds)) {
                     renderLayers(g, zoom, tileX, tileY, px, py);
@@ -84,8 +84,6 @@ public class MapRenderer {
                 }
             }
         }
-
-
     }
 
     private void createOutputCanvasForMultilayerTiles(int tileSize) {
