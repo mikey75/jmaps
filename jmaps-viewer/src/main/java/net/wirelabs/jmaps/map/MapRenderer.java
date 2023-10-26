@@ -1,20 +1,24 @@
 package net.wirelabs.jmaps.map;
 
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.utils.TileDebugger;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.painters.Painter;
 import net.wirelabs.jmaps.map.downloader.TileDownloader;
 
+
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Transparency;
 import java.awt.image.BufferedImage;
+import java.awt.image.VolatileImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +26,6 @@ import java.util.List;
  * Created 6/7/23 by Michał Szwaczko (mikey@wirelabs.net)
  * Class responsible for rendering one map 'frame' of tiles on the JPanel's Graphics Context
  */
-@Slf4j
 public class MapRenderer {
 
     private final MapViewer mapViewer;
@@ -30,9 +33,9 @@ public class MapRenderer {
 
     @Getter
     private final List<Painter<MapViewer>> painters = new ArrayList<>();
-    private final Color fillColor = new Color(0, 0, 0, 0);
-    private BufferedImage finalImage;
-    private Graphics2D finalImageG2D;
+    private static final Color EMPTY_FILL_COLOR = new Color(0, 0, 0, 0);
+    private VolatileImage tempImage;
+    private Graphics2D tempImageGraphics;
 
     public MapRenderer(MapViewer mapViewer) {
         this.mapViewer = mapViewer;
@@ -86,10 +89,12 @@ public class MapRenderer {
     }
 
     private void createOutputCanvasForMultilayerTiles(int tileSize) {
-        if (mapViewer.getLayers().size() > 1 && (finalImage == null || finalImage.getHeight() != tileSize || finalImage.getWidth() != tileSize)) {
-                log.info("Create finalimage");
-                finalImage = new BufferedImage(tileSize, tileSize, BufferedImage.TYPE_INT_ARGB);
-                finalImageG2D = finalImage.createGraphics();
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+
+        if (mapViewer.getLayers().size() > 1 && (tempImage == null || tempImage.getHeight() != tileSize || tempImage.getWidth() != tileSize)) {
+                tempImage = gc.createCompatibleVolatileImage(tileSize, tileSize, Transparency.TRANSLUCENT);
+                tempImageGraphics = tempImage.createGraphics();
         }
     }
 
@@ -109,8 +114,8 @@ public class MapRenderer {
         } else {
 
             // render multiple layers map
-            finalImageG2D.setBackground(fillColor);
-            finalImageG2D.clearRect(0, 0, finalImage.getWidth(), finalImage.getHeight());
+            tempImageGraphics.setBackground(EMPTY_FILL_COLOR);
+            tempImageGraphics.clearRect(0, 0, tempImage.getWidth(), tempImage.getHeight());
 
             for (Layer layer : layers) {
                 AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, layer.getOpacity());
@@ -118,13 +123,14 @@ public class MapRenderer {
                 BufferedImage b = tileDownloader.getTile(tileUrl);
                 if (tileDownloader.isTileInCache(tileUrl)) {
                     if (layer.getOpacity() < 1.0f) {
-                        finalImageG2D.setComposite(ac);
+                        tempImageGraphics.setComposite(ac);
                     }
-                    finalImageG2D.drawImage(b, 0, 0, null);
+                    tempImageGraphics.drawImage(b, 0, 0, null);
                 }
+
             }
             // draw final image on g
-            g.drawImage(finalImage, px, py, null);
+            g.drawImage(tempImage, px, py, null);
         }
     }
 
