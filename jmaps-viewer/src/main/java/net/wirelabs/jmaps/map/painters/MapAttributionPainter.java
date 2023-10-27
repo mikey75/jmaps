@@ -10,8 +10,6 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
-import static net.wirelabs.jmaps.map.painters.MapAttributionPainter.Position.*;
-
 /*
  * Created 12/20/22 by Michał Szwaczko (mikey@wirelabs.net)
  */
@@ -36,8 +34,9 @@ public class MapAttributionPainter implements Painter<MapViewer> {
         this.font = new Font("Dialog", Font.BOLD, 10);
         this.backgroundColor = Color.WHITE;
         this.fontColor = Color.BLACK;
-        this.position = BOTTOM_RIGHT;
+        this.position = Position.BOTTOM_RIGHT;
     }
+
     // custom painter
     public MapAttributionPainter(Font font, Color backgroundColor, Color fontColor, Position position) {
         this.font = font;
@@ -50,58 +49,67 @@ public class MapAttributionPainter implements Painter<MapViewer> {
     @Override
     public void doPaint(Graphics2D graphics, MapViewer mapViewer, int width, int height) {
 
-            // get attribution text
-            String attributionText =  mapViewer.getMapCopyrightAttribution();
-            if (!attributionText.isBlank()) {
-                // set font and calculate attribution text bounding box
-                graphics.setFont(font);
-                FontMetrics fontMetrics = graphics.getFontMetrics();
-                Rectangle2D textBounds = fontMetrics.getStringBounds(attributionText, graphics);
-                int attributionWidth = (int) textBounds.getWidth();// + margin;
-                int attributionHeight = (int) textBounds.getHeight();// + margin;
+        // get attribution text
+        String attributionText = mapViewer.getMapCopyrightAttribution();
+        if (!attributionText.isBlank()) {
+            // set font and calculate attribution text bounding box
+            graphics.setFont(font);
+            FontMetrics fontMetrics = graphics.getFontMetrics();
+            Rectangle2D textBounds = fontMetrics.getStringBounds(attributionText, graphics);
+            int attributionWidth = (int) textBounds.getWidth();
+            int attributionHeight = (int) textBounds.getHeight();
 
-                // apply position
-                Point position = getPosition(width, height, attributionWidth, attributionHeight);
-                // draw container frame
-                graphics.setColor(backgroundColor);
-                graphics.fillRect(position.x, position.y, attributionWidth, attributionHeight);
-                graphics.setColor(Color.BLACK);
-                graphics.drawRect(position.x, position.y, attributionWidth, attributionHeight);
-                // paint string
-                graphics.setColor(fontColor);
-                graphics.drawString(attributionText, position.x, position.y + fontMetrics.getAscent());
-            }
+            // apply position
+            Point startPoint = setStartPoint(width, height, attributionWidth, attributionHeight);
+            // draw container frame
+            graphics.setColor(backgroundColor);
+            graphics.fillRect(startPoint.x, startPoint.y, attributionWidth, attributionHeight);
+            graphics.setColor(Color.BLACK);
+            graphics.drawRect(startPoint.x, startPoint.y, attributionWidth, attributionHeight);
+            // paint string
+            graphics.setColor(fontColor);
+            graphics.drawString(attributionText, startPoint.x, startPoint.y + fontMetrics.getAscent());
+        }
 
     }
 
-    private Point getPosition(int width, int height, int attributionWidth, int attributionHeight) {
+    private Point setStartPoint(int width, int height, int attributionWidth, int attributionHeight) {
+
         int x = 0;
         int y = 0;
 
-        if (position == TOP_LEFT) {
-           y = MARGIN;
-           x = MARGIN;
+        switch (position) {
+
+            case TOP_LEFT:
+
+                y = MARGIN;
+                x = MARGIN;
+                return new Point(x, y);
+
+            case TOP_RIGHT:
+
+                y = MARGIN;
+                x = width - attributionWidth - MARGIN;
+                return new Point(x, y);
+
+            case BOTTOM_LEFT:
+
+                y = height - attributionHeight - MARGIN;
+                x = MARGIN;
+                return new Point(x, y);
+
+            case BOTTOM_RIGHT:
+
+                y = height - attributionHeight - MARGIN;
+                x = width - attributionWidth - MARGIN;
+                return new Point(x, y);
+
+            default:
+                return new Point(x, y);
         }
 
-        if (position == TOP_RIGHT) {
-            y = MARGIN;
-            x = width - attributionWidth - MARGIN;
-        }
 
-        if (position == BOTTOM_LEFT) {
-            y = height - attributionHeight - MARGIN;
-            x = MARGIN;
-        }
-
-        if (position == BOTTOM_RIGHT) {
-            y = height - attributionHeight - MARGIN;
-            x = width - attributionWidth - MARGIN;
-        }
-
-        return new Point(x, y);
     }
-
-
 
 
 }

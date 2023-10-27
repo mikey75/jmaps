@@ -27,7 +27,6 @@ public abstract class Layer {
 
     @Getter @Setter protected ProjectionEngine projectionEngine;
 
-    
     protected Layer(String name, String url) {
         this.name = name;
         this.url = url;
@@ -38,8 +37,6 @@ public abstract class Layer {
                 getMapSize(zoom).width * getTileSize(),
                 getMapSize(zoom).height * getTileSize());
     }
-
-
 
     // these must be implemented by all layers
     /**
