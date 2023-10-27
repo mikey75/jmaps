@@ -55,7 +55,7 @@ public class MapRenderer {
 
         int tileSize = mapViewer.getBaseLayer().getTileSize();
 
-        createOutputCanvasForMultilayerTiles(tileSize);
+        createOutputCanvas(tileSize);
 
         // calculate the "visible" viewport area in tiles
         int viewportTilesWidth = mapViewer.getWidth() / tileSize + 2;
@@ -86,11 +86,11 @@ public class MapRenderer {
         }
     }
 
-    private void createOutputCanvasForMultilayerTiles(int tileSize) {
+    private void createOutputCanvas(int tileSize) {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
 
-        if (mapViewer.getLayers().size() > 1 && (tempImage == null || tempImage.getHeight() != tileSize || tempImage.getWidth() != tileSize)) {
+        if ( (tempImage == null || tempImage.getHeight() != tileSize || tempImage.getWidth() != tileSize)) {
                 tempImage = gc.createCompatibleVolatileImage(tileSize, tileSize, Transparency.TRANSLUCENT);
                 tempImageGraphics = tempImage.createGraphics();
         }
@@ -98,38 +98,26 @@ public class MapRenderer {
 
     private void renderLayers(Graphics g,  int zoom, int tileX, int tileY, int px, int py) {
 
-        Layer baselayer = mapViewer.getBaseLayer();
-        List<Layer> layers = mapViewer.getLayers();
-
-        if (layers.size() == 1) {
-            // render single layer map
-            String tileUrl = baselayer.createTileUrl(tileX, tileY, zoom);
-            BufferedImage image = tileDownloader.getTile(tileUrl);
-            // only draw if it is already in cache (went throuh download)
-            if (tileDownloader.isTileInCache(tileUrl)) {
-                g.drawImage(image, px, py, null);
-            }
-        } else {
-
-            // render multiple layers map
+            // clear temp tile canvas
             tempImageGraphics.setBackground(EMPTY_FILL_COLOR);
             tempImageGraphics.clearRect(0, 0, tempImage.getWidth(), tempImage.getHeight());
 
-            for (Layer layer : layers) {
-                AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, layer.getOpacity());
+            for (Layer layer : mapViewer.getLayers()) {
+
                 String tileUrl = layer.createTileUrl(tileX, tileY, zoom + layer.getZoomOffset());
                 BufferedImage b = tileDownloader.getTile(tileUrl);
                 if (tileDownloader.isTileInCache(tileUrl)) {
                     if (layer.getOpacity() < 1.0f) {
+                        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, layer.getOpacity());
                         tempImageGraphics.setComposite(ac);
                     }
                     tempImageGraphics.drawImage(b, 0, 0, null);
                 }
 
             }
-            // draw final image on g
+            // draw temp image (accelerated) on g
             g.drawImage(tempImage, px, py, null);
-        }
+
     }
 
     private void runPainters(Graphics2D graphics) {
