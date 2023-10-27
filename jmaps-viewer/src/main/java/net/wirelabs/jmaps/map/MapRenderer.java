@@ -43,15 +43,15 @@ public class MapRenderer {
     }
 
     public void renderMap(Graphics graphicsContext) {
-        if (mapViewer.isMultilayer()) {
+        if (mapViewer.hasLayers()) {
             mapViewer.setZoom(mapViewer.getZoom());
             mapViewer.setHomePosition(mapViewer.getHome());
-            drawTiles(graphicsContext, mapViewer.getZoom(), mapViewer.getTopLeftCornerPoint());
-            runPainters((Graphics2D) graphicsContext);
+            renderTiles(graphicsContext, mapViewer.getZoom(), mapViewer.getTopLeftCornerPoint());
+            renderOverlays((Graphics2D) graphicsContext);
         }
     }
 
-    private void drawTiles(final Graphics g, final int zoom, Point topLeftCorner) {
+    private void renderTiles(final Graphics g, final int zoom, Point topLeftCorner) {
 
         int tileSize = mapViewer.getBaseLayer().getTileSize();
 
@@ -76,7 +76,7 @@ public class MapRenderer {
                 Rectangle currentTileBounds = new Rectangle(px, py, tileSize, tileSize);
                 // only proceed if the specified tile point lies within the area being painted
                 if (g.getClipBounds().intersects(currentTileBounds)) {
-                    renderLayers(g, zoom, tileX, tileY, px, py);
+                    renderTile(g, zoom, tileX, tileY, px, py);
                     if (mapViewer.isDeveloperMode()) {
                         TileDebugger.drawTileDebugInfo(g, tileSize, tileX, tileY, px, py, zoom);
                     }
@@ -96,7 +96,7 @@ public class MapRenderer {
         }
     }
 
-    private void renderLayers(Graphics g,  int zoom, int tileX, int tileY, int px, int py) {
+    private void renderTile(Graphics g, int zoom, int tileX, int tileY, int px, int py) {
 
             // clear temp tile canvas
             tempImageGraphics.setBackground(EMPTY_FILL_COLOR);
@@ -120,7 +120,7 @@ public class MapRenderer {
 
     }
 
-    private void runPainters(Graphics2D graphics) {
+    private void renderOverlays(Graphics2D graphics) {
         for (Painter<MapViewer> painter : painters) {
             painter.doPaint(graphics, mapViewer, mapViewer.getWidth(), mapViewer.getHeight());
         }

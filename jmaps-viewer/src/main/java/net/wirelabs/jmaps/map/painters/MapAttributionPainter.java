@@ -2,7 +2,6 @@ package net.wirelabs.jmaps.map.painters;
 
 import net.wirelabs.jmaps.map.MapViewer;
 
-import javax.swing.SwingConstants;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -11,18 +10,42 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 
+import static net.wirelabs.jmaps.map.painters.MapAttributionPainter.Position.*;
+
 /*
  * Created 12/20/22 by Michał Szwaczko (mikey@wirelabs.net)
  */
 public class MapAttributionPainter implements Painter<MapViewer> {
 
     // defaults
-    private Font font = new Font("Dialog", Font.BOLD, 10);
-    private Color backgroundColor = Color.WHITE;
-    private Color fontColor = Color.BLACK;
-    private int horizontal = SwingConstants.RIGHT;
-    private int vertical = SwingConstants.BOTTOM;
-    private int margin = 2;
+    private final Font font;
+    private final Color backgroundColor;
+    private final Color fontColor;
+    private final Position position;
+    private static final int MARGIN = 5;
+
+    public enum Position {
+        TOP_LEFT,
+        TOP_RIGHT,
+        BOTTOM_LEFT,
+        BOTTOM_RIGHT
+    }
+
+    // default painter
+    public MapAttributionPainter() {
+        this.font = new Font("Dialog", Font.BOLD, 10);
+        this.backgroundColor = Color.WHITE;
+        this.fontColor = Color.BLACK;
+        this.position = BOTTOM_RIGHT;
+    }
+    // custom painter
+    public MapAttributionPainter(Font font, Color backgroundColor, Color fontColor, Position position) {
+        this.font = font;
+        this.backgroundColor = backgroundColor;
+        this.fontColor = fontColor;
+        this.position = position;
+
+    }
 
     @Override
     public void doPaint(Graphics2D graphics, MapViewer mapViewer, int width, int height) {
@@ -34,8 +57,8 @@ public class MapAttributionPainter implements Painter<MapViewer> {
                 graphics.setFont(font);
                 FontMetrics fontMetrics = graphics.getFontMetrics();
                 Rectangle2D textBounds = fontMetrics.getStringBounds(attributionText, graphics);
-                int attributionWidth = (int) textBounds.getWidth() + margin;
-                int attributionHeight = (int) textBounds.getHeight() + margin;
+                int attributionWidth = (int) textBounds.getWidth();// + margin;
+                int attributionHeight = (int) textBounds.getHeight();// + margin;
 
                 // apply position
                 Point position = getPosition(width, height, attributionWidth, attributionHeight);
@@ -55,63 +78,30 @@ public class MapAttributionPainter implements Painter<MapViewer> {
         int x = 0;
         int y = 0;
 
-        if (vertical == SwingConstants.TOP) {
-            y = 2;
+        if (position == TOP_LEFT) {
+           y = MARGIN;
+           x = MARGIN;
         }
-        if (vertical == SwingConstants.BOTTOM) {
-            y = height - attributionHeight - 2;
+
+        if (position == TOP_RIGHT) {
+            y = MARGIN;
+            x = width - attributionWidth - MARGIN;
         }
-        if (horizontal == SwingConstants.LEFT) {
-            x = 2;
+
+        if (position == BOTTOM_LEFT) {
+            y = height - attributionHeight - MARGIN;
+            x = MARGIN;
         }
-        if (horizontal == SwingConstants.RIGHT) {
-            x = width - attributionWidth - 2;
+
+        if (position == BOTTOM_RIGHT) {
+            y = height - attributionHeight - MARGIN;
+            x = width - attributionWidth - MARGIN;
         }
 
         return new Point(x, y);
     }
 
-    /**
-     * Set margin around the attribution text in pixels
-     * @param margin margin
-     */
-    public void setMargin(int margin) {
-        this.margin = margin;
-    }
 
-    /**
-     * Set backround color of the attribution box
-     * @param backgroundColor color, default white
-     */
-    public void setBackgroundColor(Color backgroundColor) {
-        this.backgroundColor = backgroundColor;
-    }
 
-    /**
-     * Set font color of the attribution text
-     * @param fontColor color, default black
-     */
-    public void setFontColor(Color fontColor) {
-        this.fontColor = fontColor;
-    }
 
-    /**
-     * Set font of the attribution text
-     * @param font font, default Dialog,10px
-     */
-    public void setFont(Font font) {
-        this.font = font;
-    }
-
-    /**
-     * Set position of the attribution box
-     * should be SwingConstants.(TOP,BOTTOM,LEFT,RIGHT)
-     *
-     * @param vertical vertical position
-     * @param horizontal horizontal position
-     */
-    public void setPosition(int vertical, int horizontal) {
-        this.vertical = vertical;
-        this.horizontal = horizontal;
-    }
 }

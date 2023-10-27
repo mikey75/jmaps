@@ -11,11 +11,14 @@ import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
 import net.wirelabs.jmaps.map.painters.CurrentPositionPainter;
 import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
+import net.wirelabs.jmaps.map.painters.MapAttributionPainter.Position;
 import net.wirelabs.jmaps.map.painters.Painter;
 import net.wirelabs.jmaps.map.utils.MapReader;
 
 import javax.swing.JPanel;
 import javax.xml.bind.JAXBException;
+import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.geom.Point2D;
@@ -60,6 +63,7 @@ public class MapViewer extends JPanel {
     @Getter
     private boolean developerMode = false; // developer mode enables cache debug, tile debug and position tracking
 
+
     private static final String DEFAULT_USER_AGENT = "JMaps Tiler v.1.0";
     private static final int DEFAULT_TILER_THREADS = 16;
     private static final int DEFAULT_IMGCACHE_SIZE = 8000;
@@ -78,7 +82,6 @@ public class MapViewer extends JPanel {
         mapRenderer = new MapRenderer(this);
         mouseHandler = new MouseHandler(this);
 
-        addPainter(createAttributionPainter());
 
     }
 
@@ -94,12 +97,21 @@ public class MapViewer extends JPanel {
         addPainter(createCurrentPositionPainter());
     }
 
+    protected void showAttribution() {
+        MapAttributionPainter attributionPainter = new MapAttributionPainter();
+        addPainter(attributionPainter);
+    }
+    protected void showAttribution(Font font, Color bgColor, Color fontColor,  Position position) {
+        MapAttributionPainter attributionPainter = new MapAttributionPainter(font, bgColor, fontColor, position);
+        addPainter(attributionPainter);
+    }
+
     protected void setLocalCache(Cache<String, BufferedImage> cache) {
         mapRenderer.setLocalCache(cache);
     }
 
     public void setZoom(int zoom) {
-        if (isMultilayer()) {
+        if (hasLayers()) {
             Layer baseLayer = getBaseLayer();
             if (zoom < baseLayer.getMinZoom()) zoom = baseLayer.getMinZoom();
             if (zoom > baseLayer.getMaxZoom()) zoom = baseLayer.getMaxZoom();
@@ -158,7 +170,6 @@ public class MapViewer extends JPanel {
             layerManager.createLayer(layer);
         }
 
-
     }
 
     private void setInitialPositionAndZoom() {
@@ -168,15 +179,13 @@ public class MapViewer extends JPanel {
         setHomePosition(getHome());
     }
 
-    protected Painter<MapViewer> createAttributionPainter() {
-        return new MapAttributionPainter();
-    }
+
 
     protected Painter<MapViewer> createCurrentPositionPainter() {
         return new CurrentPositionPainter();
     }
 
-    public boolean isMultilayer() {
+    public boolean hasLayers() {
         return layerManager.layersPresent();
     }
 
