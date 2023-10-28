@@ -3,6 +3,7 @@ package net.wirelabs.jmaps.map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.Defaults;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.layer.Layer;
@@ -63,15 +64,11 @@ public class MapViewer extends JPanel {
     @Getter
     private boolean developerMode = false; // developer mode enables cache debug, tile debug and position tracking
 
-
-    private static final String DEFAULT_USER_AGENT = "JMaps Tiler v.1.0";
-    private static final int DEFAULT_TILER_THREADS = 16;
-    private static final int DEFAULT_IMGCACHE_SIZE = 8000;
     @Getter
     private String mapCopyrightAttribution = "";
 
     public MapViewer() {
-        this(DEFAULT_USER_AGENT, DEFAULT_TILER_THREADS, DEFAULT_IMGCACHE_SIZE);
+        this(Defaults.DEFAULT_USER_AGENT, Defaults.DEFAULT_TILER_THREADS, Defaults.DEFAULT_IMGCACHE_SIZE);
     }
 
     public MapViewer(String userAgent, int tilerThreads, int tileCacheSize) {
@@ -81,7 +78,6 @@ public class MapViewer extends JPanel {
 
         mapRenderer = new MapRenderer(this);
         mouseHandler = new MouseHandler(this);
-
 
     }
 
@@ -178,8 +174,6 @@ public class MapViewer extends JPanel {
         setHomePositionSet(false);
         setHomePosition(getHome());
     }
-
-
 
     protected Painter<MapViewer> createCurrentPositionPainter() {
         return new CurrentPositionPainter();

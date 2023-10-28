@@ -35,11 +35,6 @@ public class InMemoryTileCache implements Cache<String,BufferedImage> {
     }
 
     @Override
-    public long size() {
-        return map.size();
-    }
-
-    @Override
     public void clear() {
         map.clear();
     }

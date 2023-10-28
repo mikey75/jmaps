@@ -1,5 +1,6 @@
-package net.wirelabs.jmaps.example.application;
+package net.wirelabs.jmaps.cache;
 
+import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

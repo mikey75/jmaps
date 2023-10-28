@@ -1,6 +1,8 @@
 package net.wirelabs.jmaps.map.geo;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import net.wirelabs.jmaps.map.utils.NumberUtils;
 
 
@@ -19,11 +21,13 @@ import static java.lang.Double.NaN;
  */
 
 @NoArgsConstructor
+@Getter
+@Setter
 public class Coordinate {
 
-    public double longitude;     // x
-    public double latitude;      // y
-    public double altitude;     // z
+    private double longitude;     // x
+    private double latitude;      // y
+    private double altitude;     // z
 
     public Coordinate(double longitude, double latitude, double altitude) {
 

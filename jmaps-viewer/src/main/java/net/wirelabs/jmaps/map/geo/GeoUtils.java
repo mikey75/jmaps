@@ -34,10 +34,10 @@ public class GeoUtils {
 
     public static Coordinate calculateCenterOfCoordinateSet(List<Coordinate> route) {
 
-        double minX = route.stream().min(Comparator.comparing(c -> c.longitude)).map(coordinate -> coordinate.longitude).orElse(0.0);
-        double maxX = route.stream().max(Comparator.comparing(c -> c.longitude)).map(coordinate -> coordinate.longitude).orElse(0.0);
-        double minY = route.stream().min(Comparator.comparing(c -> c.latitude)).map(coordinate ->coordinate.latitude).orElse(0.0);
-        double maxY = route.stream().max(Comparator.comparing(c -> c.latitude)).map(coordinate -> coordinate.latitude).orElse(0.0);
+        double minX = route.stream().min(Comparator.comparing(Coordinate::getLongitude)).map(Coordinate::getLongitude).orElse(0.0);
+        double maxX = route.stream().max(Comparator.comparing(Coordinate::getLongitude)).map(Coordinate::getLongitude).orElse(0.0);
+        double minY = route.stream().min(Comparator.comparing(Coordinate::getLatitude)).map(Coordinate::getLatitude).orElse(0.0);
+        double maxY = route.stream().max(Comparator.comparing(Coordinate::getLatitude)).map(Coordinate::getLatitude).orElse(0.0);
         double cx = (maxX - minX) / 2.0;
         double cy = (maxY - minY) / 2.0;
 

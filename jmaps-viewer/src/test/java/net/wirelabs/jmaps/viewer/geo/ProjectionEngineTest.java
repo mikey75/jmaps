@@ -47,8 +47,8 @@ class ProjectionEngineTest {
     }
 
     static void assertCorrectProjection(Coordinate expectedCoord, Coordinate projectedCoord) {
-        Assertions.assertThat(projectedCoord.longitude).isEqualTo(expectedCoord.longitude, Offset.offset(0.01));
-        Assertions.assertThat(projectedCoord.latitude).isEqualTo(expectedCoord.latitude, Offset.offset(0.01));
+        Assertions.assertThat(projectedCoord.getLongitude()).isEqualTo(expectedCoord.getLongitude(), Offset.offset(0.01));
+        Assertions.assertThat(projectedCoord.getLatitude()).isEqualTo(expectedCoord.getLatitude(), Offset.offset(0.01));
     }
 
 

@@ -18,11 +18,6 @@ public class DummyCache implements Cache<String, BufferedImage> {
     }
 
     @Override
-    public long size() {
-        return 0;
-    }
-
-    @Override
     public void clear() {
         // dummy no op
     }

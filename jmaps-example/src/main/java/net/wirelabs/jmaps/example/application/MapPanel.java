@@ -2,6 +2,7 @@ package net.wirelabs.jmaps.example.application;
 
 
 import net.wirelabs.jmaps.map.MapViewer;
+import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
 
 /**
  * Created 6/4/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -15,7 +16,7 @@ public class MapPanel extends MapViewer {
         setDeveloperMode(false);
         setZoom(12);
         showAttribution();
-        //showCoordinates();
+        showCoordinates();
         //setRouteColor(Color.BLUE);
         //setTilerThreads(32);
         //setImageCacheSize(16000);

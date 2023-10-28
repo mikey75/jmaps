@@ -50,18 +50,18 @@ public class XYZLayer extends Layer {
     @Override
     public Point2D getTopLeftCorner() {
         Coordinate c = new Coordinate(-180, 85.06); // upper left
-        return new Point2D.Double(c.longitude, c.latitude);
+        return new Point2D.Double(c.getLongitude(), c.getLatitude());
     }
 
     @Override
     public Point2D latLonToPixel(Coordinate latLon, int zoom) {
 
-        double e = Math.sin(deg2rad(latLon.latitude));
+        double e = Math.sin(deg2rad(latLon.getLatitude()));
 
-        if (latLon.latitude > getTopLeftCorner().getY()) latLon.latitude = getTopLeftCorner().getY();
-        if (latLon.latitude < -getTopLeftCorner().getY()) latLon.latitude = -getTopLeftCorner().getY();
+        if (latLon.getLatitude() > getTopLeftCorner().getY()) latLon.setLatitude(getTopLeftCorner().getY());
+        if (latLon.getLatitude() < -getTopLeftCorner().getY()) latLon.setLatitude(-getTopLeftCorner().getY());
 
-        double lon = centerInPixels(zoom).getX() + (latLon.longitude * oneDegreeLonInPixels(zoom));
+        double lon = centerInPixels(zoom).getX() + (latLon.getLongitude() * oneDegreeLonInPixels(zoom));
         double lat = centerInPixels(zoom).getY() + 0.5 * Math.log((1 + e) / (1 - e)) * -oneRadianLonInPixels(zoom);
 
         return new Point2D.Double(lon, lat);

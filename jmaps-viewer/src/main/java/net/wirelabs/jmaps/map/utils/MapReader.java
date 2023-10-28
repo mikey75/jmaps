@@ -1,6 +1,7 @@
 package net.wirelabs.jmaps.map.utils;
 
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.Defaults;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
 import net.wirelabs.jmaps.map.model.wmts.Capabilities;
 
@@ -12,7 +13,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
@@ -26,15 +26,12 @@ public class MapReader {
 
     private final String wmtsCacheDir;
 
-    private static final Path DEFAULT_WMTS_DESCRIPTOR_CACHE = Paths.get(System.getProperty("user.home"),
-            ".jmaps-cache","wmts-cache");
-
     public MapReader(String wmtsCacheDir) {
         this.wmtsCacheDir = wmtsCacheDir;
     }
 
     public MapReader() {
-        this(DEFAULT_WMTS_DESCRIPTOR_CACHE.toString());
+        this(Defaults.DEFAULT_WMTS_DESCRIPTOR_CACHE);
     }
 
     public Capabilities loadCapabilities(String getCapabilitiesUrl) {

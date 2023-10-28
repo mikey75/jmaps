@@ -53,7 +53,6 @@ public class WMTSLayer extends Layer {
 
     private void configureFromCapabilities() {
 
-
         capabilities = mapReader.loadCapabilities(getCapabilitiesUrl());
 
         // defaults to first layer and first tms when not specified
@@ -110,8 +109,8 @@ public class WMTSLayer extends Layer {
         Coordinate coord = getProjectionEngine().project(latLon);
         Point2D tlc = getTopLeftCorner();
 
-        double longitude = (coord.longitude - tlc.getX()) / getMetersPerPixel(zoom);
-        double latitude = (tlc.getY() - coord.latitude) / getMetersPerPixel(zoom);
+        double longitude = (coord.getLongitude() - tlc.getX()) / getMetersPerPixel(zoom);
+        double latitude = (tlc.getY() - coord.getLatitude()) / getMetersPerPixel(zoom);
 
         return new Point2D.Double(longitude, latitude);
     }
