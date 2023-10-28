@@ -1,7 +1,9 @@
 package net.wirelabs.jmaps;
 
-import fi.iki.elonen.NanoHTTPD;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,30 +15,34 @@ import java.nio.file.Files;
  * Created 5/27/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
 @Slf4j
-public class TestHttpServer extends NanoHTTPD {
+public class TestHttpServer {
 
-    private final File fileToServe;
+    private final MockWebServer server = new MockWebServer();
 
-    public TestHttpServer(int port,File fileToServe) throws IOException {
-        super("localhost", port);
-        start();
-        this.fileToServe = fileToServe;
-        log.info("Test httpserver at port {}", getListeningPort());
+    public TestHttpServer(File fileToServe) throws IOException {
+
+        int port = getRandomFreeTcpPort();
+        String responseBody = Files.readString(fileToServe.toPath(), StandardCharsets.UTF_8);
+
+        MockResponse response = new MockResponse()
+                .addHeader("Content-Type", "application/xml; charset=utf-8")
+                .setBody(responseBody);
+
+        server.enqueue(response);
+        server.start(port);
+
+        log.info("Test httpserver at port {}", server.getPort());
     }
 
-
-    @Override
-    public Response serve(IHTTPSession session) {
-
-        try {
-            String response = Files.readString(fileToServe.toPath(), StandardCharsets.UTF_8);
-            return newFixedLengthResponse(response);
-        } catch (IOException e) {
-            throw new IllegalArgumentException("File could not be served", e);
-        }
+    public void stop() throws IOException {
+        server.close();
     }
 
-    public static int getRandomFreeTcpPort() throws IOException {
+    public int getPort() {
+        return server.getPort();
+    }
+
+    private static int getRandomFreeTcpPort() throws IOException {
         try (ServerSocket serverSocket = new ServerSocket(0)) {
             return serverSocket.getLocalPort();
         }

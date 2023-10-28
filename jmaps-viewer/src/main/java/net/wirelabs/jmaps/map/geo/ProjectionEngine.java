@@ -24,14 +24,14 @@ public class ProjectionEngine {
         crs = csFactory.createFromName(crsName);
     }
 
-    //Projects geographical coordinates into coordinates in this crs units
+    // Projects geographical coordinates into coordinates in this crs units
     public Coordinate project(Coordinate coord) {
         projectionSource.setValue(coord.getLongitude(), coord.getLatitude(), coord.getAltitude());
         crs.getProjection().project(projectionSource, projectionResult);
         return new Coordinate(projectionResult.x, projectionResult.y, projectionResult.z);
     }
 
-    //Given a projected coordinate returns the corresponding LatLng .
+    // Given a projected coordinate returns the corresponding LatLng .
     public Coordinate unproject(Coordinate coord) {
         projectionSource.setValue(coord.getLongitude(), coord.getLatitude(), coord.getAltitude());
         crs.getProjection().inverseProject(projectionSource, projectionResult);
@@ -39,19 +39,16 @@ public class ProjectionEngine {
 
     }
 
-    // get the the equator length (2PI*Radius) where radius is
+    // get the equator length (2PI*Radius) where radius is
     // the equatorial radius or semi-major axis
     public double getEquatorLength() {
         return crs.getProjection().getEllipsoid().equatorRadius * TWO_PI;
     }
 
-    //get the polar meridian length (2PI*Radius) where radius is
+    // get the polar meridian length (2PI*Radius) where radius is
     // the polar radius or semi-minor axis
     public double getPolarLength() {
         return crs.getProjection().getEllipsoid().poleRadius * TWO_PI;
     }
-
-
-
 
 }

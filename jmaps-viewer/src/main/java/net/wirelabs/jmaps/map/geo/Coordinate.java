@@ -3,8 +3,6 @@ package net.wirelabs.jmaps.map.geo;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import net.wirelabs.jmaps.map.utils.NumberUtils;
-
 
 import static java.lang.Double.NaN;
 
@@ -43,15 +41,6 @@ public class Coordinate {
         this.latitude = latitude;
         this.altitude = NaN;
 
-    }
-
-
-    public Coordinate roundTo(int decimalPlace) {
-
-        longitude = NumberUtils.roundDouble(longitude, decimalPlace);
-        latitude = NumberUtils.roundDouble(latitude, decimalPlace);
-        altitude = NumberUtils.roundDouble(altitude, decimalPlace);
-        return this;
     }
 
 }

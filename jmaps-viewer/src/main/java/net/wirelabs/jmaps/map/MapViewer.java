@@ -3,7 +3,6 @@ package net.wirelabs.jmaps.map;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.Defaults;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.layer.Layer;
@@ -12,19 +11,16 @@ import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
 import net.wirelabs.jmaps.map.painters.CurrentPositionPainter;
 import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
-import net.wirelabs.jmaps.map.painters.MapAttributionPainter.Position;
 import net.wirelabs.jmaps.map.painters.Painter;
-import net.wirelabs.jmaps.map.utils.MapReader;
 
 import javax.swing.JPanel;
 import javax.xml.bind.JAXBException;
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -63,9 +59,16 @@ public class MapViewer extends JPanel {
     @Setter
     @Getter
     private boolean developerMode = false; // developer mode enables cache debug, tile debug and position tracking
-
+    @Getter
+    @Setter
+    private boolean showCoordinates = false;
+    @Getter
+    @Setter
+    private boolean showAttribution = true;
     @Getter
     private String mapCopyrightAttribution = "";
+    @Getter
+    private final List<Painter<MapViewer>> userOverlays = new ArrayList<>();
 
     public MapViewer() {
         this(Defaults.DEFAULT_USER_AGENT, Defaults.DEFAULT_TILER_THREADS, Defaults.DEFAULT_IMGCACHE_SIZE);
@@ -79,6 +82,7 @@ public class MapViewer extends JPanel {
         mapRenderer = new MapRenderer(this);
         mouseHandler = new MouseHandler(this);
 
+
     }
 
     // the method that does the actual painting
@@ -89,18 +93,6 @@ public class MapViewer extends JPanel {
         super.paintBorder(graphicsContext);
     }
 
-    protected void showCoordinates() {
-        addPainter(createCurrentPositionPainter());
-    }
-
-    protected void showAttribution() {
-        MapAttributionPainter attributionPainter = new MapAttributionPainter();
-        addPainter(attributionPainter);
-    }
-    protected void showAttribution(Font font, Color bgColor, Color fontColor,  Position position) {
-        MapAttributionPainter attributionPainter = new MapAttributionPainter(font, bgColor, fontColor, position);
-        addPainter(attributionPainter);
-    }
 
     protected void setLocalCache(Cache<String, BufferedImage> cache) {
         mapRenderer.setLocalCache(cache);
@@ -149,8 +141,8 @@ public class MapViewer extends JPanel {
         }
     }
 
-    public void addPainter(Painter<MapViewer> painter) {
-        mapRenderer.addPainter(painter);
+    public void addUserOverlay(Painter<MapViewer> painter) {
+        userOverlays.add(painter);
     }
 
     private void parseMapDefinition(MapDefinition mapDefinition) {
@@ -175,8 +167,12 @@ public class MapViewer extends JPanel {
         setHomePosition(getHome());
     }
 
-    protected Painter<MapViewer> createCurrentPositionPainter() {
+    protected Painter<MapViewer> getCoordinatePainter() {
         return new CurrentPositionPainter();
+    }
+
+    protected Painter<MapViewer> getAttributionPainter() {
+        return new MapAttributionPainter();
     }
 
     public boolean hasLayers() {
@@ -194,6 +190,7 @@ public class MapViewer extends JPanel {
     public Point2D getCurrentMousePosition() {
         return mouseHandler.getMousePoint();
     }
+
 }
 
 

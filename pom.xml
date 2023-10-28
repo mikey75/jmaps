@@ -20,6 +20,7 @@
         <mockito.version>4.1.0</mockito.version>
         <junit.version>5.8.2</junit.version>
         <assertj.version>3.23.1</assertj.version>
+        <okhttp.version>4.11.0</okhttp.version>
     </properties>
 
     <packaging>pom</packaging>

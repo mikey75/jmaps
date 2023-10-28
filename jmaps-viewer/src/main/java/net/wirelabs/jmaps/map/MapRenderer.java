@@ -1,7 +1,5 @@
 package net.wirelabs.jmaps.map;
 
-import lombok.Getter;
-import net.wirelabs.jmaps.map.utils.TileDebugger;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.painters.Painter;
@@ -9,7 +7,6 @@ import net.wirelabs.jmaps.map.downloader.TileDownloader;
 
 
 import java.awt.AlphaComposite;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -19,8 +16,6 @@ import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created 6/7/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -31,15 +26,16 @@ public class MapRenderer {
     private final MapViewer mapViewer;
     private final TileDownloader tileDownloader;
 
-    @Getter
-    private final List<Painter<MapViewer>> painters = new ArrayList<>();
-    private static final Color EMPTY_FILL_COLOR = new Color(0, 0, 0, 0);
+    private final Painter<MapViewer> coordinatePainter;
+    private final Painter<MapViewer> attributionPainter;
     private VolatileImage tempImage;
     private Graphics2D tempImageGraphics;
 
     public MapRenderer(MapViewer mapViewer) {
         this.mapViewer = mapViewer;
         this.tileDownloader = new TileDownloader(mapViewer);
+        this.coordinatePainter = mapViewer.getCoordinatePainter();
+        this.attributionPainter = mapViewer.getAttributionPainter();
     }
 
     public void renderMap(Graphics graphicsContext) {
@@ -47,7 +43,8 @@ public class MapRenderer {
             mapViewer.setZoom(mapViewer.getZoom());
             mapViewer.setHomePosition(mapViewer.getHome());
             renderTiles(graphicsContext, mapViewer.getZoom(), mapViewer.getTopLeftCornerPoint());
-            renderOverlays((Graphics2D) graphicsContext);
+            renderUserOverlays((Graphics2D) graphicsContext);
+            renderDefaultOverlays((Graphics2D) graphicsContext);
         }
     }
 
@@ -90,44 +87,49 @@ public class MapRenderer {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
 
-        if ( (tempImage == null || tempImage.getHeight() != tileSize || tempImage.getWidth() != tileSize)) {
-                tempImage = gc.createCompatibleVolatileImage(tileSize, tileSize, Transparency.TRANSLUCENT);
-                tempImageGraphics = tempImage.createGraphics();
+        if ((tempImage == null || tempImage.getHeight() != tileSize || tempImage.getWidth() != tileSize)) {
+            tempImage = gc.createCompatibleVolatileImage(tileSize, tileSize, Transparency.TRANSLUCENT);
+            tempImageGraphics = tempImage.createGraphics();
         }
     }
 
     private void renderTile(Graphics g, int zoom, int tileX, int tileY, int px, int py) {
 
-            // clear temp tile canvas
-            tempImageGraphics.setBackground(EMPTY_FILL_COLOR);
-            tempImageGraphics.clearRect(0, 0, tempImage.getWidth(), tempImage.getHeight());
+        // clear temp tile canvas
+        tempImageGraphics.setBackground(Defaults.EMPTY_FILL_COLOR);
+        tempImageGraphics.clearRect(0, 0, tempImage.getWidth(), tempImage.getHeight());
 
-            for (Layer layer : mapViewer.getLayers()) {
+        for (Layer layer : mapViewer.getLayers()) {
 
-                String tileUrl = layer.createTileUrl(tileX, tileY, zoom + layer.getZoomOffset());
-                BufferedImage b = tileDownloader.getTile(tileUrl);
-                if (tileDownloader.isTileInCache(tileUrl)) {
-                    if (layer.getOpacity() < 1.0f) {
-                        AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, layer.getOpacity());
-                        tempImageGraphics.setComposite(ac);
-                    }
-                    tempImageGraphics.drawImage(b, 0, 0, null);
+            String tileUrl = layer.createTileUrl(tileX, tileY, zoom + layer.getZoomOffset());
+            BufferedImage b = tileDownloader.getTile(tileUrl);
+            if (tileDownloader.isTileInCache(tileUrl)) {
+                if (layer.getOpacity() < 1.0f) {
+                    AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, layer.getOpacity());
+                    tempImageGraphics.setComposite(ac);
                 }
-
+                tempImageGraphics.drawImage(b, 0, 0, null);
             }
-            // draw temp image (accelerated) on g
-            g.drawImage(tempImage, px, py, null);
+
+        }
+        // draw temp image (accelerated) on g
+        g.drawImage(tempImage, px, py, null);
 
     }
 
-    private void renderOverlays(Graphics2D graphics) {
-        for (Painter<MapViewer> painter : painters) {
-            painter.doPaint(graphics, mapViewer, mapViewer.getWidth(), mapViewer.getHeight());
+    private void renderUserOverlays(Graphics2D graphics2D) {
+        for (Painter<MapViewer> painter : mapViewer.getUserOverlays()) {
+            painter.doPaint(graphics2D, mapViewer, mapViewer.getWidth(), mapViewer.getHeight());
         }
     }
 
-    public void addPainter(Painter<MapViewer> painter) {
-        painters.add(painter);
+    private void renderDefaultOverlays(Graphics2D graphics) {
+        if (mapViewer.isShowCoordinates()) {
+            coordinatePainter.doPaint(graphics, mapViewer, mapViewer.getWidth(), mapViewer.getHeight());
+        }
+        if (mapViewer.isShowAttribution()) {
+            attributionPainter.doPaint(graphics, mapViewer, mapViewer.getWidth(), mapViewer.getHeight());
+        }
     }
 
     public void setLocalCache(Cache<String, BufferedImage> cache) {

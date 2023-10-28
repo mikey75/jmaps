@@ -6,6 +6,7 @@ import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.layer.Layer;
 
 
+
 import javax.swing.SwingUtilities;
 import javax.swing.event.MouseInputAdapter;
 import java.awt.Cursor;

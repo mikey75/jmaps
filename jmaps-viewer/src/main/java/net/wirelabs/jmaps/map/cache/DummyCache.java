@@ -3,7 +3,8 @@ package net.wirelabs.jmaps.map.cache;
 import java.awt.image.BufferedImage;
 
 /**
- * Dummy cache - no op cache implementation
+ * Dummy cache - no op cache implementation,
+ * plugged in by default so no 2level cache is present.
  */
 public class DummyCache implements Cache<String, BufferedImage> {
 

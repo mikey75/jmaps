@@ -15,33 +15,33 @@ import java.awt.image.BufferedImage;
 @Slf4j
 public class InMemoryTileCache implements Cache<String,BufferedImage> {
     
-    private final ConcurrentLinkedHashMap<String,BufferedImage> map;
+    private final ConcurrentLinkedHashMap<String,BufferedImage> lruCache;
 
     public InMemoryTileCache(int initialCapacity) {
 
-        this.map = new ConcurrentLinkedHashMap.Builder<String,BufferedImage>()
+        this.lruCache = new ConcurrentLinkedHashMap.Builder<String,BufferedImage>()
                 .maximumWeightedCapacity(initialCapacity)
                 .build();
     }
 
     @Override
     public BufferedImage get(String key) {
-        return map.get(key);
+        return lruCache.get(key);
     }
 
     @Override
     public void put(String key, BufferedImage value) {
-        map.put(key, value);
+        lruCache.put(key, value);
     }
 
     @Override
     public void clear() {
-        map.clear();
+        lruCache.clear();
     }
 
     @Override
     public boolean contains(String key) {
-        return map.containsKey(key);
+        return lruCache.containsKey(key);
     }
 
 }

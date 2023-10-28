@@ -1,12 +1,13 @@
 package net.wirelabs.jmaps.map.layer;
 
 
-import com.squareup.okhttp.HttpUrl;
+
 import net.wirelabs.jmaps.map.model.wmts.Capabilities;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.ProjectionEngine;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
-import net.wirelabs.jmaps.map.utils.MapReader;
+import net.wirelabs.jmaps.map.MapReader;
+import okhttp3.HttpUrl;
 
 
 import java.awt.Dimension;
@@ -73,7 +74,7 @@ public class WMTSLayer extends Layer {
         return new Dimension(width, height);
     }
 
-    // todo: add style and format (recognize from caps)
+    // todo: add style and format (recognize from capabilities)
     @Override
     public String createTileUrl(int x, int y, int zoom) {
 

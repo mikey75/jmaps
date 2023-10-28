@@ -1,14 +1,15 @@
 package net.wirelabs.jmaps.map.downloader;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
+
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.cache.DummyCache;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.cache.InMemoryTileCache;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;

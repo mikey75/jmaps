@@ -1,7 +1,7 @@
 package net.wirelabs.jmaps.map.cache;
 
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.Defaults;
+import net.wirelabs.jmaps.map.Defaults;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -17,6 +17,7 @@ import java.nio.file.Paths;
  */
 @Slf4j
 public class DirectoryBasedCache implements Cache<String, BufferedImage> {
+
 
     private final Path baseDir;
 
@@ -79,16 +80,13 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
         String query = uri.getQuery();
         String path = uri.getPath();
 
-        if (host != null)
-        {
+        if (host != null) {
             sb.append(host);
         }
-        if (path != null)
-        {
+        if (path != null) {
             sb.append(path);
         }
-        if (query != null)
-        {
+        if (query != null) {
             sb.append('?');
             sb.append(query);
         }
@@ -97,27 +95,24 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
 
         final int maxLen = 250;
 
-        if (sb.length() < maxLen)
-        {
+        if (sb.length() < maxLen) {
             name = sb.toString();
-        }
-        else
-        {
+        } else {
             name = sb.substring(0, maxLen);
         }
-        name = normalize(name);
+        name = normalizeUrl(name);
 
         return new File(baseDir.toFile(), name);
     }
 
-    private static String normalize(String name) {
-        name = name.replace('&', '$');
-        name = name.replace('?', '$');
-        name = name.replace('*', '$');
-        name = name.replace(':', '$');
-        name = name.replace('<', '$');
-        name = name.replace('>', '$');
-        name = name.replace('"', '$');
+    String normalizeUrl(String name) {
+
+        char replacementChar = '$';
+        char[] charsNormalized = new char[]{'&', '?', '*', ':', '<', '>', '"'};
+
+        for (char nchar : charsNormalized) {
+            name = name.replace(nchar, replacementChar);
+        }
         return name;
     }
 }
