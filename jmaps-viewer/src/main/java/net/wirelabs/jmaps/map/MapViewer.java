@@ -94,7 +94,7 @@ public class MapViewer extends JPanel {
     }
 
 
-    protected void setLocalCache(Cache<String, BufferedImage> cache) {
+    public void setLocalCache(Cache<String, BufferedImage> cache) {
         mapRenderer.setLocalCache(cache);
     }
 

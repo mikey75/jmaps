@@ -26,15 +26,17 @@ public class ConfigPanel extends JPanel {
     private final JCheckBox devMode = new JCheckBox("Developer mode");
 
     private final MapViewer mapViewer;
+    private final RoutePainter routePainter;
 
     private JFileChooser fileChooser;
 
     /**
      * Configuration panel
      */
-    public ConfigPanel(MapViewer mapViewer) {
+    public ConfigPanel(MapPanel mapPanel) {
 
-        this.mapViewer = mapViewer;
+        this.mapViewer = mapPanel.getMapViewer();
+        this.routePainter = mapPanel.getRoutePainter();
 
         LayoutManager configPanelLayout = new MigLayout(
                 "",
@@ -80,7 +82,7 @@ public class ConfigPanel extends JPanel {
                     File gpx = fileChooser.getSelectedFile();// user selects a file
                     GPXParser p = new GPXParser();
                     List<Coordinate> gpxCoordinates = p.parseToGeoPosition(gpx);
-                    ((MapPanel) mapViewer).routePainter.setRoute(gpxCoordinates);
+                    routePainter.setRoute(gpxCoordinates);
                 }));
     }
 
