@@ -2,6 +2,7 @@ package net.wirelabs.jmaps.map.layer;
 
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.ProjectionEngine;
+import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
@@ -24,9 +25,15 @@ import static net.wirelabs.jmaps.map.geo.GeoUtils.*;
 
 public class XYZLayer extends Layer {
     
-    public XYZLayer(String name, String url) {
-        super(name, url);
+    public XYZLayer(LayerDefinition layerDefinition) {
+        super(layerDefinition.getName(), layerDefinition.getUrl());
         projectionEngine = new ProjectionEngine("EPSG:3857");
+
+        setMaxZoom(layerDefinition.getMaxZoom());
+        setMinZoom(layerDefinition.getMinZoom());
+        setSwapAxis(layerDefinition.isSwapAxis());
+        setOpacity(layerDefinition.getOpacity());
+        setZoomOffset(layerDefinition.getZoomOffset());
     }
 
     /**

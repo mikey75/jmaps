@@ -29,14 +29,5 @@ public class MapDefinition  {
     private List<LayerDefinition> layers = new ArrayList<>();
     @XmlElement(name = "copyright")
     private String copyright;
-
-    public MapDefinition(String name, String copyright) {
-        this.name = name;
-        this.copyright = copyright;
-    }
-
-    public void addLayer(LayerDefinition layer) {
-        layers.add(layer);
-    }
 }
 

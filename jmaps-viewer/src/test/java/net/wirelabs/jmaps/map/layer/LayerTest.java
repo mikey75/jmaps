@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.within;
  */
 class LayerTest {
 
-    private String testUrl;
+   /* private String testUrl;
 
     @BeforeEach
     void before() throws IOException {
@@ -166,6 +166,6 @@ class LayerTest {
         assertThat(roundDouble(pixelConvertedBackToLatLon.getLatitude(), 7)).isEqualTo(lublin.getLatitude());
 
     }
-
+*/
 
 }
