@@ -22,9 +22,6 @@ public class MapPanel extends JPanel {
     @Getter private final transient RoutePainter routePainter = new RoutePainter();
     @Getter private final MapViewer mapViewer = new MapViewer("JMapsTiler 1.0",32,16000);
 
-    private final transient Coordinate lublinPL = new Coordinate(22.49004,51.23264);
-    private final transient File mapfile = new File("jmaps-example/src/main/resources/map.xml");
-
     public MapPanel() {
 
         setBorder(new TitledBorder("Map"));
@@ -38,10 +35,14 @@ public class MapPanel extends JPanel {
 
         add(mapViewer, "cell 0 0,grow");
 
-        mapViewer.setHome(lublinPL);
-        mapViewer.setMap(mapfile);
-
     }
 
+    public void setHome(Coordinate home) {
+        mapViewer.setHome(home);
+    }
+
+    public void setMap(File mapFile) {
+        mapViewer.setMap(mapFile);
+    }
 
 }
