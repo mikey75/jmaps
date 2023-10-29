@@ -16,6 +16,7 @@ public class MapPanel extends MapViewer {
 
         super("JMapsTiler 1.0",32,16000);
         setDeveloperMode(false);
+        setShowCoordinates(true);
         setZoom(12);
         addUserOverlay(routePainter);
         setLocalCache(new DirectoryBasedCache());
