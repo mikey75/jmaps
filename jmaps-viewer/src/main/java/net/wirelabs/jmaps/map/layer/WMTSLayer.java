@@ -1,12 +1,13 @@
 package net.wirelabs.jmaps.map.layer;
 
 
-import com.squareup.okhttp.HttpUrl;
-import net.wirelabs.jmaps.map.layer.wmts.Capabilities;
-import net.wirelabs.jmaps.utils.CapabilitiesReader;
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
-import net.wirelabs.jmaps.viewer.geo.ProjectionEngine;
-import net.wirelabs.jmaps.viewer.geo.GeoUtils;
+import net.wirelabs.jmaps.map.model.map.LayerDefinition;
+import net.wirelabs.jmaps.map.model.wmts.Capabilities;
+import net.wirelabs.jmaps.map.geo.Coordinate;
+import net.wirelabs.jmaps.map.geo.ProjectionEngine;
+import net.wirelabs.jmaps.map.geo.GeoUtils;
+import net.wirelabs.jmaps.map.readers.WMTSCapReader;
+import okhttp3.HttpUrl;
 
 
 import java.awt.Dimension;
@@ -23,26 +24,50 @@ import java.awt.geom.Point2D;
 public class WMTSLayer extends Layer {
 
     private static final String DEFAULT_GET_CAPABILITIES_PATH = "?service=WMTS&request=GetCapabilities";
-    private final CapabilitiesReader capabilitiesReader;
-    private Capabilities capabilities;
+    private final Capabilities capabilities;
 
     protected String tileMatrixSetName;
     protected String wmtsLayerName;
-   
 
-    public WMTSLayer(String name, String url, String layer, String tileMatrixSet) {
+    public WMTSLayer(LayerDefinition layerDefinition) {
 
-        super(name, url);
-        this.tileMatrixSetName = tileMatrixSet;
-        this.wmtsLayerName = layer;
-        this.capabilitiesReader = new CapabilitiesReader();
-        configureFromCapabilities();
+        super(layerDefinition.getName(), layerDefinition.getUrl());
+
+        capabilities = WMTSCapReader.loadCapabilities(getCapabilitiesUrl());
+
+        setTileMatrixSet(layerDefinition.getTileMatrixSet());
+        setWmtsLayer(layerDefinition.getWmtsLayer());
+
+        setProjectionEngine(new ProjectionEngine(GeoUtils.parseCrsUrn(capabilities.getContents().getTileMatrixSet(tileMatrixSetName).getSupportedCRS())));
+
+        setMaxZoom((capabilities.getContents().getTileMatrixSet(tileMatrixSetName).getTileMatrices().length - 1));
+        setTileSize((capabilities.getContents().getTileMatrixSet(tileMatrixSetName).getTileMatrix(0).getTileWidth()));
+        setMinZoom(layerDefinition.getMinZoom());
+        setSwapAxis(layerDefinition.isSwapAxis());
+        setOpacity(layerDefinition.getOpacity());
+        setZoomOffset(layerDefinition.getZoomOffset());
+
+
+
     }
 
-    public WMTSLayer(String name, String url) {
-        this(name, url, null, null);
+    private void setTileMatrixSet(String tms) {
+        // if tms not in definition, use first found in first layer
+        if (tms == null || tms.isBlank()) {
+            tileMatrixSetName = capabilities.getContents().getLayer(0).getTileMatrixSetLink(0).getTileMatrixSet();
+        } else {
+            tileMatrixSetName = tms;
+        }
     }
 
+    private void setWmtsLayer(String wmtsLayer) {
+        // if layer not in definition, use first found
+        if (wmtsLayer == null || wmtsLayer.isBlank()) {
+            wmtsLayerName = capabilities.getContents().getLayer(0).getIdentifier();
+        } else {
+            wmtsLayerName = wmtsLayer;
+        }
+    }
 
     /**
      * Override this method if wmts service has nonstandard 'getCapabilities' path
@@ -51,20 +76,6 @@ public class WMTSLayer extends Layer {
         return url + DEFAULT_GET_CAPABILITIES_PATH;
     }
 
-    private void configureFromCapabilities() {
-
-
-        capabilities = capabilitiesReader.getCapabilities(getCapabilitiesUrl());
-
-        // defaults to first layer and first tms when not specified
-        if (wmtsLayerName == null) wmtsLayerName = capabilities.getContents().getLayer(0).getIdentifier();
-        if (tileMatrixSetName == null) tileMatrixSetName = capabilities.getContents().getLayer(0).getTileMatrixSetLink(0).getTileMatrixSet();
-
-        // else use specified layer and tms
-        maxZoom = (capabilities.getContents().getTileMatrixSet(tileMatrixSetName).getTileMatrices().length - 1);
-        tileSize = (capabilities.getContents().getTileMatrixSet(tileMatrixSetName).getTileMatrix(0).getTileWidth());
-        projectionEngine = (new ProjectionEngine(GeoUtils.parseCrsUrn(capabilities.getContents().getTileMatrixSet(tileMatrixSetName).getSupportedCRS())));
-    }
 
     @Override
     public Dimension getMapSize(int zoom) {
@@ -74,7 +85,7 @@ public class WMTSLayer extends Layer {
         return new Dimension(width, height);
     }
 
-    // todo: add style and format (recognize from caps)
+    // todo: add style and format (recognize from capabilities)
     @Override
     public String createTileUrl(int x, int y, int zoom) {
 
@@ -110,8 +121,8 @@ public class WMTSLayer extends Layer {
         Coordinate coord = getProjectionEngine().project(latLon);
         Point2D tlc = getTopLeftCorner();
 
-        double longitude = (coord.longitude - tlc.getX()) / getMetersPerPixel(zoom);
-        double latitude = (tlc.getY() - coord.latitude) / getMetersPerPixel(zoom);
+        double longitude = (coord.getLongitude() - tlc.getX()) / getMetersPerPixel(zoom);
+        double latitude = (tlc.getY() - coord.getLatitude()) / getMetersPerPixel(zoom);
 
         return new Point2D.Double(longitude, latitude);
     }

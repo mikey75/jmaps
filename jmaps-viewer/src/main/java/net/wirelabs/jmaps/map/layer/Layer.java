@@ -3,9 +3,8 @@ package net.wirelabs.jmaps.map.layer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.map.tiler.TileProvider;
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
-import net.wirelabs.jmaps.viewer.geo.ProjectionEngine;
+import net.wirelabs.jmaps.map.geo.Coordinate;
+import net.wirelabs.jmaps.map.geo.ProjectionEngine;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
@@ -25,11 +24,9 @@ public abstract class Layer {
     @Getter @Setter protected float opacity = 1.0f;
     @Getter @Setter protected int zoomOffset = 0;
     @Getter @Setter protected boolean swapAxis = false;
-    
-    @Getter @Setter protected TileProvider tileProvider;
+
     @Getter @Setter protected ProjectionEngine projectionEngine;
 
-    
     protected Layer(String name, String url) {
         this.name = name;
         this.url = url;
@@ -40,8 +37,6 @@ public abstract class Layer {
                 getMapSize(zoom).width * getTileSize(),
                 getMapSize(zoom).height * getTileSize());
     }
-
-
 
     // these must be implemented by all layers
     /**

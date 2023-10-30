@@ -5,5 +5,8 @@ package net.wirelabs.jmaps.map.layer;
  */
 public enum LayerType {
     XYZ,
-    WMTS
+    WMTS,
+    WMS,
+    TMS,
+    QUAD
 }

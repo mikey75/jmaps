@@ -1,12 +1,13 @@
 package net.wirelabs.jmaps.map.layer;
 
-import net.wirelabs.jmaps.viewer.geo.Coordinate;
-import net.wirelabs.jmaps.viewer.geo.ProjectionEngine;
+import net.wirelabs.jmaps.map.geo.Coordinate;
+import net.wirelabs.jmaps.map.geo.ProjectionEngine;
+import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
 
-import static net.wirelabs.jmaps.viewer.geo.GeoUtils.*;
+import static net.wirelabs.jmaps.map.geo.GeoUtils.*;
 
 /**
  * XYZ layer, also called basic layer, slippy map,  tile layer etc
@@ -17,16 +18,22 @@ import static net.wirelabs.jmaps.viewer.geo.GeoUtils.*;
  * Tiles use the Web Mercator coordinate reference system (EPSG:3857).
  * Tiles are available between zoom levels 0 and 18.
  * Tiles are rendered in the PNG format with an alpha channel for transparency.
- * Grid is a rectangle with 2*z rows and 2*z columns, where z is the zoom level.
+ * Grid is a rectangle with 2^z rows and 2^z columns, where z is the zoom level.
  * Grid uses 0,0 as the top, left corner in the grid.
  * Tiles are found at the path z/x/y.png, where z is the zoom level, and x and y are the positions in the tile grid.
  */
 
 public class XYZLayer extends Layer {
     
-    public XYZLayer(String name, String url) {
-        super(name, url);
+    public XYZLayer(LayerDefinition layerDefinition) {
+        super(layerDefinition.getName(), layerDefinition.getUrl());
         projectionEngine = new ProjectionEngine("EPSG:3857");
+
+        setMaxZoom(layerDefinition.getMaxZoom());
+        setMinZoom(layerDefinition.getMinZoom());
+        setSwapAxis(layerDefinition.isSwapAxis());
+        setOpacity(layerDefinition.getOpacity());
+        setZoomOffset(layerDefinition.getZoomOffset());
     }
 
     /**
@@ -50,19 +57,19 @@ public class XYZLayer extends Layer {
     @Override
     public Point2D getTopLeftCorner() {
         Coordinate c = new Coordinate(-180, 85.06); // upper left
-        return new Point2D.Double(c.longitude, c.latitude);
+        return new Point2D.Double(c.getLongitude(), c.getLatitude());
     }
 
     @Override
     public Point2D latLonToPixel(Coordinate latLon, int zoom) {
 
-        double e = Math.sin(deg2rad(latLon.latitude));
+        double epsilon = Math.sin(deg2rad(latLon.getLatitude()));
 
-        if (latLon.latitude > getTopLeftCorner().getY()) latLon.latitude = getTopLeftCorner().getY();
-        if (latLon.latitude < -getTopLeftCorner().getY()) latLon.latitude = -getTopLeftCorner().getY();
+        if (latLon.getLatitude() > getTopLeftCorner().getY()) latLon.setLatitude(getTopLeftCorner().getY());
+        if (latLon.getLatitude() < -getTopLeftCorner().getY()) latLon.setLatitude(-getTopLeftCorner().getY());
 
-        double lon = centerInPixels(zoom).getX() + (latLon.longitude * oneDegreeLonInPixels(zoom));
-        double lat = centerInPixels(zoom).getY() + 0.5 * Math.log((1 + e) / (1 - e)) * -oneRadianLonInPixels(zoom);
+        double lon = centerInPixels(zoom).getX() + (latLon.getLongitude() * oneDegreeLonInPixels(zoom));
+        double lat = centerInPixels(zoom).getY() + 0.5 * Math.log((1 + epsilon) / (1 - epsilon)) * -oneRadianLonInPixels(zoom);
 
         return new Point2D.Double(lon, lat);
 
@@ -78,7 +85,6 @@ public class XYZLayer extends Layer {
         return new Coordinate(lon, lat);
 
     }
-
 
     private Point2D centerInPixels(int zoom) {
         double centerx = (getMapSize(zoom).width * getTileSize()) / 2d;
