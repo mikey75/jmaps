@@ -13,6 +13,7 @@ import net.wirelabs.jmaps.map.model.map.MapDefinition;
 import net.wirelabs.jmaps.map.painters.CurrentPositionPainter;
 import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
 import net.wirelabs.jmaps.map.painters.Painter;
+import net.wirelabs.jmaps.map.readers.MapReader;
 
 import javax.swing.JPanel;
 import javax.xml.bind.JAXBException;
@@ -28,7 +29,6 @@ import java.util.List;
 public class MapViewer extends JPanel {
 
     private final transient LayerManager layerManager = new LayerManager();
-    private final transient MapReader mapReader = new MapReader();
 
     private final transient MapRenderer mapRenderer;
     private final transient MouseHandler mouseHandler;
@@ -122,7 +122,7 @@ public class MapViewer extends JPanel {
      */
     public void setMap(File xmlMapFile) {
         try {
-            MapDefinition mapDefinition = mapReader.loadMapDefinitionFile(xmlMapFile);
+            MapDefinition mapDefinition = MapReader.loadMapDefinitionFile(xmlMapFile);
             parseMapDefinition(mapDefinition);
             setInitialPositionAndZoom();
             repaint();

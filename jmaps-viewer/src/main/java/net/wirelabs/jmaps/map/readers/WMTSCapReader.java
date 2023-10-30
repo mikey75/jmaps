@@ -1,7 +1,8 @@
-package net.wirelabs.jmaps.map;
+package net.wirelabs.jmaps.map.readers;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.map.model.map.MapDefinition;
 import net.wirelabs.jmaps.map.model.wmts.Capabilities;
 
 import javax.xml.bind.JAXBContext;
@@ -17,30 +18,20 @@ import java.nio.file.Paths;
 import static net.wirelabs.jmaps.map.Defaults.DEFAULT_WMTS_DESCRIPTOR_CACHE;
 
 /**
- * Map reader - handles reading map definition xml
- * and wmts capabilities xml
- * <p>
- * Created 6/5/23 by Michał Szwaczko (mikey@wirelabs.net)
+ * WMTS Capabilities descriptor reader
  */
 @Slf4j
-public class MapReader {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class WMTSCapReader {
 
-    private final String wmtsCacheDir;
+    private static String descriptorCacheDir = DEFAULT_WMTS_DESCRIPTOR_CACHE;
 
-    public MapReader(String wmtsCacheDir) {
-        this.wmtsCacheDir = wmtsCacheDir;
-    }
-
-    public MapReader() {
-        this(DEFAULT_WMTS_DESCRIPTOR_CACHE);
-    }
-
-    public Capabilities loadCapabilities(String getCapabilitiesUrl) {
+    public static Capabilities loadCapabilities(String getCapabilitiesUrl) {
 
         try {
 
             URI uri = URI.create(getCapabilitiesUrl);
-            File cachedFile = Paths.get(wmtsCacheDir,uri.getHost(), uri.getPath(), "capabilities.xml").toFile();
+            File cachedFile = Paths.get(descriptorCacheDir, uri.getHost(), uri.getPath(), "capabilities.xml").toFile();
 
             if (!cachedFile.exists()) {
                 log.info("Loading WMTS capabilities from {}", getCapabilitiesUrl);
@@ -58,15 +49,13 @@ public class MapReader {
 
     }
 
-    public MapDefinition loadMapDefinitionFile(File mapDefinitionFile) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(MapDefinition.class);
-        Unmarshaller jaxb = context.createUnmarshaller();
-        return (MapDefinition) jaxb.unmarshal(mapDefinitionFile);
-    }
-
-    private Capabilities parseCapabilitiesFile(File capabilitiesFile) throws JAXBException {
+    private static Capabilities parseCapabilitiesFile(File capabilitiesFile) throws JAXBException {
         JAXBContext context = JAXBContext.newInstance(Capabilities.class);
         Unmarshaller jaxb = context.createUnmarshaller();
         return (Capabilities) jaxb.unmarshal(capabilitiesFile);
+    }
+
+    static void setCacheDir(String cacheDir) {
+        descriptorCacheDir = cacheDir;
     }
 }

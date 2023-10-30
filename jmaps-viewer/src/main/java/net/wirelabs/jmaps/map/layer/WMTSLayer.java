@@ -6,7 +6,7 @@ import net.wirelabs.jmaps.map.model.wmts.Capabilities;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.ProjectionEngine;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
-import net.wirelabs.jmaps.map.MapReader;
+import net.wirelabs.jmaps.map.readers.WMTSCapReader;
 import okhttp3.HttpUrl;
 
 
@@ -24,7 +24,6 @@ import java.awt.geom.Point2D;
 public class WMTSLayer extends Layer {
 
     private static final String DEFAULT_GET_CAPABILITIES_PATH = "?service=WMTS&request=GetCapabilities";
-    private final MapReader mapReader = new MapReader();
     private final Capabilities capabilities;
 
     protected String tileMatrixSetName;
@@ -34,7 +33,7 @@ public class WMTSLayer extends Layer {
 
         super(layerDefinition.getName(), layerDefinition.getUrl());
 
-        capabilities = mapReader.loadCapabilities(getCapabilitiesUrl());
+        capabilities = WMTSCapReader.loadCapabilities(getCapabilitiesUrl());
 
         setTileMatrixSet(layerDefinition.getTileMatrixSet());
         setWmtsLayer(layerDefinition.getWmtsLayer());
