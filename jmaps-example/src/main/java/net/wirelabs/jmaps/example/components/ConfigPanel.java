@@ -6,13 +6,13 @@ import net.wirelabs.jmaps.example.gpx.GPXParser;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import java.awt.LayoutManager;
+import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import java.awt.*;
 import java.io.File;
+
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -27,6 +27,10 @@ public class ConfigPanel extends JPanel {
 
     private final MapViewer mapViewer;
     private final RoutePainter routePainter;
+
+    private final JLabel label = new JLabel("Example map definitions");
+    private final JComboBox<ExampleMaps> exampleMapCombo = new JComboBox<>(ExampleMaps.values());
+
 
     private JFileChooser fileChooser;
 
@@ -49,10 +53,13 @@ public class ConfigPanel extends JPanel {
         add(btnAddLayer, "cell 0 1, growx");
         add(btnLoadGPX, "cell 0 2, growx");
         add(devMode, "flowx,cell 0 3");
+        add(label, "cell 0 4, growx");
+        add(exampleMapCombo, "cell 0 5, growx");
 
         devMode.setSelected(mapViewer.isDeveloperMode());
 
         setTooltips();
+        setComboBoxRenderer();
         addListeners();
     }
 
@@ -66,6 +73,35 @@ public class ConfigPanel extends JPanel {
         setAddMapListener();
         setLoadGPXListener();
         setDevModeListener();
+        setComboChangeListener();
+    }
+
+    private void setComboBoxRenderer() {
+        exampleMapCombo.setRenderer(new BasicComboBoxRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                ExampleMaps item = (ExampleMaps) value;
+                setText(item.getName());
+                return this;
+            }
+        });
+    }
+
+    private void setComboChangeListener() {
+
+        exampleMapCombo.addActionListener(e -> {
+            ExampleMaps selected = (ExampleMaps) exampleMapCombo.getSelectedItem();
+
+            if (selected != null) {
+                URL path = getClass().getClassLoader().getResource(selected.getMapFile());
+                if (path != null) {
+                    File file = new File(path.getFile());
+                    mapViewer.setMap(file);
+                    mapViewer.setInitialPositionAndZoom(selected.getCenterON(), mapViewer.getZoom());
+                }
+            }
+        });
     }
 
     private void setDevModeListener() {
@@ -103,6 +139,11 @@ public class ConfigPanel extends JPanel {
         if (result == JFileChooser.APPROVE_OPTION) {
             actionOnApprove.run();
         }
+    }
+
+    public void setFirstAvailableMap() {
+        // choose first map
+        exampleMapCombo.setSelectedIndex(0);
     }
 
 }

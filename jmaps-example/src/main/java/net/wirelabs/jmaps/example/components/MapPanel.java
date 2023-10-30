@@ -37,12 +37,4 @@ public class MapPanel extends JPanel {
 
     }
 
-    public void setHome(Coordinate home) {
-        mapViewer.setHome(home);
-    }
-
-    public void setMap(File mapFile) {
-        mapViewer.setMap(mapFile);
-    }
-
 }
