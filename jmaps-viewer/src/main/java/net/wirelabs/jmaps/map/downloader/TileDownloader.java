@@ -35,18 +35,20 @@ public class TileDownloader {
     private final InMemoryTileCache inMemoryTileCache;
     private final ExecutorService executorService;
     private final MapViewer mapViewer;
+    private final String userAgent;
 
     private Cache<String, BufferedImage> localCache = new DummyCache();
 
-    public TileDownloader(MapViewer mapViewer) {
+    public TileDownloader(MapViewer mapViewer, String userAgent, int tilerThreads, int cacheSize) {
+
         this.mapViewer = mapViewer;
-        this.inMemoryTileCache = new InMemoryTileCache(mapViewer.getTileCacheSize());
-        this.executorService = Executors.newFixedThreadPool(mapViewer.getTilerThreads(), new TileDownloaderThreadFactory());
+        this.userAgent = userAgent;
+        this.inMemoryTileCache = new InMemoryTileCache(cacheSize);
+        this.executorService = Executors.newFixedThreadPool(tilerThreads, new TileDownloaderThreadFactory());
 
         log.info("Started tile downloader:[User-Agent: {}, Memory cache size: {}, Tiler threads: {}]",
-                mapViewer.getUserAgent(),
-                mapViewer.getTileCacheSize(),
-                mapViewer.getTilerThreads());
+                userAgent,cacheSize,tilerThreads);
+
     }
 
     private void download(String tileUrl) {
@@ -57,7 +59,7 @@ public class TileDownloader {
 
         Request r = new Request.Builder()
                 .url(tileUrl)
-                .header("User-Agent", mapViewer.getUserAgent())
+                .header("User-Agent", userAgent)
                 .get().build();
 
         try {

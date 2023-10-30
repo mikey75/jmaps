@@ -19,7 +19,8 @@ import java.awt.image.VolatileImage;
 
 /**
  * Created 6/7/23 by Michał Szwaczko (mikey@wirelabs.net)
- * Class responsible for rendering one map 'frame' of tiles on the JPanel's Graphics Context
+ * Class responsible for loading and rendering one map 'frame'
+ * of tiles on the JPanel's Graphics Context
  */
 public class MapRenderer {
 
@@ -31,9 +32,9 @@ public class MapRenderer {
     private VolatileImage tempImage;
     private Graphics2D tempImageGraphics;
 
-    public MapRenderer(MapViewer mapViewer) {
+    public MapRenderer(MapViewer mapViewer, TileDownloader tileDownloader) {
         this.mapViewer = mapViewer;
-        this.tileDownloader = new TileDownloader(mapViewer);
+        this.tileDownloader = tileDownloader;
         this.coordinatePainter = mapViewer.getCoordinatePainter();
         this.attributionPainter = mapViewer.getAttributionPainter();
     }
@@ -132,11 +133,4 @@ public class MapRenderer {
         }
     }
 
-    public void setLocalCache(Cache<String, BufferedImage> cache) {
-        tileDownloader.setLocalCache(cache);
-    }
-
-    public void shutdownTileDownloader() {
-        tileDownloader.shutdown();
-    }
 }

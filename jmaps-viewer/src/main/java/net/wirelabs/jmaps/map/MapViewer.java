@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.cache.Cache;
+import net.wirelabs.jmaps.map.downloader.TileDownloader;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.layer.LayerManager;
@@ -31,16 +32,12 @@ public class MapViewer extends JPanel {
 
     private final transient MapRenderer mapRenderer;
     private final transient MouseHandler mouseHandler;
+    private final transient TileDownloader tileDownloader;
 
     // current map top left corner in pixels
     @Getter
     private final Point topLeftCornerPoint = new Point();
-    @Getter
-    private final int tileCacheSize;
-    @Getter
-    private final int tilerThreads;
-    @Getter
-    private final String userAgent;
+
 
 
     // zoom level
@@ -75,14 +72,9 @@ public class MapViewer extends JPanel {
     }
 
     public MapViewer(String userAgent, int tilerThreads, int tileCacheSize) {
-        this.userAgent = userAgent;
-        this.tilerThreads = tilerThreads;
-        this.tileCacheSize = tileCacheSize;
-
-        mapRenderer = new MapRenderer(this);
+        tileDownloader = new TileDownloader(this, userAgent, tilerThreads, tileCacheSize);
+        mapRenderer = new MapRenderer(this, tileDownloader);
         mouseHandler = new MouseHandler(this);
-
-
     }
 
     // the method that does the actual painting
@@ -93,9 +85,8 @@ public class MapViewer extends JPanel {
         super.paintBorder(graphicsContext);
     }
 
-
     public void setLocalCache(Cache<String, BufferedImage> cache) {
-        mapRenderer.setLocalCache(cache);
+        tileDownloader.setLocalCache(cache);
     }
 
     public void setZoom(int zoom) {
