@@ -7,6 +7,7 @@ import net.wirelabs.jmaps.map.downloader.TileDownloader;
 
 
 import java.awt.AlphaComposite;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -74,7 +75,9 @@ public class MapRenderer {
                 Rectangle currentTileBounds = new Rectangle(px, py, tileSize, tileSize);
                 // only proceed if the specified tile point lies within the area being painted
                 if (g.getClipBounds().intersects(currentTileBounds)) {
-                    renderTile(g, zoom, tileX, tileY, px, py);
+                    if (isTileLegal(tileX, tileY, zoom)) {
+                        renderTile(g, zoom, tileX, tileY, px, py);
+                    }
                     if (mapViewer.isDeveloperMode()) {
                         TileDebugger.drawTileDebugInfo(g, tileSize, tileX, tileY, px, py, zoom);
                     }
@@ -82,6 +85,11 @@ public class MapRenderer {
                 }
             }
         }
+    }
+
+    private boolean isTileLegal(int tileX, int tileY, int zoom) {
+        Dimension mapsize = mapViewer.getBaseLayer().getMapSize(zoom);
+        return tileX >= 0 && tileY >= 0 && tileX < mapsize.width && tileY < mapsize.height;
     }
 
     private void createOutputCanvas(int tileSize) {
