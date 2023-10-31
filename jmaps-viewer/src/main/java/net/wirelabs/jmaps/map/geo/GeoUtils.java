@@ -3,12 +3,14 @@ package net.wirelabs.jmaps.map.geo;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.util.Comparator;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 /**
  * Created 5/23/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GeoUtils {
 
@@ -32,16 +34,23 @@ public class GeoUtils {
         return deg * ONE_DEG_IN_RAD;
     }
 
-    public static Coordinate calculateCenterOfCoordinateSet(List<Coordinate> route) {
+    /**
+     * Calculate the geometric center of set of coordinates - in lat/lon units
+     * @param coordinates set of coordinates
+     * @return lat/lon of the center point
+     */
+    public static Coordinate calculateCenterOfCoordinateSet(List<Coordinate> coordinates) {
+        // calculate enclosing rectangle for all coordinates
+        Point2D firstPoint = new Point2D.Double(coordinates.get(0).getLongitude(), coordinates.get(0).getLatitude());
+        Rectangle2D r2 = new Rectangle2D.Double(firstPoint.getX(), firstPoint.getY(), 0, 0);
 
-        double minX = route.stream().min(Comparator.comparing(Coordinate::getLongitude)).map(Coordinate::getLongitude).orElse(0.0);
-        double maxX = route.stream().max(Comparator.comparing(Coordinate::getLongitude)).map(Coordinate::getLongitude).orElse(0.0);
-        double minY = route.stream().min(Comparator.comparing(Coordinate::getLatitude)).map(Coordinate::getLatitude).orElse(0.0);
-        double maxY = route.stream().max(Comparator.comparing(Coordinate::getLatitude)).map(Coordinate::getLatitude).orElse(0.0);
-        double cx = (maxX - minX) / 2.0;
-        double cy = (maxY - minY) / 2.0;
-
-        return new Coordinate(minX + cx, minY + cy);
+        for (Coordinate c : coordinates) {
+            Point2D p = new Point2D.Double(c.getLongitude(), c.getLatitude());
+            r2.add(p);
+        }
+        // return center of that rectangle
+        return new Coordinate(r2.getCenterX(), r2.getCenterY());
     }
+
 }
 

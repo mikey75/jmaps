@@ -4,7 +4,6 @@
         <name>Open Street Map</name>
         <type>XYZ</type>
         <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
-        <minZoom>3</minZoom>
     </layer>
     <copyright>© OpenStreetMap Contributors, Creative Commons Attribution-ShareAlike 2.0</copyright>
 </map>
