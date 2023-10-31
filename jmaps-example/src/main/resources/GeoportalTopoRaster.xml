@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<map name="Mapa 1">
+    <layer>
+        <name>layer1</name>
+        <type>WMTS</type>
+        <url>https://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/TOPO</url>
+        <minZoom>7</minZoom>
+        <swapAxis>true</swapAxis>
+    </layer>
+    <copyright>© Geoportal Krajowy (geoportal.gov.pl)</copyright>
+</map>

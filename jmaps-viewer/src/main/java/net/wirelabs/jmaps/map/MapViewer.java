@@ -151,11 +151,15 @@ public class MapViewer extends JPanel {
 
     }
 
-    private void setInitialPositionAndZoom() {
+    public void setInitialPositionAndZoom(Coordinate home, int zoom) {
         getTopLeftCornerPoint().setLocation(0, 0);
-        setZoom(getZoom());
+        setZoom(zoom);
         setHomePositionSet(false);
-        setHomePosition(getHome());
+        setHomePosition(home);
+    }
+
+    public void setInitialPositionAndZoom() {
+        setInitialPositionAndZoom(getHome(), getZoom());
     }
 
     protected Painter<MapViewer> getCoordinatePainter() {

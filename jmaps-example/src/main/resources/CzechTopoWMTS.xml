@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<map name="Mapa 1">
+    <layer>
+        <name>layer1</name>
+        <type>WMTS</type>
+        <url>http://geoportal.cuzk.cz/WMTS_ZM/WMTService.aspx</url>
+        <minZoom>2</minZoom>
+        <swapAxis>true</swapAxis>
+        <wmtsLayer>zm</wmtsLayer>
+        <tileMatrixSet>jtsk:epsg:5514</tileMatrixSet>
+    </layer>
+    <copyright>© ČÚZK</copyright>
+</map>
