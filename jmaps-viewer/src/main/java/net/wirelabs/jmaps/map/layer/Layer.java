@@ -24,6 +24,7 @@ public abstract class Layer {
     @Getter @Setter protected float opacity = 1.0f;
     @Getter @Setter protected int zoomOffset = 0;
     @Getter @Setter protected boolean swapAxis = false;
+    @Getter @Setter protected boolean enabled = true;
 
     @Getter @Setter protected ProjectionEngine projectionEngine;
 

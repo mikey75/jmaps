@@ -1,5 +1,6 @@
 package net.wirelabs.jmaps.example;
 
+import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.example.components.ConfigPanel;
 import net.wirelabs.jmaps.example.components.MainWindow;
 import net.wirelabs.jmaps.example.components.MapPanel;
@@ -7,7 +8,7 @@ import net.wirelabs.jmaps.example.components.MapPanel;
 import javax.swing.JFrame;
 import java.awt.EventQueue;
 
-
+@Slf4j
 public class ExampleApplication {
 
     /**
@@ -27,7 +28,7 @@ public class ExampleApplication {
                 configPanel.setFirstAvailableMap();
 
             } catch (Exception e) {
-                e.printStackTrace();
+                log.error(e.getMessage(), e);
             }
         });
 

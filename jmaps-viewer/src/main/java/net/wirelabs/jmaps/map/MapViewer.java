@@ -62,6 +62,8 @@ public class MapViewer extends JPanel {
     private String mapCopyrightAttribution = "";
     @Getter
     private final List<Painter<MapViewer>> userOverlays = new ArrayList<>();
+    @Getter
+    private final LayersPanel layersPanel;
 
     public MapViewer() {
         this(Defaults.DEFAULT_USER_AGENT, Defaults.DEFAULT_TILER_THREADS, Defaults.DEFAULT_IMGCACHE_SIZE);
@@ -70,7 +72,9 @@ public class MapViewer extends JPanel {
     public MapViewer(String userAgent, int tilerThreads, int tileCacheSize) {
         tileDownloader = new TileDownloader(this, userAgent, tilerThreads, tileCacheSize);
         mapRenderer = new MapRenderer(this, tileDownloader);
+        layersPanel = new LayersPanel( this, layerManager);
         mouseHandler = new MouseHandler(this);
+        addLayersPanel();
     }
 
     // the method that does the actual painting
@@ -120,11 +124,22 @@ public class MapViewer extends JPanel {
         try {
             MapDefinition mapDefinition = MapReader.loadMapDefinitionFile(xmlMapFile);
             parseMapDefinition(mapDefinition);
+            // update layers panel
+            updateLayersPanel();
             setPositionAndZoom(getHome(), getZoom());
             repaint();
 
         } catch (JAXBException ex) {
             log.info("Map not created {}", ex.getMessage(), ex);
+        }
+    }
+
+    private void updateLayersPanel() {
+        if (layerManager.isMultilayer()) {
+            layersPanel.addLayers();
+            layersPanel.setVisible(true);
+        } else {
+            layersPanel.setVisible(false);
         }
     }
 
@@ -220,6 +235,13 @@ public class MapViewer extends JPanel {
 
     }
 
+    public List<Layer> getEnabledLayers() {
+        return layerManager.getEnabledLayers();
+    }
+
+    private void addLayersPanel() {
+        add(layersPanel);
+    }
 }
 
 

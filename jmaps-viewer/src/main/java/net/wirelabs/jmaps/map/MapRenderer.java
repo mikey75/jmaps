@@ -107,7 +107,7 @@ public class MapRenderer {
         tempImageGraphics.setBackground(Defaults.EMPTY_FILL_COLOR);
         tempImageGraphics.clearRect(0, 0, tempImage.getWidth(), tempImage.getHeight());
 
-        for (Layer layer : mapViewer.getLayers()) {
+        for (Layer layer : mapViewer.getEnabledLayers()) {
 
             String tileUrl = layer.createTileUrl(tileX, tileY, zoom + layer.getZoomOffset());
             BufferedImage b = tileDownloader.getTile(tileUrl);
