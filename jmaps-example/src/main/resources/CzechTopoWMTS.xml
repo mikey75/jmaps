@@ -4,7 +4,6 @@
         <name>layer1</name>
         <type>WMTS</type>
         <url>http://geoportal.cuzk.cz/WMTS_ZM/WMTService.aspx</url>
-        <minZoom>2</minZoom>
         <swapAxis>true</swapAxis>
         <wmtsLayer>zm</wmtsLayer>
         <tileMatrixSet>jtsk:epsg:5514</tileMatrixSet>

@@ -32,22 +32,20 @@ public class RoutePainter implements Painter<MapViewer> {
             // store changed settings
             Stroke s = graphics.getStroke();
             Color color = graphics.getColor();
-
-            graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
+            // not sure if needed
+            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
             // do the drawing
             graphics.setColor(routeColor);
             graphics.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
             drawRoute(graphics, object);
-
             // restore changed settings
             graphics.setColor(color);
             graphics.setStroke(s);
 
         }
     }
+
 
     public void clearRoute() {
         routePoints.clear();

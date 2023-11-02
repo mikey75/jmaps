@@ -21,8 +21,8 @@ import java.util.List;
 @Slf4j
 public class ConfigPanel extends JPanel {
 
-    private final JButton btnAddLayer = new JButton("Change map");
-    private final JButton btnLoadGPX = new JButton("Load gpx");
+    private final JButton btnAddLayer = new JButton("Load custom map");
+    private final JButton btnLoadGPX = new JButton("Load gpx track");
     private final JCheckBox devMode = new JCheckBox("Developer mode");
 
     private final MapViewer mapViewer;
@@ -50,11 +50,11 @@ public class ConfigPanel extends JPanel {
 
         setLayout(configPanelLayout);
 
-        add(btnAddLayer, "cell 0 1, growx");
-        add(btnLoadGPX, "cell 0 2, growx");
-        add(devMode, "flowx,cell 0 3");
-        add(label, "cell 0 4, growx");
-        add(exampleMapCombo, "cell 0 5, growx");
+        add(label, "cell 0 1, growx");
+        add(exampleMapCombo, "cell 0 2, growx");
+        add(btnAddLayer, "cell 0 3, growx");
+        add(btnLoadGPX, "cell 0 4, growx");
+        add(devMode, "flowx,cell 0 5");
 
         devMode.setSelected(mapViewer.isDeveloperMode());
 
@@ -65,7 +65,7 @@ public class ConfigPanel extends JPanel {
 
     private void setTooltips() {
         devMode.setToolTipText("Enables visual tile debug + cache debug logging");
-        btnAddLayer.setToolTipText("Change current map source");
+        btnAddLayer.setToolTipText("Load custom map (from XML file)");
         btnLoadGPX.setToolTipText("Load and visualise a gpx track");
     }
 
@@ -98,7 +98,7 @@ public class ConfigPanel extends JPanel {
                 if (path != null) {
                     File file = new File(path.getFile());
                     mapViewer.setMap(file);
-                    mapViewer.setInitialPositionAndZoom(selected.getCenterON(), mapViewer.getZoom());
+                    mapViewer.setPositionAndZoom(selected.getCenterON(), mapViewer.getZoom());
                 }
             }
         });
@@ -119,6 +119,8 @@ public class ConfigPanel extends JPanel {
                     GPXParser p = new GPXParser();
                     List<Coordinate> gpxCoordinates = p.parseToGeoPosition(gpx);
                     routePainter.setRoute(gpxCoordinates);
+                    mapViewer.setBestFit(gpxCoordinates);
+
                 }));
     }
 

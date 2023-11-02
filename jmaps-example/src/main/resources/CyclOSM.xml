@@ -4,7 +4,6 @@
         <name>CyclOSM Map</name>
         <type>XYZ</type>
         <url>https://a.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png</url>
-        <minZoom>3</minZoom>
     </layer>
     <copyright>CyclOSM | Map data © OpenStreetMap contributors</copyright>
 </map>

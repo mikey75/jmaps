@@ -14,8 +14,8 @@ import static java.lang.Double.NaN;
  * It can be a geographic position - in lon/lat/elevation
  * or projected position (in crs units)
  * <p>
- * To avoid conversion headaches, all values are in geographical namespace
- * i.e lon/lat/elevation.
+ * To avoid conversion headaches, both (geo position and crs units)
+ * are stored in geographical namespace i.e lon/lat/elevation.
  */
 
 @NoArgsConstructor
