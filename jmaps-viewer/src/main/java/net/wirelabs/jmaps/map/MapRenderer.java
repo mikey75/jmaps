@@ -112,10 +112,9 @@ public class MapRenderer {
             String tileUrl = layer.createTileUrl(tileX, tileY, zoom + layer.getZoomOffset());
             BufferedImage b = tileDownloader.getTile(tileUrl);
             if (tileDownloader.isTileInCache(tileUrl)) {
-                if (layer.getOpacity() < 1.0f) {
-                    AlphaComposite ac = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, layer.getOpacity());
-                    tempImageGraphics.setComposite(ac);
-                }
+                // if layer's opacity is < 1.0 - apply layer's opacity alpha, otherwise set alpha 1.0f
+                AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.DST_OVER, Math.min(layer.getOpacity(), 1.0f));
+                tempImageGraphics.setComposite(alpha);
                 tempImageGraphics.drawImage(b, 0, 0, null);
             }
 
