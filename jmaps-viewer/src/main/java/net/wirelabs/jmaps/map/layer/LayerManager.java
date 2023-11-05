@@ -1,10 +1,12 @@
 package net.wirelabs.jmaps.map.layer;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 /**
  * Created 6/3/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -12,6 +14,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 
 @Slf4j
+@Getter
 public class LayerManager {
 
     private final List<Layer> layers = new CopyOnWriteArrayList<>();
@@ -22,10 +25,6 @@ public class LayerManager {
 
     public boolean layersPresent() {
         return !layers.isEmpty();
-    }
-
-    public List<Layer> getLayers() {
-        return layers;
     }
 
     public void removeAllLayers(){
@@ -92,5 +91,15 @@ public class LayerManager {
             }
         }
         return true;
+    }
+
+    public boolean isMultilayer() {
+        return layers.size() > 1;
+    }
+
+    public List<Layer> getEnabledLayers() {
+        return layers.stream()
+                .filter(Layer::isEnabled)
+                .collect(Collectors.toList());
     }
 }
