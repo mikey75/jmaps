@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<map name="Mapa 1">
+
+    <layer>
+        <name>podklad</name>
+        <type>WMTS</type>
+        <url>https://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/G2_MOBILE_500</url>
+        <minZoom>2</minZoom>
+        <swapAxis>true</swapAxis>
+    </layer>
+
+    <layer>
+        <name>cieniowanie</name>
+        <type>WMTS</type>
+        <url>https://mapy.geoportal.gov.pl/wss/service/PZGIK/NMT/GRID1/WMTS/ShadedRelief</url>
+        <minZoom>2</minZoom>
+        <opacity>0.3</opacity>
+        <zoomOffset>-2</zoomOffset>
+        <swapAxis>true</swapAxis>
+    </layer>
+
+    <copyright>© OpenStreetMap Contributors, Creative Commons Attribution-ShareAlike 2.0</copyright>
+</map>
+
