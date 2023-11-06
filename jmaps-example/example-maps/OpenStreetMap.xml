@@ -5,7 +5,7 @@
         <name>Open Street Map</name>
         <maxZoom>18</maxZoom>
         <type>XYZ</type>
-        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
+        <url>http://[a|b|c].tile.openstreetmap.org/{z}/{x}/{y}.png</url>
     </layer>
     <copyright>© OpenStreetMap Contributors, Creative Commons Attribution-ShareAlike 2.0</copyright>
 </map>
