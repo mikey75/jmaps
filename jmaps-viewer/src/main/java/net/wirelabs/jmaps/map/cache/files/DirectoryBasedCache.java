@@ -58,11 +58,7 @@ public class DirectoryBasedCache extends BaseCache implements Cache<String, Buff
     private void putImage(String key, BufferedImage b) {
         try {
             Path filePath = getLocalFile(key);
-            // create file only if it does not exist so that if the entry expires,
-            // file is not recreated  (saves time) and only image is written to this existing file
-            if (!filePath.toFile().exists()) {
-                Files.createDirectories(filePath);
-            }
+            Files.createDirectories(filePath.getParent());
             ImageIO.write(b, "png", filePath.toFile());
 
         } catch (IOException ex) {
@@ -87,7 +83,7 @@ public class DirectoryBasedCache extends BaseCache implements Cache<String, Buff
      * being the path for the place to store the file
      */
     private Path getLocalFile(String remoteUri) throws IOException {
-        return Path.of(getBaseDir().toString(),UrlUtils.urlToStringPath(remoteUri));
+        return Path.of(getBaseDir().toString(), UrlUtils.urlToStringPath(remoteUri));
     }
 
 }

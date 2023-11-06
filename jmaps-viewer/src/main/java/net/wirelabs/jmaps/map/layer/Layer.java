@@ -3,6 +3,8 @@ package net.wirelabs.jmaps.map.layer;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.map.downloader.HostPrefixAlternator;
+import net.wirelabs.jmaps.map.downloader.UrlSet;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.ProjectionEngine;
 import net.wirelabs.jmaps.model.map.LayerDocument;
@@ -29,10 +31,12 @@ public abstract class Layer  {
     protected boolean disabled;
 
     private final ProjectionEngine projectionEngine = new ProjectionEngine();
+    private final HostPrefixAlternator hostPrefixAlternator;
 
     protected Layer(LayerDocument.Layer layerDefinition) {
         this.name = layerDefinition.getName();
         this.url = layerDefinition.getUrl();
+        this.hostPrefixAlternator = new HostPrefixAlternator(url);
         this.type = LayerType.valueOf(layerDefinition.getType());
         this.crs = layerDefinition.getCrs();
 
@@ -121,7 +125,7 @@ public abstract class Layer  {
      * @param zoom zoom level
      * @return string containing complete url ready to use
      */
-    public abstract String createTileUrl(int x, int y, int zoom);
+    public abstract UrlSet createTileUrl(int x, int y, int zoom);
     /**
      * Returns map size in tiles at given zoom
      * @param zoom zoom level

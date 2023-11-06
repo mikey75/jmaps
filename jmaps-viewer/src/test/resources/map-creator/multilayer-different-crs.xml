@@ -4,14 +4,14 @@
     <layer>
         <name>layer1</name>
         <type>QUAD</type>
-        <url>url</url>
+        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
         <crs>EPSG:3857</crs>
     </layer>
 
     <layer>
         <name>layer2</name>
         <type>QUAD</type>
-        <url>url</url>
+        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
         <crs>EPSG:3128</crs>
     </layer>
 

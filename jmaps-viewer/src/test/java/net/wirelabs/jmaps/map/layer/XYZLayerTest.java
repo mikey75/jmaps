@@ -7,9 +7,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.testcontainers.shaded.org.awaitility.Awaitility;
 
 import java.awt.*;
 import java.awt.geom.*;
+import java.time.Duration;
 import java.util.stream.Stream;
 
 import static net.wirelabs.jmaps.TestUtils.roundDouble;
@@ -21,7 +23,7 @@ class XYZLayerTest {
 
     @BeforeEach
     void before() {
-        xyzLayerDefinition =LayerDocument.Layer.Factory.newInstance();
+        xyzLayerDefinition = LayerDocument.Layer.Factory.newInstance();
         xyzLayerDefinition.setType(String.valueOf(LayerType.XYZ));
         xyzLayerDefinition.setName("TestXYZ");
         xyzLayerDefinition.setUrl("http://localhost/{z}/{x}/{y}.png");
@@ -30,7 +32,28 @@ class XYZLayerTest {
     @Test
     void shouldCreateCorrectUrl() {
         Layer xyz = new XYZLayer(xyzLayerDefinition);
-        assertThat(xyz.createTileUrl(4,5,12)).isEqualTo("http://localhost/12/4/5.png");
+        assertThat(xyz.createTileUrl(4, 5, 12).downloadUrl()).isEqualTo("http://localhost/12/4/5.png");
+    }
+
+    @Test
+    void shouldCreateCorectMultiHost() {
+        xyzLayerDefinition.setUrl("http://[a|b|c].localhost/12/4/5.png");
+        Layer xyz = new XYZLayer(xyzLayerDefinition);
+        assertThat(xyz.createTileUrl(4, 5, 12).downloadUrl()).matches("http://[abc].localhost/12/4/5\\.png");
+        assertThat(xyz.createTileUrl(4, 5, 12).cacheUrl()).isEqualTo("http://localhost/12/4/5.png");
+        // now check if hosts are really randomized
+        Layer layer = new XYZLayer(xyzLayerDefinition);
+        Awaitility.waitAtMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+                    String url1 = layer.createTileUrl(4, 5, 12).downloadUrl();
+                    String url2 = layer.createTileUrl(4, 5, 12).downloadUrl();
+                    assertThat(url1).isNotEqualTo(url2);
+                }
+        );
+        xyzLayerDefinition.setUrl("http://[host1|host2|host3].localhost/12/4/5.png");
+        xyz = new XYZLayer(xyzLayerDefinition);
+        assertThat(xyz.createTileUrl(4, 5, 12).downloadUrl()).matches("http://(host1|host2|host3)\\.localhost/12/4/5\\.png");
+        assertThat(xyz.createTileUrl(4, 5, 12).cacheUrl()).isEqualTo("http://localhost/12/4/5.png");
+
     }
 
 
@@ -47,7 +70,6 @@ class XYZLayerTest {
         assertThat(roundDouble(pixelConvertedBackToLatLon.getLatitude(), 7)).isEqualTo(coord.getLatitude());
 
 
-
     }
 
     public static Stream<Arguments> providePoints() {
@@ -55,7 +77,7 @@ class XYZLayerTest {
         return Stream.of(
 
                 Arguments.of(new Coordinate(22.4900397, 51.2326363)),
-                Arguments.of(new Coordinate( -45.490, 43.213)),
+                Arguments.of(new Coordinate(-45.490, 43.213)),
                 Arguments.of(new Coordinate(39.091, -84.01)),
                 Arguments.of(new Coordinate(-39.091, -84.01))
         );
@@ -67,8 +89,8 @@ class XYZLayerTest {
     void getTopLeftCorner() {
         Layer xyz = new XYZLayer(xyzLayerDefinition);
         Point2D corner = xyz.getTopLeftCornerInMeters();
-        assertThat(corner.getX()).isEqualTo(-xyz.getProjectionEngine().getEquatorLength() /2 );
-        assertThat(corner.getY()).isEqualTo(xyz.getProjectionEngine().getPolarLength() /2 );
+        assertThat(corner.getX()).isEqualTo(-xyz.getProjectionEngine().getEquatorLength() / 2);
+        assertThat(corner.getY()).isEqualTo(xyz.getProjectionEngine().getPolarLength() / 2);
     }
 
     @Test
@@ -102,7 +124,7 @@ class XYZLayerTest {
 
 
     @Test
-    void shouldCreateXYZLayerWithNonDefaultValues()  {
+    void shouldCreateXYZLayerWithNonDefaultValues() {
 
         // xyz layer with custom params
 
@@ -128,5 +150,6 @@ class XYZLayerTest {
         assertThat(xyz.getZoomOffset()).isEqualTo(1);
 
     }
+
 
 }

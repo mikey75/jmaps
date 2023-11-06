@@ -62,7 +62,7 @@ public class DownloadingTileProvider implements TileProvider {
         return executorService;
     }
 
-    void download(String tileUrl) {
+    void download(String tileUrl, String cacheUrl) {
         log.debug("Getting from: {}", tileUrl);
 
         HttpRequest r = HttpRequest.newBuilder() //Request.nBuilder()
@@ -75,7 +75,7 @@ public class DownloadingTileProvider implements TileProvider {
             HttpResponse<InputStream> response = httpClient.send(r, HttpResponse.BodyHandlers.ofInputStream());
 
             if (response.statusCode() == 200) {
-                readAndCacheImage(tileUrl, response);
+                readAndCacheImage(cacheUrl, response);
             } else {
                 log.debug("Could not download {} - Http response {}", tileUrl, response.statusCode());
             }
@@ -110,19 +110,19 @@ public class DownloadingTileProvider implements TileProvider {
             }
     }
 
-    public BufferedImage getTile(String url) {
+    public BufferedImage getTile(String url, String cacheUrl) {
 
         // check local memory cache
-        Optional<BufferedImage> img = Optional.ofNullable(primaryTileCache.get(url));
+        Optional<BufferedImage> img = Optional.ofNullable(primaryTileCache.get(cacheUrl));
         if (img.isPresent()) {
             return img.get();
         }
 
         // now check configured local cache - if the image is there, and it's cache validity is not expired - return it
         if (secondaryCacheEnabled()) {
-                Optional<BufferedImage> image = Optional.ofNullable(mapViewer.getSecondaryTileCache().get(url));
-                if (image.isPresent() && !mapViewer.getSecondaryTileCache().keyExpired(url)) {
-                    primaryTileCache.put(url, image.get());
+                Optional<BufferedImage> image = Optional.ofNullable(mapViewer.getSecondaryTileCache().get(cacheUrl));
+                if (image.isPresent() && !mapViewer.getSecondaryTileCache().keyExpired(cacheUrl)) {
+                    primaryTileCache.put(cacheUrl, image.get());
                     return image.get();
                 }
 
@@ -132,7 +132,7 @@ public class DownloadingTileProvider implements TileProvider {
         // else submit tile for download from the web, but only if it's not already submitted
         if (!tilesLoading.contains(url)) {
             tilesLoading.add(url);
-            getExecutorService().submit(() -> download(url));
+            getExecutorService().submit(() -> download(url,cacheUrl));
         }
 
         return null;

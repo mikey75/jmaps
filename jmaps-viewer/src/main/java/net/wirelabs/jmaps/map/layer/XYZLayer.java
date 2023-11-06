@@ -1,5 +1,6 @@
 package net.wirelabs.jmaps.map.layer;
 
+import net.wirelabs.jmaps.map.downloader.UrlSet;
 import net.wirelabs.jmaps.model.map.LayerDocument;
 
 import java.awt.*;
@@ -34,15 +35,20 @@ public class XYZLayer extends Layer {
     }
 
     @Override
-    public String createTileUrl(int x, int y, int zoom) {
-        return url
-                .replace("{z}", String.valueOf(zoom))
-                .replace("{x}", String.valueOf(x))
-                .replace("{y}", String.valueOf(y));
+    public UrlSet createTileUrl(int x, int y, int zoom) {
+
+        String cacheUrl = substituteCoordinates(getHostPrefixAlternator().getCacheUrl(),x,y,zoom);
+        String downloadUrl = substituteCoordinates(getHostPrefixAlternator().getDownloadUrl(),x,y,zoom);
+        return new UrlSet(downloadUrl,cacheUrl);
 
     }
 
-
+    private String substituteCoordinates(String template, int x, int y, int zoom) {
+        return template
+                .replace("{z}", String.valueOf(zoom))
+                .replace("{x}", String.valueOf(x))
+                .replace("{y}", String.valueOf(y));
+    }
 
     @Override
     public double getMetersPerPixelAtZoom(int zoom) {
