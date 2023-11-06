@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.opengis.ows.x11.DatasetDescriptionSummaryBaseType;
 import net.opengis.wmts.x10.CapabilitiesDocument;
 import net.opengis.wmts.x10.TileMatrixSetDocument;
+import net.wirelabs.jmaps.map.downloader.UrlSet;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
 import net.wirelabs.jmaps.map.utils.UrlBuilder;
 import net.wirelabs.jmaps.model.map.LayerDocument;
@@ -124,8 +125,8 @@ public class WMTSLayer extends Layer {
 
     // todo: add style and format (recognize from capabilities)
     @Override
-    public String createTileUrl(int x, int y, int zoom) {
-        return urlBuilder.parse(url)
+    public UrlSet createTileUrl(int x, int y, int zoom) {
+        String originalUrl = urlBuilder.parse(url)
                 .addQueryParam("Service", "WMTS")
                 .addQueryParam("Request", "GetTile")
                 .addQueryParam("Layer", layerName)
@@ -137,6 +138,7 @@ public class WMTSLayer extends Layer {
                 .addQueryParam("TileRow", String.valueOf(y))
                 .addQueryParam("TileCol", String.valueOf(x))
                 .build();
+        return new UrlSet(originalUrl,originalUrl);
 
     }
 

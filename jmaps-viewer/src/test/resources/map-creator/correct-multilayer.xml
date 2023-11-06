@@ -5,13 +5,13 @@
     <layer>
         <name>layer1</name>
         <type>XYZ</type>
-        <url>url</url>
+        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
     </layer>
 
     <layer>
         <name>layer2</name>
         <type>XYZ</type>
-        <url>url</url>
+        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
     </layer>
 
     <copyright>jmaps</copyright>

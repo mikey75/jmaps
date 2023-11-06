@@ -5,7 +5,7 @@
     <layer>
         <name>layer1</name>
         <type>XYZ</type>
-        <url>url</url>
+        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
         <disabled>false</disabled>
         <swapAxis>true</swapAxis>
     </layer>
@@ -14,7 +14,7 @@
     <layer>
         <name>layer2</name>
         <type>XYZ</type>
-        <url>url</url>
+        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
         <disabled>true</disabled>
     </layer>
 
@@ -22,7 +22,7 @@
     <layer>
         <name>default</name>
         <type>XYZ</type>
-        <url>url</url>
+        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
     </layer>
 
     <copyright>jmaps</copyright>

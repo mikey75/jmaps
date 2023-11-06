@@ -19,10 +19,8 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
 
     private static final String CREATE_TABLE_SQL = "CREATE TABLE TILECACHE (tileUrl VARCHAR(1024) PRIMARY KEY,tileImg BLOB,timeStamp BIGINT)";
     private static final String GET_TEMPLATE_SQL = "select TILEIMG from TILECACHE where TILEURL='%s'";
-    private static final String PUT_TEMPLATE_SQL = "INSERT INTO TILECACHE VALUES('%s', ?, ?)";
-    private static final String UPDATE_TEMPLATE_SQL = "UPDATE TILECACHE set TILEIMG=?,TIMESTAMP=? WHERE TILEURL='%s'";
+    private static final String PUT_TEMPLATE_SQL = "INSERT OR REPLACE INTO TILECACHE VALUES('%s', ?, ?)";
     private static final String GET_TIMESTAMP_TEMPLATE_SQL = "select TIMESTAMP from TILECACHE where TILEURL='%s'";
-    private static final String COUNT_TEMPLATE_SQL = "select count (*) from TILECACHE where TILEURL='%s'";
 
 
     public DBCache() {
@@ -84,14 +82,7 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
     private void putImage(String key, BufferedImage value) {
         try {
             byte[] imgbytes = ImageUtils.imageToBytes(value);
-            String sqlCmd;
-
-            // always write entry - TileProvider decides if it's a re-load or new tile
-            if (!entryExists(key)) {
-                sqlCmd = String.format(PUT_TEMPLATE_SQL, key);
-            } else {
-                sqlCmd = String.format(UPDATE_TEMPLATE_SQL, key);
-            }
+            String sqlCmd = String.format(PUT_TEMPLATE_SQL, key);
 
             try (Connection connection = getConnection(); PreparedStatement ps = connection.prepareStatement(sqlCmd)) {
                 ps.setBytes(1, imgbytes);
@@ -135,11 +126,4 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
         return 0;
     }
 
-    boolean entryExists(String key) throws SQLException {
-
-        String query = String.format(COUNT_TEMPLATE_SQL, key);
-        try (Connection connection = getConnection(); Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
-            return (rs.next() && rs.getInt(1) == 1);
-        }
-    }
 }

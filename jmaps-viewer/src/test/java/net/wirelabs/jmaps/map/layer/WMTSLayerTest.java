@@ -2,35 +2,32 @@ package net.wirelabs.jmaps.map.layer;
 
 import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.model.map.LayerDocument;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class WMTSLayerTest {
-    private String testUrl;
-    private LayerDocument.Layer wmtsLayerDefinition;
-    private MockHttpServer server;
 
-    @BeforeEach
-    void before() throws IOException {
+    private static String testUrl;
+    private static MockHttpServer server;
+    private static LayerDocument.Layer wmtsLayerDefinition;
 
-        // serve fake capabilities
-
+    @BeforeAll
+    static void beforeAll() throws IOException {
+        // start mock capabilities server
         server = new MockHttpServer();
         testUrl = "http://localhost:"+ server.getPort() +"/valid1";
+        // serve fake layer definition
         wmtsLayerDefinition = LayerDocument.Layer.Factory.newInstance();
         wmtsLayerDefinition.setType(String.valueOf(LayerType.WMTS));
         wmtsLayerDefinition.setName("TestWmts");
         wmtsLayerDefinition.setUrl(testUrl);
-
     }
 
-    @AfterEach
-    void after() {
+    @AfterAll
+    static void afterAll() {
         server.stop();
     }
 
@@ -52,7 +49,7 @@ class WMTSLayerTest {
         assertThat(wmts.getZoomOffset()).isZero();
 
 
-        assertThat(wmts.createTileUrl(10, 11, 15)).isEqualTo(
+        assertThat(wmts.createTileUrl(10, 11, 15).downloadUrl()).isEqualTo(
                 testUrl + "?Service=WMTS" +
                         "&Request=GetTile" +
                         "&Layer=G2_MOBILE_500" +
@@ -86,7 +83,7 @@ class WMTSLayerTest {
         assertThat(wmts.isSwapAxis()).isTrue();
         assertThat(wmts.getCrs()).isEqualTo("EPSG:3187");
 
-        assertThat(wmts.createTileUrl(10, 11, 15)).isEqualTo(
+        assertThat(wmts.createTileUrl(10, 11, 15).downloadUrl()).isEqualTo(
                 testUrl + "?Service=WMTS" +
                         "&Request=GetTile" +
                         "&Layer=G2_MOBILE_500" +

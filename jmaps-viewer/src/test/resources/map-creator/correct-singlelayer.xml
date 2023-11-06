@@ -4,7 +4,7 @@
     <layer>
         <name>Open Street Map</name>
         <type>XYZ</type>
-        <url>url</url>
+        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
     </layer>
     <copyright>jmaps</copyright>
 </map>

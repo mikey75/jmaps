@@ -4,13 +4,13 @@
     <layer>
         <name>podklad</name>
         <type>QUAD</type>
-        <url>url</url>
+        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
     </layer>
 
     <layer>
         <name>podklad</name>
         <type>QUAD</type>
-        <url>url</url>
+        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
     </layer>
 
     <copyright>jmaps</copyright>
