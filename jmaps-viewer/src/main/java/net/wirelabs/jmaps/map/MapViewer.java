@@ -91,11 +91,30 @@ public class MapViewer extends JPanel {
 
     public void setZoom(int zoom) {
         if (hasLayers()) {
-            Layer baseLayer = getBaseLayer();
-            if (zoom < baseLayer.getMinZoom()) zoom = baseLayer.getMinZoom();
-            if (zoom > baseLayer.getMaxZoom()) zoom = baseLayer.getMaxZoom();
+
+            int minZoomAllLayers = getMinZoomAllLayers();
+            int maxZoomAllLayers = getMaxZoomAllLayers();
+
+            if (zoom < minZoomAllLayers) zoom = minZoomAllLayers;
+            if (zoom > maxZoomAllLayers) zoom = maxZoomAllLayers;
+
         }
         this.zoom = zoom;
+    }
+
+    public int getMaxZoomAllLayers() {
+        return getLayers().stream()
+                .map(Layer::getMaxZoom)
+                .mapToInt(v -> v)
+                .min().orElse(0);
+    }
+
+    public int getMinZoomAllLayers() {
+        return getLayers()
+                .stream()
+                .map(Layer::getMinZoom)
+                .mapToInt(val -> val)
+                .max().orElse(0);
     }
 
     // sets location (given in wgs84 coordinates)
