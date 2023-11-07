@@ -47,7 +47,7 @@ public class TileDownloader {
         this.executorService = Executors.newFixedThreadPool(tilerThreads, new TileDownloaderThreadFactory());
 
         log.info("Started tile downloader:[User-Agent: {}, Memory cache size: {}, Tiler threads: {}]",
-                userAgent,cacheSize,tilerThreads);
+                userAgent, cacheSize, tilerThreads);
 
     }
 
@@ -91,15 +91,10 @@ public class TileDownloader {
                 if (localCache.get(tileUrl) == null) {
                     localCache.put(tileUrl, b);
                 }
-                SwingUtilities.invokeAndWait(() -> {
-                    tilesLoading.remove(tileUrl);
-                    // emit LOADED event here to ditch the mapviewer reference dependency
-                    mapViewer.repaint();
-                });
-
+                tilesLoading.remove(tileUrl);
+                // emit LOADED event here to ditch the mapviewer reference dependency
+                mapViewer.repaint();
             }
-        } catch (InterruptedException | InvocationTargetException e) {
-            Thread.currentThread().interrupt();
         }
     }
 
