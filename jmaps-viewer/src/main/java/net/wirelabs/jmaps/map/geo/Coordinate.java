@@ -4,8 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import static java.lang.Double.NaN;
-
 /**
  * Created 5/22/23 by Michał Szwaczko (mikey@wirelabs.net)
  * <p>
@@ -39,7 +37,7 @@ public class Coordinate {
 
         this.longitude = longitude;
         this.latitude = latitude;
-        this.altitude = NaN;
+        this.altitude = 0.0d;
 
     }
 

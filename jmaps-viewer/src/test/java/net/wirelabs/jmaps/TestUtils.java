@@ -3,6 +3,8 @@ package net.wirelabs.jmaps;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.Random;
+
 /**
  * Created 10/28/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
@@ -28,5 +30,18 @@ public class TestUtils {
 
         double mask = coeffs[decimalPlace];
         return Math.round(value * mask) / mask;
+    }
+
+    public static String getRandomString(int len) {
+
+        String chars = "abcdefghijklmnopqrstuwvxyzABCDEFGHIJKLMNOPQRSTUWVXYZ";
+        Random random = new Random();
+        StringBuilder resultString = new StringBuilder();
+
+        for (int x = 0; x < len; x++) {
+            int idx = random.nextInt(chars.length() - 1);
+            resultString.append(chars.charAt(idx));
+        }
+        return resultString.toString();
     }
 }
