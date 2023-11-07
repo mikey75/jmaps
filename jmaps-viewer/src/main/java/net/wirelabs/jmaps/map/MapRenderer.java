@@ -42,7 +42,6 @@ public class MapRenderer {
 
     public void renderMap(Graphics graphicsContext) {
         if (mapViewer.hasLayers()) {
-            mapViewer.setZoom(mapViewer.getZoom());
             renderTiles(graphicsContext, mapViewer.getZoom(), mapViewer.getTopLeftCornerPoint());
             renderUserOverlays((Graphics2D) graphicsContext);
             renderDefaultOverlays((Graphics2D) graphicsContext);

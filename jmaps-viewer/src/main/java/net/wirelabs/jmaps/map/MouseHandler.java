@@ -44,7 +44,10 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
 
             int zoom = mapViewer.getZoom() - evt.getWheelRotation();
 
-            if (zoom >= baseLayer.getMinZoom() && zoom <= baseLayer.getMaxZoom()) {
+            int minZoomAllLayers = mapViewer.getMinZoomAllLayers();
+            int maxZoomAllLayers = mapViewer.getMaxZoomAllLayers();
+
+            if (zoom >= minZoomAllLayers && zoom <= maxZoomAllLayers) {
                 // get mouse location in pixels in new zoom
                 Point2D p = baseLayer.latLonToPixel(mouseLatLon, zoom);
 
