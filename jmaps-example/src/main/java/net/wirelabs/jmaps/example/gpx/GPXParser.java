@@ -44,12 +44,12 @@ class GPXParser {
     public List<Coordinate> parseToGeoPosition(File file) {
 
         return parseGpxFile(file).stream()
-                .map(GPXParser::trackPointToCoordinate)
+                .map(this::trackPointToCoordinate)
                 .collect(Collectors.toList());
 
     }
 
-    private static Coordinate trackPointToCoordinate(WptType trackPoint) {
+    private Coordinate trackPointToCoordinate(WptType trackPoint) {
         Coordinate coordinate;
 
         if (trackPoint.getEle() == null) {

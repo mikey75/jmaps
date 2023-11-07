@@ -3,29 +3,33 @@ package net.wirelabs.jmaps.map;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.geom.Rectangle2D;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TileDebugger {
 
-    private static final Font font = new Font("Dialog", Font.BOLD, 10);
+    private static final Font FONT = new Font("Dialog", Font.BOLD, 10);
+    private static final String TILE_INFO_FORMAT = "[%d/%d/%d]";
+    private static final int MARGIN = 4;
 
-    public static void drawTileDebugInfo(Graphics g, int tileSize, int itpx, int itpy, int ox, int oy, int zoom) {
+    public static void drawTileDebugInfo(Graphics graphics, int tileSize, int tileX, int tileY, int px, int py, int zoom) {
 
-        g.setFont(font);
-        FontMetrics fontMetrics = g.getFontMetrics();
+        graphics.setFont(FONT);
 
-        String text = itpx + "/" + itpy + "/" + zoom;
-        Rectangle2D textBounds = fontMetrics.getStringBounds(text, g);
-        // ramka i tlo na debug info
-        g.setColor(Color.WHITE);
-        g.fillRect(ox, oy, (int) (textBounds.getWidth() + 5), (int) (textBounds.getHeight() + 2));
-        g.setColor(Color.BLACK);
-        g.drawRect(ox, oy, (int) (textBounds.getWidth() + 5), (int) (textBounds.getHeight() + 2));
+        String text = String.format(TILE_INFO_FORMAT, tileX, tileY, zoom);
+        Rectangle2D textBounds = graphics.getFontMetrics().getStringBounds(text, graphics);
 
-        // draw ramki na caly kafel
-        g.drawRect(ox, oy, tileSize, tileSize);
-        g.drawString(text, (ox + 2), (int) (oy + textBounds.getHeight()));
+        // draw tile info box
+        graphics.setColor(Color.WHITE);
+        graphics.fillRect(px, py, (int) (textBounds.getWidth() + MARGIN), (int) (textBounds.getHeight() + MARGIN));
+        graphics.setColor(Color.BLACK);
+        graphics.drawRect(px, py, (int) (textBounds.getWidth() + MARGIN), (int) (textBounds.getHeight() + MARGIN));
+        graphics.drawString(text, px + MARGIN / 2, (int) (py + textBounds.getHeight()) + MARGIN / 2);
+
+        // draw tile frame
+        graphics.drawRect(px, py, tileSize, tileSize);
     }
 }

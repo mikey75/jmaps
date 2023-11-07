@@ -32,27 +32,22 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
 
     @Override
     public BufferedImage get(String key) {
-        File f = getCacheFile(key);
 
         try {
-            BufferedImage image = ImageIO.read(Files.newInputStream(f.toPath()));
-            if (image != null) {
-                return image;
-            }
+            File f = getCacheFile(key);
+            return ImageIO.read(Files.newInputStream(f.toPath()));
         } catch (IOException e) {
             return null;
         }
-        return null;
-
     }
 
     @Override
     public void put(String key, BufferedImage b) {
         try {
             File file = getCacheFile(key);
-            if (file.exists()) return;
+            if (file.exists()) return; // fail fast
             Files.createDirectories(file.toPath());
-            ImageIO.write(b, "png", getCacheFile(key));
+            ImageIO.write(b, "png",file);
         } catch (IOException ex) {
             log.error("File cache put failed for {}", key, ex);
         }
@@ -64,7 +59,7 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
 
     @Override
     public void clear() {
-        // do nothing, clear has only sense in memory based cache
+        throw new UnsupportedOperationException("clear() unimplemented for this cache");
     }
 
     @Override
@@ -105,7 +100,7 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
         return new File(baseDir.toFile(), name);
     }
 
-    String normalizeUrl(String name) {
+    private String normalizeUrl(String name) {
 
         char replacementChar = '$';
         char[] charsNormalized = new char[]{'&', '?', '*', ':', '<', '>', '"'};
