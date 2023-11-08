@@ -1,6 +1,5 @@
 package net.wirelabs.jmaps.map;
 
-import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.painters.Painter;
 import net.wirelabs.jmaps.map.downloader.TileDownloader;

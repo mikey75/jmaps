@@ -4,7 +4,7 @@ import lombok.Getter;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 
 @Getter
-public enum ExampleMaps {
+public enum ExampleMap {
 
     OSM("Open Street Map", "OpenStreetMap.xml", new Coordinate(22.565628, 51.247717)),
     CYCLE("Cyclo OSM", "CyclOSM.xml", new Coordinate(22.565628, 51.247717)),
@@ -18,7 +18,7 @@ public enum ExampleMaps {
     private final String mapFile;
     private final Coordinate centerON;
 
-    ExampleMaps(String name, String mapFile, Coordinate centerON) {
+    ExampleMap(String name, String mapFile, Coordinate centerON) {
         this.name = name;
         this.mapFile = mapFile;
         this.centerON = centerON;

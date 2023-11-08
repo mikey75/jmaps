@@ -9,7 +9,7 @@ import javax.swing.border.TitledBorder;
 public class LayersPanel extends JPanel {
 
     private final MapViewer mapViewer;
-    private final LayerManager layerManager;
+    private final transient LayerManager layerManager;
 
     public LayersPanel(MapViewer mapViewer, LayerManager layerManager) {
         this.mapViewer = mapViewer;

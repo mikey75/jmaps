@@ -11,22 +11,22 @@ import java.awt.geom.Point2D;
 
 
 @Slf4j
+@Getter
+@Setter
 public abstract class Layer {
 
-    @Getter
     protected final String name;
-    @Getter
     protected final String url;
 
-    @Getter @Setter protected int tileSize = 256;
-    @Getter @Setter protected int maxZoom = 18;
-    @Getter @Setter protected int minZoom = 0;
-    @Getter @Setter protected float opacity = 1.0f;
-    @Getter @Setter protected int zoomOffset = 0;
-    @Getter @Setter protected boolean swapAxis = false;
-    @Getter @Setter protected boolean enabled = true;
+    protected int tileSize = 256;
+    protected int maxZoom = 18;
+    protected int minZoom = 0;
+    protected float opacity = 1.0f;
+    protected int zoomOffset = 0;
+    protected boolean swapAxis = false;
+    protected boolean enabled = true;
 
-    @Getter @Setter protected ProjectionEngine projectionEngine;
+    protected ProjectionEngine projectionEngine;
 
     protected Layer(String name, String url) {
         this.name = name;

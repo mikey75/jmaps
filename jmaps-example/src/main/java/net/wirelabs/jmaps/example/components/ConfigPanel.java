@@ -21,16 +21,16 @@ import java.util.List;
 @Slf4j
 public class ConfigPanel extends JPanel {
 
+    public static final File HOME_DIR = new File(System.getProperty("user.home"));
+
     private final JButton btnAddLayer = new JButton("Load custom map");
     private final JButton btnLoadGPX = new JButton("Load gpx track");
     private final JCheckBox devMode = new JCheckBox("Developer mode");
+    private final JLabel label = new JLabel("Example map definitions");
+    private final JComboBox<ExampleMap> exampleMapCombo = new JComboBox<>(ExampleMap.values());
 
     private final MapViewer mapViewer;
-    private final RoutePainter routePainter;
-
-    private final JLabel label = new JLabel("Example map definitions");
-    private final JComboBox<ExampleMaps> exampleMapCombo = new JComboBox<>(ExampleMaps.values());
-
+    private final transient RoutePainter routePainter;
 
     private JFileChooser fileChooser;
 
@@ -81,7 +81,7 @@ public class ConfigPanel extends JPanel {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                ExampleMaps item = (ExampleMaps) value;
+                ExampleMap item = (ExampleMap) value;
                 setText(item.getName());
                 return this;
             }
@@ -91,7 +91,7 @@ public class ConfigPanel extends JPanel {
     private void setComboChangeListener() {
 
         exampleMapCombo.addActionListener(e -> {
-            ExampleMaps selected = (ExampleMaps) exampleMapCombo.getSelectedItem();
+            ExampleMap selected = (ExampleMap) exampleMapCombo.getSelectedItem();
 
             if (selected != null) {
                 URL path = getClass().getClassLoader().getResource(selected.getMapFile());
@@ -134,7 +134,7 @@ public class ConfigPanel extends JPanel {
 
     private void invokeFileChooser(String type, String fileExtensions, Runnable actionOnApprove) {
         fileChooser = new JFileChooser();
-        fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+        fileChooser.setCurrentDirectory(HOME_DIR);
         fileChooser.setFileFilter(new FileNameExtensionFilter(type, fileExtensions));
         int result = fileChooser.showOpenDialog(mapViewer);
 
@@ -143,8 +143,8 @@ public class ConfigPanel extends JPanel {
         }
     }
 
+    // choose first available map
     public void setFirstAvailableMap() {
-        // choose first map
         exampleMapCombo.setSelectedIndex(0);
     }
 
