@@ -88,15 +88,5 @@ class DirectoryBasedCacheTest {
         cache.put(LONG_URL, TEST_IMAGE);
         assertThat(cache.get(EXPECTED_LONG_KEY)).isNotNull();
     }
-
-    @Test
-    void shouldThrowExceptionOnClear() {
-
-        assertThatExceptionOfType(UnsupportedOperationException.class)
-                .isThrownBy(cache::clear)
-                .withMessageContaining("clear() unimplemented for this cache");
-
-    }
-
 }
 

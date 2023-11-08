@@ -35,13 +35,11 @@ public class InMemoryTileCache implements Cache<String,BufferedImage> {
     }
 
     @Override
-    public void clear() {
-        lruCache.clear();
-    }
-
-    @Override
     public boolean contains(String key) {
         return lruCache.containsKey(key);
     }
 
+    public void clear() {
+        lruCache.clear();
+    }
 }

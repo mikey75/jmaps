@@ -19,11 +19,6 @@ public class DummyCache implements Cache<String, BufferedImage> {
     }
 
     @Override
-    public void clear() {
-        // dummy no op
-    }
-
-    @Override
     public boolean contains(String key) {
         return false;
     }

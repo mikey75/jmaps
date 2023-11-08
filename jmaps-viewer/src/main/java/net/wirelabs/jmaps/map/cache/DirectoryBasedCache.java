@@ -58,11 +58,6 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
     }
 
     @Override
-    public void clear() {
-        throw new UnsupportedOperationException("clear() unimplemented for this cache");
-    }
-
-    @Override
     public boolean contains(String key) {
         return Files.exists(Paths.get(key));
     }
