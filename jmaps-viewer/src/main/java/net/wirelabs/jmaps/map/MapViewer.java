@@ -8,8 +8,6 @@ import net.wirelabs.jmaps.map.downloader.TileDownloader;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
 import net.wirelabs.jmaps.map.layer.Layer;
-import net.wirelabs.jmaps.map.layer.LayerManager;
-import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
 import net.wirelabs.jmaps.map.painters.CurrentPositionPainter;
 import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
@@ -18,8 +16,7 @@ import net.wirelabs.jmaps.map.readers.MapReader;
 
 import javax.swing.*;
 import javax.xml.bind.JAXBException;
-import java.awt.Graphics;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -30,51 +27,45 @@ import java.util.List;
 @Slf4j
 public class MapViewer extends JPanel {
 
-    private final transient LayerManager layerManager = new LayerManager();
-
     private final transient MapRenderer mapRenderer;
     private final transient MouseHandler mouseHandler;
     private final transient TileDownloader tileDownloader;
+    private final transient MapManager mapManager;
+
+    private final transient CurrentPositionPainter currentPositionPainter = new CurrentPositionPainter();
+    private final transient MapAttributionPainter attributionPainter = new MapAttributionPainter();
 
     // current map top left corner in pixels
     @Getter
     private final Point topLeftCornerPoint = new Point();
-
-
+    private final MapInfoPanel mapInfoPanel;
+    @Getter @Setter
+    private String userAgent = Defaults.DEFAULT_USER_AGENT;
+    @Getter @Setter
+    private int tilerThreads = Defaults.DEFAULT_TILER_THREADS;
     // zoom level
     @Getter
-    private int zoom = 1;
-    // location for map start
-    @Getter
-    @Setter
-    private transient Coordinate home;
+    private int zoom = 3;
 
-    @Setter
-    @Getter
+    // location for map start
+    @Getter @Setter
+    private transient Coordinate home;
+    @Getter @Setter
     private boolean developerMode = false; // developer mode enables cache debug, tile debug and position tracking
-    @Getter
-    @Setter
+    @Getter @Setter
     private boolean showCoordinates = false;
-    @Getter
-    @Setter
+    @Getter @Setter
     private boolean showAttribution = true;
     @Getter
-    private String mapCopyrightAttribution = "";
-    @Getter
     private final List<Painter<MapViewer>> userOverlays = new ArrayList<>();
-    @Getter
-    private final LayersPanel layersPanel;
 
     public MapViewer() {
-        this(Defaults.DEFAULT_USER_AGENT, Defaults.DEFAULT_TILER_THREADS, Defaults.DEFAULT_IMGCACHE_SIZE);
-    }
-
-    public MapViewer(String userAgent, int tilerThreads, int tileCacheSize) {
-        tileDownloader = new TileDownloader(this, userAgent, tilerThreads, tileCacheSize);
+        tileDownloader = new TileDownloader(this);
         mapRenderer = new MapRenderer(this, tileDownloader);
-        layersPanel = new LayersPanel( this, layerManager);
+        mapManager = new MapManager();
         mouseHandler = new MouseHandler(this);
-        addLayersPanel();
+        mapInfoPanel = new MapInfoPanel(this, mapManager);
+        add(mapInfoPanel);
     }
 
     // the method that does the actual painting
@@ -86,14 +77,14 @@ public class MapViewer extends JPanel {
     }
 
     public void setLocalCache(Cache<String, BufferedImage> cache) {
-        tileDownloader.setLocalCache(cache);
+        tileDownloader.setSecondaryTileCache(cache);
     }
 
     public void setZoom(int zoom) {
         if (hasLayers()) {
 
-            int minZoomAllLayers = getMinZoomAllLayers();
-            int maxZoomAllLayers = getMaxZoomAllLayers();
+            int minZoomAllLayers = getMinZoom();
+            int maxZoomAllLayers = getMaxZoom();
 
             if (zoom < minZoomAllLayers) zoom = minZoomAllLayers;
             if (zoom > maxZoomAllLayers) zoom = maxZoomAllLayers;
@@ -102,19 +93,12 @@ public class MapViewer extends JPanel {
         this.zoom = zoom;
     }
 
-    public int getMaxZoomAllLayers() {
-        return getLayers().stream()
-                .map(Layer::getMaxZoom)
-                .mapToInt(v -> v)
-                .min().orElse(0);
+    public int getMaxZoom() {
+        return mapManager.getMaxZoom();
     }
 
-    public int getMinZoomAllLayers() {
-        return getLayers()
-                .stream()
-                .map(Layer::getMinZoom)
-                .mapToInt(val -> val)
-                .max().orElse(0);
+    public int getMinZoom() {
+        return mapManager.getMinZoom();
     }
 
     // sets location (given in wgs84 coordinates)
@@ -142,43 +126,18 @@ public class MapViewer extends JPanel {
     public void setMap(File xmlMapFile) {
         try {
             MapDefinition mapDefinition = MapReader.loadMapDefinitionFile(xmlMapFile);
-            parseMapDefinition(mapDefinition);
+            mapManager.createMap(mapDefinition);
             // update layers panel
             updateLayersPanel();
             setPositionAndZoom(getHome(), getZoom());
-            repaint();
 
         } catch (JAXBException ex) {
             log.info("Map not created {}", ex.getMessage(), ex);
         }
     }
 
-    private void updateLayersPanel() {
-        if (layerManager.isMultilayer()) {
-            layersPanel.addLayers();
-            layersPanel.setVisible(true);
-        } else {
-            layersPanel.setVisible(false);
-        }
-    }
-
     public void addUserOverlay(Painter<MapViewer> painter) {
         userOverlays.add(painter);
-    }
-
-    private void parseMapDefinition(MapDefinition mapDefinition) {
-
-        mapCopyrightAttribution = mapDefinition.getCopyright();
-        log.info("Setting map to {}", mapDefinition.getName());
-        log.info("Copyright: {}", mapCopyrightAttribution);
-        // there can be only one map rendered at a time
-        // so remove existing if any
-        layerManager.removeAllLayers();
-
-        for (LayerDefinition layer : mapDefinition.getLayers()) {
-            layerManager.createLayer(layer);
-        }
-
     }
 
     public void setPositionAndZoom(Coordinate home, int zoom) {
@@ -189,23 +148,19 @@ public class MapViewer extends JPanel {
     }
 
     protected Painter<MapViewer> getCoordinatePainter() {
-        return new CurrentPositionPainter();
+        return currentPositionPainter;
     }
 
     protected Painter<MapViewer> getAttributionPainter() {
-        return new MapAttributionPainter();
+        return attributionPainter;
     }
 
     public boolean hasLayers() {
-        return layerManager.layersPresent();
+        return mapManager.layersPresent();
     }
 
     public Layer getBaseLayer() {
-        return layerManager.getBaseLayer();
-    }
-
-    public List<Layer> getLayers() {
-        return layerManager.getLayers();
+        return mapManager.getBaseLayer();
     }
 
     public Point2D getCurrentMousePosition() {
@@ -255,11 +210,25 @@ public class MapViewer extends JPanel {
     }
 
     public List<Layer> getEnabledLayers() {
-        return layerManager.getEnabledLayers();
+        return mapManager.getEnabledLayers();
     }
 
-    private void addLayersPanel() {
-        add(layersPanel);
+    public String getMapCopyrightAttribution() {
+        return mapManager.getMapCopyrightAttribution();
+    }
+
+    public void setImageCacheSize(long size) {
+        tileDownloader.setImageCacheSize(size);
+    }
+
+    public void updateLayersPanel() {
+
+        if (mapManager.isMultilayer()) {
+            mapInfoPanel.addLayers();
+            mapInfoPanel.setVisible(true);
+        } else {
+            mapInfoPanel.setVisible(false);
+        }
     }
 }
 

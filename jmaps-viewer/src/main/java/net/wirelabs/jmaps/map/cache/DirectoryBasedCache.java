@@ -27,7 +27,6 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
 
     public DirectoryBasedCache(String cacheDir) {
         this.baseDir = Paths.get(cacheDir);
-        log.info("Local cache directory: {} ", cacheDir);
     }
 
     @Override

@@ -1,19 +1,20 @@
 package net.wirelabs.jmaps.map;
 
 import net.wirelabs.jmaps.map.layer.Layer;
-import net.wirelabs.jmaps.map.layer.LayerManager;
 
-import javax.swing.*;
+import javax.swing.BoxLayout;
+import javax.swing.JCheckBox;
+import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
 
-public class LayersPanel extends JPanel {
+public class MapInfoPanel extends JPanel {
 
     private final MapViewer mapViewer;
-    private final transient LayerManager layerManager;
+    private final transient MapManager mapManager;
 
-    public LayersPanel(MapViewer mapViewer, LayerManager layerManager) {
+    public MapInfoPanel(MapViewer mapViewer, MapManager mapManager) {
         this.mapViewer = mapViewer;
-        this.layerManager = layerManager;
+        this.mapManager = mapManager;
 
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setOpaque(true);
@@ -25,7 +26,7 @@ public class LayersPanel extends JPanel {
 
         removeAll();
 
-        for (Layer layer: layerManager.getLayers()) {
+        for (Layer layer: mapManager.getLayers()) {
             JCheckBox layerCheckbox = new JCheckBox(layer.getName());
             layerCheckbox.setSelected(layer.isEnabled());
             layerCheckbox.addActionListener( e -> {

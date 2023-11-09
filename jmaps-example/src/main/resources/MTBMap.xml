@@ -5,5 +5,5 @@
         <type>XYZ</type>
         <url>http://tile.mtbmap.cz/mtbmap_tiles/{z}/{x}/{y}.png</url>
     </layer>
-    <copyright>>Map data: OpenStreetMap, USGS | Rendering: Martin Tesař</copyright>
+    <copyright>Map data: OpenStreetMap, USGS | Rendering: Martin Tesař</copyright>
 </map>

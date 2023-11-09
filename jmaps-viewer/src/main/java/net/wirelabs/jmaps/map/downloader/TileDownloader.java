@@ -1,26 +1,24 @@
 package net.wirelabs.jmaps.map.downloader;
 
 
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.map.Defaults;
+import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
 import net.wirelabs.jmaps.map.cache.DummyCache;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.cache.Cache;
-import net.wirelabs.jmaps.map.cache.InMemoryTileCache;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 
 /**
  * Created 5/23/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -32,23 +30,30 @@ public class TileDownloader {
 
     private final OkHttpClient httpClient = new OkHttpClient();
     private final List<String> tilesLoading = new CopyOnWriteArrayList<>();
-    private final InMemoryTileCache inMemoryTileCache;
-    private final ExecutorService executorService;
+
+    // primary LRU in memory cache
+    private final ConcurrentLinkedHashMap<String,BufferedImage> primaryTileCache;
+    // secondary cache - default no-cache
+    private Cache<String, BufferedImage> secondaryTileCache = new DirectoryBasedCache();
+
     private final MapViewer mapViewer;
-    private final String userAgent;
+    private ExecutorService executorService;
 
-    private Cache<String, BufferedImage> localCache = new DummyCache();
 
-    public TileDownloader(MapViewer mapViewer, String userAgent, int tilerThreads, int cacheSize) {
+    public TileDownloader(MapViewer mapViewer) {
 
         this.mapViewer = mapViewer;
-        this.userAgent = userAgent;
-        this.inMemoryTileCache = new InMemoryTileCache(cacheSize);
-        this.executorService = Executors.newFixedThreadPool(tilerThreads, new TileDownloaderThreadFactory());
+        this.primaryTileCache = new ConcurrentLinkedHashMap.Builder<String,BufferedImage>()
+                .maximumWeightedCapacity(Defaults.DEFAULT_IMGCACHE_SIZE)
+                .build();
+    }
 
-        log.info("Started tile downloader:[User-Agent: {}, Memory cache size: {}, Tiler threads: {}]",
-                userAgent, cacheSize, tilerThreads);
+    public ExecutorService getExecutorService() {
 
+        if (executorService == null) {
+            executorService = Executors.newFixedThreadPool(mapViewer.getTilerThreads(), new TileDownloaderThreadFactory());
+        }
+        return executorService;
     }
 
     private void download(String tileUrl) {
@@ -59,7 +64,7 @@ public class TileDownloader {
 
         Request r = new Request.Builder()
                 .url(tileUrl)
-                .header("User-Agent", userAgent)
+                .header("User-Agent", mapViewer.getUserAgent())
                 .get().build();
 
         try {
@@ -75,7 +80,7 @@ public class TileDownloader {
         } catch (OutOfMemoryError e) {
             log.error("DANG! Local memory cache run out of memory");
             log.error("Prunning memory cache...");
-            inMemoryTileCache.clear();
+            primaryTileCache.clear();
         }
         // tile is not loading anymore
         tilesLoading.remove(tileUrl);
@@ -87,9 +92,9 @@ public class TileDownloader {
             InputStream inputStream = body.byteStream();
             BufferedImage b = ImageIO.read(inputStream);
             if (b != null) {
-                inMemoryTileCache.put(tileUrl, b);
-                if (localCache.get(tileUrl) == null) {
-                    localCache.put(tileUrl, b);
+                primaryTileCache.put(tileUrl, b);
+                if (secondaryTileCache.get(tileUrl) == null) {
+                    secondaryTileCache.put(tileUrl, b);
                 }
                 tilesLoading.remove(tileUrl);
                 // emit LOADED event here to ditch the mapviewer reference dependency
@@ -101,38 +106,38 @@ public class TileDownloader {
     public BufferedImage getTile(String url) {
 
         // check local memory cache
-        BufferedImage img = inMemoryTileCache.get(url);
+        BufferedImage img = primaryTileCache.get(url);
         if (img != null) {
-            return inMemoryTileCache.get(url);
+            return primaryTileCache.get(url);
         }
 
         // now check configured local cache
 
-        BufferedImage image = localCache.get(url);
+        BufferedImage image = secondaryTileCache.get(url);
         if (image != null) {
-            inMemoryTileCache.put(url, image);
-            return inMemoryTileCache.get(url);
+            primaryTileCache.put(url, image);
+            return primaryTileCache.get(url);
         }
 
         // else submit tile for download from the web
         // but don't submit if it is already submitted
         if (!tilesLoading.contains(url)) {
             tilesLoading.add(url);
-            executorService.submit(() -> download(url));
+            getExecutorService().submit(() -> download(url));
         }
 
         return null;
     }
 
-    public void shutdown() {
-        executorService.shutdown();
-    }
-
     public boolean isTileInCache(String url) {
-        return inMemoryTileCache.contains(url);
+        return primaryTileCache.containsKey(url);
     }
 
-    public void setLocalCache(Cache<String, BufferedImage> localCache) {
-        this.localCache = localCache;
+    public void setImageCacheSize(long size) {
+        primaryTileCache.setCapacity(size);
+    }
+
+    public void setSecondaryTileCache(Cache<String, BufferedImage> secondaryTileCache) {
+        this.secondaryTileCache = secondaryTileCache;
     }
 }

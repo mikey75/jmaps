@@ -19,19 +19,16 @@ import javax.swing.border.TitledBorder;
 public class MapPanel extends JPanel {
 
     private final transient RoutePainter routePainter = new RoutePainter();
-    private final MapViewer mapViewer = new MapViewer("JMapsTiler 1.0",32,16000);
+    private final MapViewer mapViewer = new MapViewer();
 
     public MapPanel() {
 
         setBorder(new TitledBorder("Map"));
         setLayout(new MigLayout("", "[grow]", "[grow]"));
-
-        mapViewer.setDeveloperMode(false);
         mapViewer.setShowCoordinates(true);
         mapViewer.setZoom(12);
+        mapViewer.setImageCacheSize(32000);
         mapViewer.addUserOverlay(routePainter);
-        mapViewer.setLocalCache(new DirectoryBasedCache());
-
         add(mapViewer, "cell 0 0,grow");
 
     }
