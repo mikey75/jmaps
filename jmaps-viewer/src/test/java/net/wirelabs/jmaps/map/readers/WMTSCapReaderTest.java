@@ -19,6 +19,7 @@ class WMTSCapReaderTest {
 
     private static final File TEST_CAPABILITIES_XML_FILE = new File("src/test/resources/wmts/capabilities.xml");
     private static final File EXPECTED_CACHED_FILE = new File(TEST_CACHE_ROOT,"localhost/wmts/capabilities.xml");
+    private static final File NON_CAPABILITIES_FILE = new File("src/test/resources/wmts/non-capabilities.xml");
 
     @BeforeEach
     void deleteCacheFile() throws IOException {
@@ -48,7 +49,7 @@ class WMTSCapReaderTest {
 
         assertThatExceptionOfType(IllegalStateException.class)
                 .isThrownBy(() -> WMTSCapReader.loadCapabilities("nonexisting"))
-                .withMessageContaining("Could not parse Capablities.xml");
+                .withMessageContaining("Could not parse Capabilities.xml");
     }
 
     @Test
@@ -58,6 +59,18 @@ class WMTSCapReaderTest {
         String testUrl = "http://localhost/wmts";
         Capabilities capabilities = WMTSCapReader.loadCapabilities(testUrl);
         assertFileIsCreatedAndHasCorrectContent(capabilities);
+    }
+
+    @Test
+    void shouldNotLoadAndCacheNonXMLFileFromNetwork() throws Exception {
+        TestHttpServer server = new TestHttpServer(NON_CAPABILITIES_FILE);
+        String testUrl = "http://localhost:" + server.getPort() + "/wmts";
+
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> WMTSCapReader.loadCapabilities(testUrl))
+                .withMessageContaining("Could not parse Capabilities.xml");
+
+        assertThat(EXPECTED_CACHED_FILE).doesNotExist();
+
     }
 
     private void assertFileIsCreatedAndHasCorrectContent(Capabilities capabilities) throws IOException {
