@@ -56,7 +56,7 @@ public class TileDownloader {
         return executorService;
     }
 
-    private void download(String tileUrl) {
+    void download(String tileUrl) {
 
         if (mapViewer.isDeveloperMode()) {
             log.info("Getting from: {}", tileUrl);
