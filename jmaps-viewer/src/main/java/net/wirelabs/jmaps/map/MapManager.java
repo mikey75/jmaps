@@ -2,6 +2,7 @@ package net.wirelabs.jmaps.map;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.layer.*;
 import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
@@ -88,26 +89,23 @@ public class MapManager {
         Layer layer;
         LayerType type = layerDefinition.getType();
 
-        if (type == null) {
-            throw new IllegalStateException("Layer type not given");
+        if (type == null ) {
+            throw new CriticalMapException("Layer type not given or unknown");
         }
 
-        switch (layerDefinition.getType()) {
+        switch (type) {
             case WMTS: {
-                layer = new WMTSLayer(layerDefinition);
-                break;
+               layer = new WMTSLayer(layerDefinition);
+               return layer;
             }
             case XYZ: {
                 layer = new XYZLayer(layerDefinition);
-                break;
+                return layer;
             }
             default: {
-                throw new IllegalStateException("Layer type not supported");
+                throw new CriticalMapException("Layer type not currently supported");
             }
         }
-        return layer;
-
-
     }
 
     private boolean layerMatches(Layer layerAdded) {

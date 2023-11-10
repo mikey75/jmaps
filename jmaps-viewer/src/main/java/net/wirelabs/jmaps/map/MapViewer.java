@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.downloader.TileDownloader;
+import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
 import net.wirelabs.jmaps.map.layer.Layer;
@@ -131,7 +132,7 @@ public class MapViewer extends JPanel {
             updateLayersPanel();
             setPositionAndZoom(getHome(), getZoom());
 
-        } catch (JAXBException ex) {
+        } catch (CriticalMapException ex) {
             log.info("Map not created {}", ex.getMessage(), ex);
         }
     }

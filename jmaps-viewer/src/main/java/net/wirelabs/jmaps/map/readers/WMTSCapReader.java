@@ -3,6 +3,7 @@ package net.wirelabs.jmaps.map.readers;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.model.wmts.Capabilities;
 
 import javax.xml.bind.JAXBContext;
@@ -40,7 +41,8 @@ public class WMTSCapReader {
                 return parseCapabilitiesFromFile(cachedFile);
             }
         } catch (Exception e) {
-            throw new IllegalStateException("Could not parse Capabilities.xml", e);
+            log.error("Could not load WMTS capabilities descriptor", e);
+            throw new CriticalMapException("WMTS - Could not parse Capabilities.xml");
         }
 
     }

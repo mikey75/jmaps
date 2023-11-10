@@ -1,6 +1,7 @@
 package net.wirelabs.jmaps.map.readers;
 
 import net.wirelabs.jmaps.TestHttpServer;
+import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.model.wmts.Capabilities;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,7 +48,7 @@ class WMTSCapReaderTest {
     @Test
     void shouldNotLoadNonexistingCapabilitiesURL() {
 
-        assertThatExceptionOfType(IllegalStateException.class)
+        assertThatExceptionOfType(CriticalMapException.class)
                 .isThrownBy(() -> WMTSCapReader.loadCapabilities("nonexisting"))
                 .withMessageContaining("Could not parse Capabilities.xml");
     }
@@ -66,7 +67,7 @@ class WMTSCapReaderTest {
         TestHttpServer server = new TestHttpServer(NON_CAPABILITIES_FILE);
         String testUrl = "http://localhost:" + server.getPort() + "/wmts";
 
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> WMTSCapReader.loadCapabilities(testUrl))
+        assertThatExceptionOfType(CriticalMapException.class).isThrownBy(() -> WMTSCapReader.loadCapabilities(testUrl))
                 .withMessageContaining("Could not parse Capabilities.xml");
 
         assertThat(EXPECTED_CACHED_FILE).doesNotExist();

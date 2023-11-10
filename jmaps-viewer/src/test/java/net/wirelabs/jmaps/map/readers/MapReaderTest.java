@@ -1,5 +1,6 @@
 package net.wirelabs.jmaps.map.readers;
 
+import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.layer.LayerType;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
 import org.junit.jupiter.api.Test;
@@ -23,9 +24,9 @@ class MapReaderTest {
     @Test
     void shouldNotLoadNonExistingMapDefinitionFile() {
 
-        assertThatExceptionOfType(IllegalArgumentException.class)
+        assertThatExceptionOfType(CriticalMapException.class)
                 .isThrownBy(() -> MapReader.loadMapDefinitionFile(MAPFILE_NONEXISTING))
-                .withMessageMatching("(.*No such file or directory.*|.*The system cannot find the file specified.*)");
+                .withMessageMatching("Could not load map definition");
     }
 
 
@@ -48,9 +49,9 @@ class MapReaderTest {
     @Test
     void shouldNotLoadBadMapDefinitionFile() {
 
-        assertThatExceptionOfType(UnmarshalException.class)
+        assertThatExceptionOfType(CriticalMapException.class)
                 .isThrownBy(() -> MapReader.loadMapDefinitionFile(MAPFILE_BAD))
-                .withMessageContaining("unexpected element");
+                .withMessageContaining("Could not load map definition");
 
     }
 
