@@ -1,20 +1,22 @@
 package net.wirelabs.jmaps.map.downloader;
 
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import net.wirelabs.jmaps.TestHttpServer;
+import net.wirelabs.jmaps.TestUtils;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
+import org.apache.commons.io.FileUtils;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.verification.VerificationMode;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,19 +33,21 @@ class TileDownloaderTest {
     private TestHttpServer testTileServer;
     private String tileUrl;
 
+    private static final File CACHE_DIR = new File("target/testcache");
 
     private static final File testTileFile = new File("src/test/resources/tiles/tile.png");
-    private static final File cachedTileFile = new File("target/testcache/localhost/tile.png");
+    private ConcurrentLinkedHashMap<String, BufferedImage> primaryCache;
 
     @BeforeEach
     void before() throws IOException {
         MapViewer mapViewer = new MapViewer();
         testTileServer = new TestHttpServer(testTileFile);
         tileProvider = spy(new TileDownloader(mapViewer));
-        secondaryCache = new DirectoryBasedCache("target/testcache/");
+        secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath());
+        primaryCache = tileProvider.primaryTileCache;
         tileProvider.setSecondaryTileCache(secondaryCache);
         tileUrl = "http://localhost:" + testTileServer.getPort() + "/tile.png";
-        Files.deleteIfExists(cachedTileFile.toPath());
+        FileUtils.deleteDirectory(CACHE_DIR);
     }
 
     @AfterEach
@@ -52,26 +56,23 @@ class TileDownloaderTest {
     }
 
     @Test
-    void getTileNotCachedBefore() {
+    void shouldDownloadTileAndUpdateCachesIfNotPreviouslyCached() {
 
-        assertTileNotInAnyCache();
-
-        Awaitility.await().atMost(Duration.ofSeconds(2))
-                .untilAsserted(() -> {
+        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> {
                     assertThat(tileProvider.getTile(tileUrl)).isNotNull();
-                    assertFileInSecondaryCache();
-                    assertFileInPrimaryCache();
-                    assertDownloadCalled(atLeastOnce());
                 });
+
+        assertTileInSecondaryCache(tileUrl);
+        assertTileInPrimaryCache(tileUrl);
+        assertDownloadCalled(atLeastOnce());
 
 
     }
 
     @Test
-    void getTileCachedOnSecondaryCache() throws IOException {
-        // put imagefile to secondary cache
-        Files.copy(testTileFile.toPath(), cachedTileFile.toPath());
-        assertThat(cachedTileFile).isFile().exists();
+    void shouldNotDownloadTileIfItIsInPrimaryCache() throws IOException {
+
+        primaryCache.put(tileUrl, ImageIO.read(testTileFile));
 
         BufferedImage tile = tileProvider.getTile(tileUrl);
 
@@ -79,17 +80,38 @@ class TileDownloaderTest {
         assertDownloadCalled(never());
     }
 
-    private void assertTileNotInAnyCache() {
-        assertThat(cachedTileFile).doesNotExist();
-        assertThat(tileProvider.isTileInCache(tileUrl)).isFalse();
+    @Test
+    void shouldNotDownloadTileIfItIsInTheSecondaryCache() throws IOException {
+        // put imagefile to secondary cache
+        secondaryCache.put(tileUrl, ImageIO.read(testTileFile));
+
+        BufferedImage tile = tileProvider.getTile(tileUrl);
+        // get from secondary should update primary too
+        assertTileInPrimaryCache(tileUrl);
+
+        assertThat(tile).isNotNull();
+        assertDownloadCalled(never());
     }
 
-    private void assertFileInSecondaryCache() {
+    @Test
+    void shouldDownloadAndUpdatePrimaryIfNoSecondaryCacheEnabled() {
+
+        tileProvider.setSecondaryTileCache(null);
+
+        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> {
+            assertThat(tileProvider.getTile(tileUrl)).isNotNull();
+        });
+
+        assertTileInPrimaryCache(tileUrl);
+        assertDownloadCalled(atLeastOnce());
+    }
+
+    private void assertTileInSecondaryCache(String tileUrl) {
         assertThat(secondaryCache.get(tileUrl)).isNotNull();
     }
 
-    private void assertFileInPrimaryCache() {
-        assertThat(tileProvider.isTileInCache(tileUrl)).isTrue();
+    private void assertTileInPrimaryCache(String tileUrl) {
+        assertThat(primaryCache.get(tileUrl)).isNotNull();
     }
 
     private void assertDownloadCalled(VerificationMode mode) {
