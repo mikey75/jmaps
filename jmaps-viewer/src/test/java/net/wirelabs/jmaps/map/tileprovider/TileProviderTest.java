@@ -1,4 +1,4 @@
-package net.wirelabs.jmaps.map.downloader;
+package net.wirelabs.jmaps.map.tileprovider;
 
 import net.wirelabs.jmaps.TestHttpServer;
 import net.wirelabs.jmaps.map.MapViewer;
@@ -7,7 +7,6 @@ import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.verification.VerificationMode;
 
@@ -24,9 +23,9 @@ import static org.mockito.Mockito.*;
 /**
  * Created 11/10/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
-class TileDownloaderTest {
+class TileProviderTest {
 
-    private TileDownloader tileProvider;
+    private TileProvider tileProvider;
     private Cache<String, BufferedImage> secondaryCache;
     private TestHttpServer testTileServer;
     private String tileUrl;
@@ -39,7 +38,8 @@ class TileDownloaderTest {
     void before() throws IOException {
         MapViewer mapViewer = new MapViewer();
         testTileServer = new TestHttpServer(testTileFile);
-        tileProvider = spy(new TileDownloader(mapViewer));
+        tileProvider = spy(new TileProvider(mapViewer));
+        tileProvider.setImageCacheSize(12000);
         secondaryCache = new DirectoryBasedCache("target/testcache/");
         tileProvider.setSecondaryTileCache(secondaryCache);
         tileUrl = "http://localhost:" + testTileServer.getPort() + "/tile.png";
@@ -78,6 +78,18 @@ class TileDownloaderTest {
         assertThat(tile).isNotNull();
         assertDownloadCalled(never());
     }
+
+    @Test
+    void getTileWhenNoSecondaryCache() {
+        tileProvider.setSecondaryTileCache(null);
+        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> {
+            assertThat(tileProvider.getTile(tileUrl)).isNotNull();
+            assertFileInPrimaryCache();
+            assertDownloadCalled(atLeastOnce());
+        });
+
+    }
+
 
     private void assertTileNotInAnyCache() {
         assertThat(cachedTileFile).doesNotExist();

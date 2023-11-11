@@ -2,7 +2,7 @@ package net.wirelabs.jmaps.map;
 
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.painters.Painter;
-import net.wirelabs.jmaps.map.downloader.TileDownloader;
+import net.wirelabs.jmaps.map.tileprovider.TileProvider;
 
 
 import java.awt.AlphaComposite;
@@ -25,14 +25,14 @@ import java.awt.image.VolatileImage;
 public class MapRenderer {
 
     private final MapViewer mapViewer;
-    private final TileDownloader tileDownloader;
+    private final TileProvider tileDownloader;
 
     private final Painter<MapViewer> coordinatePainter;
     private final Painter<MapViewer> attributionPainter;
     private VolatileImage tempImage;
     private Graphics2D tempImageGraphics;
 
-    public MapRenderer(MapViewer mapViewer, TileDownloader tileDownloader) {
+    public MapRenderer(MapViewer mapViewer, TileProvider tileDownloader) {
         this.mapViewer = mapViewer;
         this.tileDownloader = tileDownloader;
         this.coordinatePainter = mapViewer.getCoordinatePainter();

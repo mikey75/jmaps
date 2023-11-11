@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.cache.Cache;
-import net.wirelabs.jmaps.map.downloader.TileDownloader;
+import net.wirelabs.jmaps.map.tileprovider.TileProvider;
 import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
@@ -16,7 +16,6 @@ import net.wirelabs.jmaps.map.painters.Painter;
 import net.wirelabs.jmaps.map.readers.MapReader;
 
 import javax.swing.*;
-import javax.xml.bind.JAXBException;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -30,7 +29,7 @@ public class MapViewer extends JPanel {
 
     private final transient MapRenderer mapRenderer;
     private final transient MouseHandler mouseHandler;
-    private final transient TileDownloader tileDownloader;
+    private final transient TileProvider tileDownloader;
     private final transient MapManager mapManager;
 
     private final transient CurrentPositionPainter currentPositionPainter = new CurrentPositionPainter();
@@ -61,7 +60,7 @@ public class MapViewer extends JPanel {
     private final List<Painter<MapViewer>> userOverlays = new ArrayList<>();
 
     public MapViewer() {
-        tileDownloader = new TileDownloader(this);
+        tileDownloader = new TileProvider(this);
         mapRenderer = new MapRenderer(this, tileDownloader);
         mapManager = new MapManager();
         mouseHandler = new MouseHandler(this);

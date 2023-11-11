@@ -1,11 +1,9 @@
-package net.wirelabs.jmaps.map.downloader;
+package net.wirelabs.jmaps.map.tileprovider;
 
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.Defaults;
-import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
-import net.wirelabs.jmaps.map.cache.DummyCache;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.cache.Cache;
 import okhttp3.OkHttpClient;
@@ -18,6 +16,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.*;
 
 /**
@@ -26,21 +25,21 @@ import java.util.concurrent.*;
  * Tile downloader - downloads tiles and stores in cache(s)
  */
 @Slf4j
-public class TileDownloader {
+public class TileProvider {
 
     private final OkHttpClient httpClient = new OkHttpClient();
     private final List<String> tilesLoading = new CopyOnWriteArrayList<>();
 
     // primary LRU in memory cache
     private final ConcurrentLinkedHashMap<String,BufferedImage> primaryTileCache;
-    // secondary cache - default no-cache
-    private Cache<String, BufferedImage> secondaryTileCache = new DirectoryBasedCache();
+    // secondary cache - default none
+    private Cache<String, BufferedImage> secondaryTileCache;
 
     private final MapViewer mapViewer;
     private ExecutorService executorService;
 
 
-    public TileDownloader(MapViewer mapViewer) {
+    public TileProvider(MapViewer mapViewer) {
 
         this.mapViewer = mapViewer;
         this.primaryTileCache = new ConcurrentLinkedHashMap.Builder<String,BufferedImage>()
@@ -48,19 +47,17 @@ public class TileDownloader {
                 .build();
     }
 
-    public ExecutorService getExecutorService() {
+    private ExecutorService getExecutorService() {
 
         if (executorService == null) {
-            executorService = Executors.newFixedThreadPool(mapViewer.getTilerThreads(), new TileDownloaderThreadFactory());
+            executorService = Executors.newFixedThreadPool(mapViewer.getTilerThreads(), new TileProviderThreadFactory());
         }
         return executorService;
     }
 
     void download(String tileUrl) {
 
-        if (mapViewer.isDeveloperMode()) {
-            log.info("Getting from: {}", tileUrl);
-        }
+        log.debug("Downloading tile from: {}", tileUrl);
 
         Request r = new Request.Builder()
                 .url(tileUrl)
@@ -90,32 +87,33 @@ public class TileDownloader {
     private void readAndCacheImage(String tileUrl, Response response) throws IOException {
         try (ResponseBody body = response.body()) {
             InputStream inputStream = body.byteStream();
-            BufferedImage b = ImageIO.read(inputStream);
-            if (b != null) {
-                primaryTileCache.put(tileUrl, b);
-                if (secondaryTileCache.get(tileUrl) == null) {
-                    secondaryTileCache.put(tileUrl, b);
+
+            Optional<BufferedImage> image = Optional.ofNullable(ImageIO.read(inputStream));
+
+            if (image.isPresent()) {
+                primaryTileCache.put(tileUrl, image.get());
+                if (isSecondaryCacheEnabled() && !secondaryTileCache.contains(tileUrl)) {
+                    secondaryTileCache.put(tileUrl, image.get());
                 }
                 tilesLoading.remove(tileUrl);
                 // emit LOADED event here to ditch the mapviewer reference dependency
                 mapViewer.repaint();
+
             }
         }
     }
 
     public BufferedImage getTile(String url) {
 
-        // check local memory cache
-        BufferedImage img = primaryTileCache.get(url);
-        if (img != null) {
+        if (primaryTileCache.containsKey(url)) {
             return primaryTileCache.get(url);
         }
 
         // now check configured local cache
-
-        BufferedImage image = secondaryTileCache.get(url);
-        if (image != null) {
-            primaryTileCache.put(url, image);
+        // if tile exists and is not null - write it thru to primary, return image
+        if (isSecondaryCacheEnabled() && secondaryTileCache.contains(url)) {
+            Optional<BufferedImage> image = Optional.ofNullable(secondaryTileCache.get(url));
+            image.ifPresent(i -> primaryTileCache.put(url, image.get()));
             return primaryTileCache.get(url);
         }
 
@@ -140,4 +138,9 @@ public class TileDownloader {
     public void setSecondaryTileCache(Cache<String, BufferedImage> secondaryTileCache) {
         this.secondaryTileCache = secondaryTileCache;
     }
+
+    private boolean isSecondaryCacheEnabled() {
+        return secondaryTileCache != null;
+    }
+
 }

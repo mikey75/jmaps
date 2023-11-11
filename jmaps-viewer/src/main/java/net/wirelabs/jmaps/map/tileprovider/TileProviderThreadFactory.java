@@ -1,10 +1,10 @@
-package net.wirelabs.jmaps.map.downloader;
+package net.wirelabs.jmaps.map.tileprovider;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ThreadFactory;
 
-public class TileDownloaderThreadFactory implements ThreadFactory {
+public class TileProviderThreadFactory implements ThreadFactory {
 
     int threadsSpawned = 0;
 
