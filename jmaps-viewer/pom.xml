@@ -122,7 +122,11 @@
             <version>${okhttp.version}</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.13.0</version>
+        </dependency>
 
     </dependencies>
     <build>

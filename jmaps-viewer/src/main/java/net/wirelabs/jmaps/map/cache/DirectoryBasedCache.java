@@ -58,7 +58,7 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
 
     @Override
     public boolean contains(String key) {
-        return Files.exists(Paths.get(key));
+        return Files.exists(getLocalFile(key).toPath());
     }
 
     private File getLocalFile(String remoteUri) {
