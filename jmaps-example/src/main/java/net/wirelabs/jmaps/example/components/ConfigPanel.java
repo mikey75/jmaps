@@ -25,7 +25,7 @@ public class ConfigPanel extends JPanel {
 
     private final JButton btnAddLayer = new JButton("Load custom map");
     private final JButton btnLoadGPX = new JButton("Load gpx track");
-    private final JCheckBox devMode = new JCheckBox("Developer mode");
+    private final JCheckBox devMode = new JCheckBox("Tile debugger");
     private final JLabel label = new JLabel("Example map definitions");
     private final JComboBox<ExampleMap> exampleMapCombo = new JComboBox<>(ExampleMap.values());
 
@@ -64,7 +64,7 @@ public class ConfigPanel extends JPanel {
     }
 
     private void setTooltips() {
-        devMode.setToolTipText("Enables visual tile debug + cache debug logging");
+        devMode.setToolTipText("Enables visual tile debug");
         btnAddLayer.setToolTipText("Load custom map (from XML file)");
         btnLoadGPX.setToolTipText("Load and visualise a gpx track");
     }
