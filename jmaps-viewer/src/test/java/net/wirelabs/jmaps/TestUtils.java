@@ -3,6 +3,7 @@ package net.wirelabs.jmaps;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.awt.image.BufferedImage;
 import java.util.Random;
 
 /**
@@ -43,5 +44,19 @@ public class TestUtils {
             resultString.append(chars.charAt(idx));
         }
         return resultString.toString();
+    }
+
+    public static boolean compareImages(BufferedImage img1, BufferedImage img2) {
+        if (img1.getWidth() == img2.getWidth() && img1.getHeight() == img2.getHeight()) {
+            for (int x = 0; x < img1.getWidth(); x++) {
+                for (int y = 0; y < img1.getHeight(); y++) {
+                    if (img1.getRGB(x, y) != img2.getRGB(x, y))
+                        return false;
+                }
+            }
+        } else {
+            return false;
+        }
+        return true;
     }
 }

@@ -28,6 +28,7 @@ public class MapPanel extends JPanel {
         mapViewer.setShowCoordinates(true);
         mapViewer.setZoom(12);
         mapViewer.setImageCacheSize(32000);
+        mapViewer.setLocalCache(new DirectoryBasedCache());
         mapViewer.addUserOverlay(routePainter);
         add(mapViewer, "cell 0 0,grow");
 

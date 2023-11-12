@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 
 
+import static net.wirelabs.jmaps.TestUtils.compareImages;
 import static org.assertj.core.api.Assertions.*;
 
 /**
@@ -75,7 +76,6 @@ class DirectoryBasedCacheTest {
 
     @Test
     void testGetNonExisting() {
-        assertThat(cache.contains("nonexisting")).isFalse();
         assertThat(cache.get("nonexisting")).isNull();
     }
 
@@ -83,7 +83,8 @@ class DirectoryBasedCacheTest {
     void tesPutExistingShouldNotUpdate() {
         String URL = "https://paka.pl/10/10/10.png";
         cache.put(URL, TEST_IMAGE);
-        assertThat(cache.contains(URL)).isTrue();
+        retrieveFromCacheAndCheckContent(URL, TEST_IMAGE);
+        //assertThat(cache.get(URL)).isNotNull();
         // put another image at this url should not succeed,
         // there should still be previous image in there
         cache.put(URL, TEST_IMAGE_OTHER);
@@ -91,22 +92,9 @@ class DirectoryBasedCacheTest {
     }
 
     void retrieveFromCacheAndCheckContent(String url, BufferedImage img2) {
-        assertThat(cache.contains(url)).isTrue();
+        assertThat(cache.get(url)).isNotNull();
         assertThat(compareImages(cache.get(url), img2)).isTrue();
     }
 
-    private static boolean compareImages(BufferedImage img1, BufferedImage img2) {
-        if (img1.getWidth() == img2.getWidth() && img1.getHeight() == img2.getHeight()) {
-            for (int x = 0; x < img1.getWidth(); x++) {
-                for (int y = 0; y < img1.getHeight(); y++) {
-                    if (img1.getRGB(x, y) != img2.getRGB(x, y))
-                        return false;
-                }
-            }
-        } else {
-            return false;
-        }
-        return true;
-    }
 }
 

@@ -16,6 +16,7 @@ import java.awt.Rectangle;
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
+import java.util.Optional;
 
 /**
  * Created 6/7/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -108,12 +109,12 @@ public class MapRenderer {
         for (Layer layer : mapViewer.getEnabledLayers()) {
 
             String tileUrl = layer.createTileUrl(tileX, tileY, zoom + layer.getZoomOffset());
-            BufferedImage b = tileDownloader.getTile(tileUrl);
-            if (tileDownloader.isTileInCache(tileUrl)) {
+            Optional<BufferedImage> b = Optional.ofNullable(tileDownloader.getTile(tileUrl));
+            if (b.isPresent()) {
                 // if layer's opacity is < 1.0 - apply layer's opacity alpha, otherwise set alpha 1.0f
                 AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.min(layer.getOpacity(), 1.0f));
                 tempImageGraphics.setComposite(alpha);
-                tempImageGraphics.drawImage(b, 0, 0, null);
+                tempImageGraphics.drawImage(b.get(), 0, 0, null);
             }
 
         }

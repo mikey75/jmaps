@@ -33,7 +33,7 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
     public BufferedImage get(String key) {
 
         try {
-            File f = getCacheFile(key);
+            File f = getLocalFile(key);
             return ImageIO.read(Files.newInputStream(f.toPath()));
         } catch (IOException e) {
             return null;
@@ -43,22 +43,13 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
     @Override
     public void put(String key, BufferedImage b) {
         try {
-            File file = getCacheFile(key);
+            File file = getLocalFile(key);
             if (file.exists()) return; // fail fast
             Files.createDirectories(file.toPath());
             ImageIO.write(b, "png",file);
         } catch (IOException ex) {
             log.error("File cache put failed for {}", key, ex);
         }
-    }
-
-    private File getCacheFile(String key) {
-        return getLocalFile(key);
-    }
-
-    @Override
-    public boolean contains(String key) {
-        return Files.exists(getLocalFile(key).toPath());
     }
 
     private File getLocalFile(String remoteUri) {
