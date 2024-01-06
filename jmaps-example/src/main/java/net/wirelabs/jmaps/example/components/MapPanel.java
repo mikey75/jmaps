@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.miginfocom.swing.MigLayout;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
+import net.wirelabs.jmaps.map.geo.Coordinate;
 
 import javax.swing.JPanel;
 import javax.swing.border.TitledBorder;
@@ -20,6 +21,7 @@ public class MapPanel extends JPanel {
 
     private final transient RoutePainter routePainter = new RoutePainter();
     private final MapViewer mapViewer = new MapViewer();
+    private static final Coordinate LUBLIN_PL = new Coordinate(22.565628, 51.247717);
 
     public MapPanel() {
 
@@ -27,6 +29,7 @@ public class MapPanel extends JPanel {
         setLayout(new MigLayout("", "[grow]", "[grow]"));
         mapViewer.setShowCoordinates(true);
         mapViewer.setZoom(12);
+        mapViewer.setHome(LUBLIN_PL);
         mapViewer.setImageCacheSize(32000);
         mapViewer.setLocalCache(new DirectoryBasedCache());
         mapViewer.addUserOverlay(routePainter);
