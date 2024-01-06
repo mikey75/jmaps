@@ -17,3 +17,6 @@ Here's a few pictures telling thousand words ;)
 ![sample2](images/2.png "Sample 2")
 - OpenStreetMap with loaded GPX track
 ![sample3](images/3.png "Sample 3")
+- Example of multilayer map (2 layers - one is a base topo map, the other is elevation profile). 
+You can enable/disable given layer from the view.
+![sample4](images/4.png "Sample 4")
