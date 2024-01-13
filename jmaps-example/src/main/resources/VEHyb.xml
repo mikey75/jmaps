@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<map name="Mapa 1">
+    <layer>
+        <name>VirtEarth Hybrid</name>
+        <type>VE</type>
+        <url>http://h{quadchar}.ortho.tiles.virtualearth.net/tiles/h{quad}.jpeg?g=1</url>
+    </layer>
+    <copyright>© Microsoft https://www.microsoft.com/en-us/maps/licensing</copyright>
+</map>

@@ -8,5 +8,6 @@ public enum LayerType {
     WMTS,
     WMS,
     TMS,
-    QUAD
+    QUAD,
+    VE      // ms virtual earth
 }

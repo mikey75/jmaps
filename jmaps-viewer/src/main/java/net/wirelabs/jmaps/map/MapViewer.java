@@ -106,17 +106,30 @@ public class MapViewer extends JPanel {
     // on the map at current zoom and centers on it
     // if location is null - center on map's center point
     public void centerOnLocation(Coordinate location) {
-
+        // if location is NULL or outside map bounds, center on map geometric centre
         Layer baseLayer = getBaseLayer();
-        if (location != null) { // if location given center on it
+        Rectangle2D mapBounds  = new Rectangle2D.Double(0,0,getBaseLayer().getMapSizeInPixels(zoom).width, getBaseLayer().getMapSizeInPixels(zoom).height); //getEnclosingRectangle(List.of(home),zoom);
+
+        Point2D pp = new Point2D.Double();
+        pp.setLocation(baseLayer.latLonToPixel(location, zoom));
+
+        if (location == null || !mapBounds.contains(pp)) { //location.getLongitude(), location.getLatitude())) {
+            double x = baseLayer.getMapSizeInPixels(zoom).width / 2.0;
+            double y = baseLayer.getMapSizeInPixels(zoom).height / 2.0;
+            topLeftCornerPoint.setLocation((int) (x - getWidth() / 2.0), (int) (y - getHeight() / 2.0));
+        } else {
             Point2D p = baseLayer.latLonToPixel(location, zoom);
-            topLeftCornerPoint.translate((int) (p.getX() - getWidth() / 2.0), (int) (p.getY() - getHeight() / 2.0));
+            topLeftCornerPoint.setLocation((int) (p.getX() - getWidth() / 2.0), (int) (p.getY() - getHeight() / 2.0));
+        }
+        /*if (location != null) { // if location given center on it
+            Point2D p = baseLayer.latLonToPixel(location, zoom);
+            topLeftCornerPoint.setLocation((int) (p.getX() - getWidth() / 2.0), (int) (p.getY() - getHeight() / 2.0));
         } else {
             // if, not - center map on tile grid center
             double x = baseLayer.getMapSizeInPixels(zoom).width / 2.0;
             double y = baseLayer.getMapSizeInPixels(zoom).height / 2.0;
-            topLeftCornerPoint.translate((int) (x - getWidth() / 2.0), (int) (y - getHeight() / 2.0));
-        }
+            topLeftCornerPoint.setLocation((int) (x - getWidth() / 2.0), (int) (y - getHeight() / 2.0));
+        }*/
     }
 
     /**
@@ -142,7 +155,7 @@ public class MapViewer extends JPanel {
     }
 
     public void setPositionAndZoom(Coordinate home, int zoom) {
-        getTopLeftCornerPoint().setLocation(0, 0);
+        //getTopLeftCornerPoint().setLocation(0, 0);
         setZoom(zoom);
         centerOnLocation(home);
         repaint();

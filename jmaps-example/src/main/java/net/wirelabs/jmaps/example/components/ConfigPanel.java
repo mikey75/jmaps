@@ -98,7 +98,6 @@ public class ConfigPanel extends JPanel {
                 if (path != null) {
                     File file = new File(path.getFile());
                     mapViewer.setMap(file);
-                    mapViewer.setPositionAndZoom(selected.getCenterON(), mapViewer.getZoom());
                 }
             }
         });

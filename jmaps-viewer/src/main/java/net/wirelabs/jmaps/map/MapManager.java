@@ -49,7 +49,7 @@ public class MapManager {
 
     public int getMaxZoom() {
         return layers.stream()
-                .map(Layer::getMaxZoom)
+                .map(layer -> layer.getMaxZoom() - layer.getZoomOffset())
                 .mapToInt(v -> v)
                 .min().orElse(0);
 
@@ -100,6 +100,10 @@ public class MapManager {
             }
             case XYZ: {
                 layer = new XYZLayer(layerDefinition);
+                return layer;
+            }
+            case VE: {
+                layer = new VEarthLayer(layerDefinition);
                 return layer;
             }
             default: {

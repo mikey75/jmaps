@@ -38,11 +38,8 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
     public void mouseWheelMoved(MouseWheelEvent evt) {
 
         if (mapViewer.hasLayers()) {
-            // if mousepoint is 0,0 - means mouse wasnt moved over map yet,
-            // so need to update mouse point for correct mouseLatLon
-            if (mousePoint.getX() == 0.0 && mousePoint.getY() == 0.0) {
-                updateMousePoint(evt);
-            }
+
+            updateMousePoint(evt);
 
             Layer baseLayer = mapViewer.getBaseLayer();
             // location of mouse at current zoom
@@ -118,7 +115,6 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
             return;
         prevMousePosition = null;
         mapViewer.setCursor(priorCursor);
-        //mapViewer.repaint();
 
     }
 
