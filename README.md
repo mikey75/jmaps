@@ -20,3 +20,5 @@ Here's a few pictures telling thousand words ;)
 - Example of multilayer map (2 layers - one is a base topo map, the other is elevation profile). 
 You can enable/disable given layer from the view.
 ![sample4](images/4.png "Sample 4")
+- Virtual Earth Maps 
+![sample5](images/5.png "Sample 5")
