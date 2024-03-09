@@ -10,7 +10,7 @@ import java.awt.Graphics2D;
  * <p>
  * Prints current world coordinates of the point under cursor
  */
-public class CurrentPositionPainter extends TextPrinter implements Painter<MapViewer> {
+public class CurrentPositionPainter extends TextPrinter {
 
     // default painter
     public CurrentPositionPainter() {
@@ -19,7 +19,7 @@ public class CurrentPositionPainter extends TextPrinter implements Painter<MapVi
     }
 
     @Override
-    public void doPaint(Graphics2D graphics, MapViewer mapViewer, int width, int height) {
+    public void print(Graphics2D graphics, MapViewer mapViewer, int width, int height) {
         // get coordinate under mouse
         Coordinate c = mapViewer.getBaseLayer().pixelToLatLon(mapViewer.getCurrentMousePosition(), mapViewer.getZoom());
         String text = String.format("Lon: %.4f Lat: %.4f", c.getLongitude(), c.getLatitude());

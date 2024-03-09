@@ -1,7 +1,6 @@
 package net.wirelabs.jmaps.map.painters;
 
 import net.wirelabs.jmaps.map.MapViewer;
-
 import java.awt.Graphics2D;
 
 /**
@@ -10,7 +9,7 @@ import java.awt.Graphics2D;
  * Prints current map attribution string, i.e copyright and author info
  * This is required by some (if not all) online map sources
  */
-public class MapAttributionPainter extends TextPrinter implements Painter<MapViewer> {
+public class MapAttributionPainter extends TextPrinter  {
 
     // default painter
     public MapAttributionPainter() {
@@ -19,7 +18,7 @@ public class MapAttributionPainter extends TextPrinter implements Painter<MapVie
     }
 
     @Override
-    public void doPaint(Graphics2D graphics, MapViewer mapViewer, int width, int height) {
+    public void print(Graphics2D graphics, MapViewer mapViewer, int width, int height) {
 
         // get attribution text
         String attributionText = mapViewer.getMapCopyrightAttribution();
@@ -27,5 +26,7 @@ public class MapAttributionPainter extends TextPrinter implements Painter<MapVie
             printText(graphics, width, height, attributionText);
         }
     }
+
+
 
 }

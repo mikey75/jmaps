@@ -1,7 +1,6 @@
 package net.wirelabs.jmaps.example.components;
 
 import lombok.Getter;
-import net.wirelabs.jmaps.map.geo.Coordinate;
 
 @Getter
 public enum ExampleMap {

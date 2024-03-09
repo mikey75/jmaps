@@ -11,24 +11,22 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.Point2D;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created 6/8/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
-public class RoutePainter implements Painter<MapViewer> {
+public class RoutePainter extends Painter<MapViewer> {
 
     private Color routeColor = Color.RED;
-    private List<Coordinate> routePoints = new ArrayList<>();
 
     public void setColor(Color color) {
         routeColor = color;
     }
 
     @Override
-    public void doPaint(Graphics2D graphics, MapViewer object, int width, int height) {
-        if (!routePoints.isEmpty()) {
+    public void doPaint(Graphics2D graphics, MapViewer mapViewer, int width, int height) {
+        if (!getObjects().isEmpty()) {
             // store changed settings
             Stroke s = graphics.getStroke();
             Color color = graphics.getColor();
@@ -38,7 +36,7 @@ public class RoutePainter implements Painter<MapViewer> {
             graphics.setColor(routeColor);
             graphics.setStroke(new BasicStroke(3, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
-            drawRoute(graphics, object);
+            drawRoute(graphics, mapViewer);
             // restore changed settings
             graphics.setColor(color);
             graphics.setStroke(s);
@@ -47,8 +45,9 @@ public class RoutePainter implements Painter<MapViewer> {
     }
 
 
+
     public void clearRoute() {
-        routePoints.clear();
+        getObjects().clear();
     }
     
     private void drawRoute(Graphics2D graphicsContext, MapViewer map) {
@@ -58,7 +57,7 @@ public class RoutePainter implements Painter<MapViewer> {
 
         boolean firstPoint = true;
 
-        for (Coordinate gp : routePoints) {
+        for (Coordinate gp : getObjects()) {
             // convert geo-coordinate to world bitmap pixel
             Point2D pt = map.getBaseLayer().latLonToPixel(gp, map.getZoom());
             //!!!! trzeba odjac topleftcorner zeby uzyskac pixel na aktualnym g canvas !!!
@@ -77,7 +76,7 @@ public class RoutePainter implements Painter<MapViewer> {
     }
 
     public void setRoute(List<Coordinate> route) {
-        this.routePoints = route;
+        setObjects(route);
     }
 
 }

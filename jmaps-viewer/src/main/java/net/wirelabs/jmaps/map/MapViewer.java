@@ -13,10 +13,10 @@ import net.wirelabs.jmaps.map.model.map.MapDefinition;
 import net.wirelabs.jmaps.map.painters.CurrentPositionPainter;
 import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
 import net.wirelabs.jmaps.map.painters.Painter;
+import net.wirelabs.jmaps.map.painters.TextPrinter;
 import net.wirelabs.jmaps.map.readers.MapReader;
 
 import javax.swing.*;
-import javax.xml.bind.JAXBException;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -24,6 +24,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 public class MapViewer extends JPanel {
@@ -108,7 +109,7 @@ public class MapViewer extends JPanel {
     public void centerOnLocation(Coordinate location) {
         // if location is NULL or outside map bounds, center on map geometric centre
         Layer baseLayer = getBaseLayer();
-        Rectangle2D mapBounds  = new Rectangle2D.Double(0,0,getBaseLayer().getMapSizeInPixels(zoom).width, getBaseLayer().getMapSizeInPixels(zoom).height); //getEnclosingRectangle(List.of(home),zoom);
+        Rectangle2D mapBounds  = new Rectangle2D.Double(0,0,getBaseLayer().getMapSizeInPixels(zoom).width, getBaseLayer().getMapSizeInPixels(zoom).height);
 
         Point2D pp = new Point2D.Double();
         pp.setLocation(baseLayer.latLonToPixel(location, zoom));
@@ -134,7 +135,16 @@ public class MapViewer extends JPanel {
             mapManager.createMap(mapDefinition);
             // update layers panel
             updateLayersPanel();
-            setPositionAndZoom(getHome(), getZoom());
+            // if any overlay has drawn something (i.e getObjects is not empty) -> fit best to those objects
+            List<Coordinate> allObjects = userOverlays.stream()
+                    .flatMap(listContainer -> listContainer.getObjects().stream())
+                    .collect(Collectors.toList());
+
+            if (!allObjects.isEmpty()) {
+                setBestFit(allObjects);
+            } else {
+                setPositionAndZoom(getHome(), getZoom());
+            }
 
         } catch (CriticalMapException ex) {
             log.info("Map not created {}", ex.getMessage(), ex);
@@ -146,19 +156,16 @@ public class MapViewer extends JPanel {
     }
 
     public void setPositionAndZoom(Coordinate home, int zoom) {
-        //getTopLeftCornerPoint().setLocation(0, 0);
         setZoom(zoom);
-        //todo  if any painter exists and has route/waypoints - bestfit it
-        //otherwise - center on home
         centerOnLocation(home);
         repaint();
     }
 
-    protected Painter<MapViewer> getCoordinatePainter() {
+    protected TextPrinter getCoordinatePainter() {
         return currentPositionPainter;
     }
 
-    protected Painter<MapViewer> getAttributionPainter() {
+    protected TextPrinter getAttributionPainter() {
         return attributionPainter;
     }
 

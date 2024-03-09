@@ -1,6 +1,7 @@
 package net.wirelabs.jmaps.map.painters;
 
 import lombok.Setter;
+import net.wirelabs.jmaps.map.MapViewer;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -22,6 +23,8 @@ public abstract class TextPrinter {
 
     protected boolean framed = true;
     protected int margin = 2;
+
+    public abstract void print(Graphics2D graphics, MapViewer mapViewer, int width, int height);
 
     protected Point setStartPoint(int width, int height, int textWidth, int textHeight) {
 

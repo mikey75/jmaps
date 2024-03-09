@@ -3,6 +3,7 @@ package net.wirelabs.jmaps.map;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.painters.Painter;
 import net.wirelabs.jmaps.map.downloader.TileDownloader;
+import net.wirelabs.jmaps.map.painters.TextPrinter;
 
 
 import java.awt.AlphaComposite;
@@ -28,16 +29,16 @@ public class MapRenderer {
     private final MapViewer mapViewer;
     private final TileDownloader tileDownloader;
 
-    private final Painter<MapViewer> coordinatePainter;
-    private final Painter<MapViewer> attributionPainter;
+    private final TextPrinter coordinatePrinter;
+    private final TextPrinter mapAttributionPrinter;
     private VolatileImage tempImage;
     private Graphics2D tempImageGraphics;
 
     public MapRenderer(MapViewer mapViewer, TileDownloader tileDownloader) {
         this.mapViewer = mapViewer;
         this.tileDownloader = tileDownloader;
-        this.coordinatePainter = mapViewer.getCoordinatePainter();
-        this.attributionPainter = mapViewer.getAttributionPainter();
+        this.coordinatePrinter = mapViewer.getCoordinatePainter();
+        this.mapAttributionPrinter = mapViewer.getAttributionPainter();
     }
 
     public void renderMap(Graphics graphicsContext) {
@@ -131,10 +132,10 @@ public class MapRenderer {
 
     private void renderDefaultOverlays(Graphics2D graphics) {
         if (mapViewer.isShowCoordinates()) {
-            coordinatePainter.doPaint(graphics, mapViewer, mapViewer.getWidth(), mapViewer.getHeight());
+            coordinatePrinter.print(graphics, mapViewer, mapViewer.getWidth(), mapViewer.getHeight());
         }
         if (mapViewer.isShowAttribution()) {
-            attributionPainter.doPaint(graphics, mapViewer, mapViewer.getWidth(), mapViewer.getHeight());
+            mapAttributionPrinter.print(graphics, mapViewer, mapViewer.getWidth(), mapViewer.getHeight());
         }
     }
 
