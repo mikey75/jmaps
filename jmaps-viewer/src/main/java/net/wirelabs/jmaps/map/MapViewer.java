@@ -104,7 +104,7 @@ public class MapViewer extends JPanel {
 
     // sets location (given in wgs84 coordinates)
     // on the map at current zoom and centers on it
-    // if location is null - center on map's center point
+    // if location is null or does not match map bounds - center on map's center point
     public void centerOnLocation(Coordinate location) {
         // if location is NULL or outside map bounds, center on map geometric centre
         Layer baseLayer = getBaseLayer();
@@ -113,7 +113,7 @@ public class MapViewer extends JPanel {
         Point2D pp = new Point2D.Double();
         pp.setLocation(baseLayer.latLonToPixel(location, zoom));
 
-        if (location == null || !mapBounds.contains(pp)) { //location.getLongitude(), location.getLatitude())) {
+        if (location == null || !mapBounds.contains(pp)) {
             double x = baseLayer.getMapSizeInPixels(zoom).width / 2.0;
             double y = baseLayer.getMapSizeInPixels(zoom).height / 2.0;
             topLeftCornerPoint.setLocation((int) (x - getWidth() / 2.0), (int) (y - getHeight() / 2.0));
@@ -121,15 +121,6 @@ public class MapViewer extends JPanel {
             Point2D p = baseLayer.latLonToPixel(location, zoom);
             topLeftCornerPoint.setLocation((int) (p.getX() - getWidth() / 2.0), (int) (p.getY() - getHeight() / 2.0));
         }
-        /*if (location != null) { // if location given center on it
-            Point2D p = baseLayer.latLonToPixel(location, zoom);
-            topLeftCornerPoint.setLocation((int) (p.getX() - getWidth() / 2.0), (int) (p.getY() - getHeight() / 2.0));
-        } else {
-            // if, not - center map on tile grid center
-            double x = baseLayer.getMapSizeInPixels(zoom).width / 2.0;
-            double y = baseLayer.getMapSizeInPixels(zoom).height / 2.0;
-            topLeftCornerPoint.setLocation((int) (x - getWidth() / 2.0), (int) (y - getHeight() / 2.0));
-        }*/
     }
 
     /**
@@ -157,6 +148,8 @@ public class MapViewer extends JPanel {
     public void setPositionAndZoom(Coordinate home, int zoom) {
         //getTopLeftCornerPoint().setLocation(0, 0);
         setZoom(zoom);
+        //todo  if any painter exists and has route/waypoints - bestfit it
+        //otherwise - center on home
         centerOnLocation(home);
         repaint();
     }
