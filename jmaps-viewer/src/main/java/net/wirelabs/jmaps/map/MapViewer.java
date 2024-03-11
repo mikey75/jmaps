@@ -111,10 +111,7 @@ public class MapViewer extends JPanel {
         Layer baseLayer = getBaseLayer();
         Rectangle2D mapBounds  = new Rectangle2D.Double(0,0,getBaseLayer().getMapSizeInPixels(zoom).width, getBaseLayer().getMapSizeInPixels(zoom).height);
 
-        Point2D pp = new Point2D.Double();
-        pp.setLocation(baseLayer.latLonToPixel(location, zoom));
-
-        if (location == null || !mapBounds.contains(pp)) {
+       if (location == null || !mapBounds.contains(baseLayer.latLonToPixel(location, zoom))) {
             double x = baseLayer.getMapSizeInPixels(zoom).width / 2.0;
             double y = baseLayer.getMapSizeInPixels(zoom).height / 2.0;
             topLeftCornerPoint.setLocation((int) (x - getWidth() / 2.0), (int) (y - getHeight() / 2.0));

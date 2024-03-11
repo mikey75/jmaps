@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<map name="Mapa 1">
+    <layer>
+        <name>Open Street Map</name>
+        <type>XYZ</type>
+        <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
+    </layer>
+    <copyright>© OpenStreetMap Contributors, Creative Commons Attribution-ShareAlike 2.0</copyright>
+</map>
