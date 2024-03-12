@@ -1,6 +1,8 @@
 package net.wirelabs.jmaps.map;
 
 import net.wirelabs.jmaps.map.layer.Layer;
+import net.wirelabs.jmaps.map.painters.CurrentPositionPainter;
+import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
 import net.wirelabs.jmaps.map.painters.Painter;
 import net.wirelabs.jmaps.map.downloader.TileDownloader;
 import net.wirelabs.jmaps.map.painters.TextPrinter;
@@ -37,8 +39,8 @@ public class MapRenderer {
     public MapRenderer(MapViewer mapViewer, TileDownloader tileDownloader) {
         this.mapViewer = mapViewer;
         this.tileDownloader = tileDownloader;
-        this.coordinatePrinter = mapViewer.getCoordinatePainter();
-        this.mapAttributionPrinter = mapViewer.getAttributionPainter();
+        this.coordinatePrinter = new CurrentPositionPainter();
+        this.mapAttributionPrinter = new MapAttributionPainter();
     }
 
     public void renderMap(Graphics graphicsContext) {

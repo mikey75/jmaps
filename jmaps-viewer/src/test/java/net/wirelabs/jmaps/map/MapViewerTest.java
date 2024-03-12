@@ -37,7 +37,6 @@ class MapViewerTest {
 
         assertThat(mapviewer.isDeveloperMode()).isFalse();
         assertThat(mapviewer.isShowAttribution()).isTrue();
-        assertThat(mapviewer.getAttributionPainter()).isInstanceOf(MapAttributionPainter.class);
         assertThat(mapviewer.isShowCoordinates()).isFalse();
 
         assertThat(mapviewer.getZoom()).isEqualTo(3);
@@ -52,9 +51,6 @@ class MapViewerTest {
         mapviewer.setShowAttribution(true);
         mapviewer.setShowCoordinates(true);
         mapviewer.setZoom(10);
-
-        assertThat(mapviewer.getAttributionPainter()).isInstanceOf(MapAttributionPainter.class);
-        assertThat(mapviewer.getCoordinatePainter()).isInstanceOf(CurrentPositionPainter.class);
         assertThat(mapviewer.getUserAgent()).isEqualTo(NEW_USER_AGENT);
         assertThat(mapviewer.getTilerThreads()).isEqualTo(10);
 

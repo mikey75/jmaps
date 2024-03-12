@@ -10,10 +10,7 @@ import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
-import net.wirelabs.jmaps.map.painters.CurrentPositionPainter;
-import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
 import net.wirelabs.jmaps.map.painters.Painter;
-import net.wirelabs.jmaps.map.painters.TextPrinter;
 import net.wirelabs.jmaps.map.readers.MapReader;
 
 import javax.swing.*;
@@ -33,9 +30,6 @@ public class MapViewer extends JPanel {
     private final transient MouseHandler mouseHandler;
     private final transient TileDownloader tileDownloader;
     private final transient MapManager mapManager;
-
-    private final transient CurrentPositionPainter currentPositionPainter = new CurrentPositionPainter();
-    private final transient MapAttributionPainter attributionPainter = new MapAttributionPainter();
 
     // current map top left corner in pixels
     @Getter
@@ -156,14 +150,6 @@ public class MapViewer extends JPanel {
         setZoom(zoom);
         centerOnLocation(home);
         repaint();
-    }
-
-    protected TextPrinter getCoordinatePainter() {
-        return currentPositionPainter;
-    }
-
-    protected TextPrinter getAttributionPainter() {
-        return attributionPainter;
     }
 
     public boolean hasLayers() {
