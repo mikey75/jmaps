@@ -45,4 +45,9 @@ public class LayerDefinition {
     private String tileMatrixSet;
     @XmlElement
     private String wmtsLayer;
+
+    public LayerDefinition(String name, String url) {
+        this.name = name;
+        this.url = url;
+    }
 }
