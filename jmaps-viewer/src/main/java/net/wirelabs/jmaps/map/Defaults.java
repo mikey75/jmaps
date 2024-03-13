@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 
 import java.awt.Color;
 import java.nio.file.Paths;
+import java.time.Duration;
 
 /**
  * Created 9/25/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Defaults {
 
+    public static final Duration DEFAULT_CACHE_VALIDITY_TIME = Duration.ofDays(30);
     // default cache dir base
     private static final String HOME = System.getProperty("user.home");
     private static final String DEFAULT_CACHE_DIR = Paths.get(HOME, ".jmaps-cache").toString();

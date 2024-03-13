@@ -59,8 +59,8 @@ class TileDownloaderTest {
     void shouldDownloadTileAndUpdateCachesIfNotPreviouslyCached() {
 
         Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> {
-                    assertThat(tileProvider.getTile(tileUrl)).isNotNull();
-                });
+            assertThat(tileProvider.getTile(tileUrl)).isNotNull();
+        });
 
         assertTileInSecondaryCache(tileUrl);
         assertTileInPrimaryCache(tileUrl);
@@ -91,6 +91,35 @@ class TileDownloaderTest {
 
         assertThat(tile).isNotNull();
         assertDownloadCalled(never());
+    }
+
+    @Test
+    void shouldNotDownloadTileIfItIsNotExpired() throws IOException, InterruptedException {
+
+        secondaryCache.setValidityTime(Duration.ofSeconds(2));
+        secondaryCache.put(tileUrl, ImageIO.read(testTileFile));
+        tileProvider.getTile(tileUrl);
+        assertDownloadCalled(never());
+
+
+
+    }
+
+    @Test
+    void shouldDownloadTileIfItIsExpired() throws IOException, InterruptedException {
+        // set validity time to 2 sec
+        secondaryCache.setValidityTime(Duration.ofSeconds(2));
+        secondaryCache.put(tileUrl, ImageIO.read(testTileFile));
+        // wait validity time + some margin timn
+        Thread.sleep(Duration.ofSeconds(3).toMillis());
+
+        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> {
+            assertThat(tileProvider.getTile(tileUrl)).isNotNull();
+        });
+
+        // this should download tile since it expired in cache
+        assertDownloadCalled(times(1));
+
     }
 
     @Test

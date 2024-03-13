@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 
 
 import static net.wirelabs.jmaps.TestUtils.compareImages;
@@ -77,6 +78,21 @@ class DirectoryBasedCacheTest {
     @Test
     void testGetNonExisting() {
         assertThat(cache.get("nonexisting")).isNull();
+    }
+
+    @Test
+    void shouldCheckValidity() throws InterruptedException {
+        Duration validityTime = Duration.ofSeconds(2);
+        String URL1 = "http://tile.openstreetmap.org/2/4/5.jpg";
+
+        cache.setValidityTime(validityTime);
+        cache.put(URL1, TEST_IMAGE);
+        // get quick should return image
+        assertThat(cache.keyExpired(URL1)).isFalse();
+        // now wait expiry time plus a few ms
+        Thread.sleep(validityTime.toMillis() + 100);
+        // now get should return null (will trigger redownload upstream)
+        assertThat(cache.keyExpired(URL1)).isTrue();
     }
 
     @Test
