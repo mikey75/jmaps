@@ -108,12 +108,15 @@ public class TileDownloader {
         }
 
         // now check configured local cache
-        if (secondaryCacheEnabled()) {
-            Optional<BufferedImage> image = Optional.ofNullable(secondaryTileCache.get(url));
-            if (image.isPresent()) {
-                primaryTileCache.put(url, image.get());
-                return image.get();
-            }
+        if (secondaryCacheEnabled() && !secondaryTileCache.keyExpired(url)) {
+
+                Optional<BufferedImage> image = Optional.ofNullable(secondaryTileCache.get(url));
+                if (image.isPresent()) {
+                    primaryTileCache.put(url, image.get());
+                    return image.get();
+                }
+
+
         }
 
         // else submit tile for download from the web
