@@ -14,10 +14,10 @@ import java.nio.file.Files;
 @Slf4j
 public class TestHttpServer extends BaseHttpTestServer {
 
-    public TestHttpServer(File xmlFile) throws IOException {
+    public TestHttpServer(File fileToServe) throws IOException {
 
         Buffer buffer = new Buffer();
-        buffer.write(Files.readAllBytes(xmlFile.toPath()));
+        buffer.write(Files.readAllBytes(fileToServe.toPath()));
 
         MockResponse response = new MockResponse().setResponseCode(200)
                 //.addHeader("Content-Type", "application/xml; charset=utf-8")

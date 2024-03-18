@@ -2,7 +2,6 @@ package net.wirelabs.jmaps.map.downloader;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import net.wirelabs.jmaps.TestHttpServer;
-import net.wirelabs.jmaps.TestUtils;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
@@ -26,25 +25,30 @@ import static org.mockito.Mockito.*;
 /**
  * Created 11/10/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
+
 class TileDownloaderTest {
 
     private TileDownloader tileProvider;
+    private ConcurrentLinkedHashMap<String, BufferedImage> primaryCache;
     private Cache<String, BufferedImage> secondaryCache;
+
     private TestHttpServer testTileServer;
     private String tileUrl;
 
     private static final File CACHE_DIR = new File("target/testcache");
-
-    private static final File testTileFile = new File("src/test/resources/tiles/tile.png");
-    private ConcurrentLinkedHashMap<String, BufferedImage> primaryCache;
+    private static final File TEST_TILE_FILE = new File("src/test/resources/tiles/tile.png");
+    private static final Duration CACHE_VALIDITY_TIME = Duration.ofSeconds(2);
 
     @BeforeEach
     void before() throws IOException {
         MapViewer mapViewer = new MapViewer();
-        testTileServer = new TestHttpServer(testTileFile);
+        testTileServer = new TestHttpServer(TEST_TILE_FILE);
         tileProvider = spy(new TileDownloader(mapViewer));
-        secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath());
+
         primaryCache = tileProvider.primaryTileCache;
+        secondaryCache = spy(new DirectoryBasedCache(CACHE_DIR.getPath()));
+        when(secondaryCache.getValidityTime()).thenReturn(CACHE_VALIDITY_TIME);
+
         tileProvider.setSecondaryTileCache(secondaryCache);
         tileUrl = "http://localhost:" + testTileServer.getPort() + "/tile.png";
         FileUtils.deleteDirectory(CACHE_DIR);
@@ -58,32 +62,39 @@ class TileDownloaderTest {
     @Test
     void shouldDownloadTileAndUpdateCachesIfNotPreviouslyCached() {
 
-        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> {
-            assertThat(tileProvider.getTile(tileUrl)).isNotNull();
-        });
+        downloadTile();
+        assertDownloadCalled(times(1));
 
         assertTileInSecondaryCache(tileUrl);
         assertTileInPrimaryCache(tileUrl);
-        assertDownloadCalled(atLeastOnce());
-
 
     }
+
+
 
     @Test
     void shouldNotDownloadTileIfItIsInPrimaryCache() throws IOException {
 
-        primaryCache.put(tileUrl, ImageIO.read(testTileFile));
-
-        BufferedImage tile = tileProvider.getTile(tileUrl);
-
-        assertThat(tile).isNotNull();
+        primaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
+        assertThat(tileProvider.getTile(tileUrl)).isNotNull();
         assertDownloadCalled(never());
     }
 
     @Test
+    void shouldPutFileInPrimaryCacheIfSecondaryCacheDisabled() {
+
+        secondaryCache = null; // secondaryCacheEnabled() zwróci false
+        downloadTile();
+        assertDownloadCalled(times(1));
+        assertTileInPrimaryCache(tileUrl);
+
+    }
+
+
+    @Test
     void shouldNotDownloadTileIfItIsInTheSecondaryCache() throws IOException {
         // put imagefile to secondary cache
-        secondaryCache.put(tileUrl, ImageIO.read(testTileFile));
+        secondaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
 
         BufferedImage tile = tileProvider.getTile(tileUrl);
         // get from secondary should update primary too
@@ -94,45 +105,33 @@ class TileDownloaderTest {
     }
 
     @Test
-    void shouldNotDownloadTileIfItIsNotExpired() throws IOException, InterruptedException {
-
-        secondaryCache.setValidityTime(Duration.ofSeconds(2));
-        secondaryCache.put(tileUrl, ImageIO.read(testTileFile));
+    void shouldNotDownloadTileIfItIsNotExpired() throws IOException {
+        // should not download file if it has not expired
+        secondaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
         tileProvider.getTile(tileUrl);
         assertDownloadCalled(never());
-
-
-
     }
 
     @Test
-    void shouldDownloadTileIfItIsExpired() throws IOException, InterruptedException {
-        // set validity time to 2 sec
-        secondaryCache.setValidityTime(Duration.ofSeconds(2));
-        secondaryCache.put(tileUrl, ImageIO.read(testTileFile));
-        // wait validity time + some margin timn
-        Thread.sleep(Duration.ofSeconds(3).toMillis());
+    void shouldDownloadTileIfItIsExpired() throws IOException {
 
-        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> {
-            assertThat(tileProvider.getTile(tileUrl)).isNotNull();
-        });
-
-        // this should download tile since it expired in cache
+        secondaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
+        // check if tile expired after waiting validity time (plus some margin for test time)
+        assertTileExpired();
+        // download tile
+        downloadTile();
         assertDownloadCalled(times(1));
-
     }
+
+
 
     @Test
     void shouldDownloadAndUpdatePrimaryIfNoSecondaryCacheEnabled() {
 
         tileProvider.setSecondaryTileCache(null);
-
-        Awaitility.await().atMost(Duration.ofSeconds(2)).untilAsserted(() -> {
-            assertThat(tileProvider.getTile(tileUrl)).isNotNull();
-        });
-
+        downloadTile();
+        assertDownloadCalled(times(1));
         assertTileInPrimaryCache(tileUrl);
-        assertDownloadCalled(atLeastOnce());
     }
 
     private void assertTileInSecondaryCache(String tileUrl) {
@@ -145,5 +144,17 @@ class TileDownloaderTest {
 
     private void assertDownloadCalled(VerificationMode mode) {
         verify(tileProvider, mode).download(anyString());
+    }
+
+    private void downloadTile() {
+        Awaitility.await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
+            assertThat(tileProvider.getTile(tileUrl)).isNotNull();
+        });
+    }
+
+    private void assertTileExpired() {
+        Awaitility.await().pollDelay(CACHE_VALIDITY_TIME.plus(Duration.ofMillis(1500))).untilAsserted(
+                () -> assertThat(secondaryCache.keyExpired(tileUrl)).isTrue()
+        );
     }
 }

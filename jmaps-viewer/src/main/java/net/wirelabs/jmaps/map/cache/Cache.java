@@ -1,5 +1,7 @@
 package net.wirelabs.jmaps.map.cache;
 
+import net.wirelabs.jmaps.map.Defaults;
+
 import java.time.Duration;
 
 /**
@@ -9,5 +11,8 @@ public interface Cache<K,V> {
     V get(K key);
     void put(K key, V value);
     boolean keyExpired(K key);
-    void setValidityTime(Duration duration);
+
+    default Duration getValidityTime() {
+        return Defaults.DEFAULT_CACHE_VALIDITY_TIME;
+    }
 }
