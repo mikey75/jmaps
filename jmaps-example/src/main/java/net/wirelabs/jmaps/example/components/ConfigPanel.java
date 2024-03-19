@@ -19,7 +19,7 @@ import java.util.List;
  * Created 6/4/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
 @Slf4j
-public class ConfigPanel extends JPanel {
+public class ConfigPanel extends TitledPanel {
 
     public static final File HOME_DIR = new File(System.getProperty("user.home"));
 
@@ -39,16 +39,10 @@ public class ConfigPanel extends JPanel {
      */
     public ConfigPanel(MapPanel mapPanel) {
 
+        super("Config");
+
         this.mapViewer = mapPanel.getMapViewer();
         this.routePainter = mapPanel.getRoutePainter();
-
-        LayoutManager configPanelLayout = new MigLayout(
-                "",
-                "[grow]",
-                "[][][][][][][][][][][][]"
-        );
-
-        setLayout(configPanelLayout);
 
         add(label, "cell 0 1, growx");
         add(exampleMapCombo, "cell 0 2, growx");
@@ -147,6 +141,14 @@ public class ConfigPanel extends JPanel {
         exampleMapCombo.setSelectedIndex(0);
     }
 
+    @Override
+    protected LayoutManager customLayout() {
+
+        return new MigLayout(
+                "",
+                "[grow]",
+                "[][][][][][][][][][][][]");
+    }
 }
 
 

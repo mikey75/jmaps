@@ -6,8 +6,7 @@ import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
+import java.awt.*;
 
 /**
  * Created 10/29/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -17,7 +16,7 @@ import javax.swing.border.TitledBorder;
  * Sets home position to Lublin, PL
  */
 @Getter
-public class MapPanel extends JPanel {
+public class MapPanel extends TitledPanel {
 
     private final transient RoutePainter routePainter = new RoutePainter();
     private final MapViewer mapViewer = new MapViewer();
@@ -25,8 +24,8 @@ public class MapPanel extends JPanel {
 
     public MapPanel() {
 
-        setBorder(new TitledBorder("Map"));
-        setLayout(new MigLayout("", "[grow]", "[grow]"));
+        super("MapViewer");
+
         mapViewer.setShowCoordinates(true);
         mapViewer.setZoom(12);
         mapViewer.setHome(LUBLIN_PL);
@@ -37,4 +36,8 @@ public class MapPanel extends JPanel {
 
     }
 
+    @Override
+    protected LayoutManager customLayout() {
+        return new MigLayout("", "[grow]", "[grow]");
+    }
 }
