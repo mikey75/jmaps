@@ -1,5 +1,6 @@
 package net.wirelabs.jmaps.map.cache;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.Defaults;
 
@@ -11,6 +12,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
 
 /**
  * Created 1/2/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -19,13 +21,22 @@ import java.nio.file.Paths;
 public class DirectoryBasedCache implements Cache<String, BufferedImage> {
 
     private final Path baseDir;
+    @Getter
+    private final Duration cacheTimeout;
 
     public DirectoryBasedCache() {
-        this(Defaults.DEFAULT_TILECACHE_DIR);
+        this(Defaults.DEFAULT_TILECACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
     }
 
-    public DirectoryBasedCache(String cacheDir) {
+    public DirectoryBasedCache(String cacheDir, Duration cacheTimeout) {
         this.baseDir = Paths.get(cacheDir);
+        this.cacheTimeout = cacheTimeout;
+
+        if (cacheTimeout.isZero()) {
+            log.info("Directory based cache expiration checking disabled!");
+        } else {
+            log.info("Directory based cache expiration timeout set to {}", cacheTimeout);
+        }
     }
 
     @Override
@@ -33,24 +44,17 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
 
         try {
             File f = getLocalFile(key);
+            if (validityTimeGreaterThanZero() && (keyExpired(key))) {
+                return null;
+            }
             return ImageIO.read(Files.newInputStream(f.toPath()));
         } catch (IOException e) {
             return null;
         }
     }
 
-    private boolean fileExpired(File f) {
-
-        long expirationTime = System.currentTimeMillis() - getValidityTime().toMillis();
-        long lastWrittenOn;
-
-        try {
-            lastWrittenOn = Files.getLastModifiedTime(f.toPath()).toMillis();
-        } catch (IOException e) {
-            return false;
-        }
-        return  (lastWrittenOn < expirationTime);
-
+    private boolean validityTimeGreaterThanZero() {
+        return getCacheTimeout().toMillis() > Duration.ZERO.toMillis();
     }
 
     @Override
@@ -66,10 +70,19 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
         }
     }
 
-    @Override
     public boolean keyExpired(String key) {
         File file = getLocalFile(key);
-        return fileExpired(file);
+
+        long expirationTime = System.currentTimeMillis() - getCacheTimeout().toMillis();
+        long lastWrittenOn;
+
+        try {
+            lastWrittenOn = Files.getLastModifiedTime(file.toPath()).toMillis();
+        } catch (IOException e) {
+            return false;
+        }
+        return  (lastWrittenOn < expirationTime);
+
     }
 
     private File getLocalFile(String remoteUri) {

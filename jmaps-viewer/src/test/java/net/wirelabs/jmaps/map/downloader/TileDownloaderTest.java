@@ -2,8 +2,8 @@ package net.wirelabs.jmaps.map.downloader;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import net.wirelabs.jmaps.TestHttpServer;
+import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
-import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
 import org.apache.commons.io.FileUtils;
 import org.awaitility.Awaitility;
@@ -30,7 +30,7 @@ class TileDownloaderTest {
 
     private TileDownloader tileProvider;
     private ConcurrentLinkedHashMap<String, BufferedImage> primaryCache;
-    private Cache<String, BufferedImage> secondaryCache;
+    private DirectoryBasedCache secondaryCache;
 
     private TestHttpServer testTileServer;
     private String tileUrl;
@@ -46,8 +46,8 @@ class TileDownloaderTest {
         tileProvider = spy(new TileDownloader(mapViewer));
 
         primaryCache = tileProvider.primaryTileCache;
-        secondaryCache = spy(new DirectoryBasedCache(CACHE_DIR.getPath()));
-        when(secondaryCache.getValidityTime()).thenReturn(CACHE_VALIDITY_TIME);
+        secondaryCache = spy(new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT));
+        when(secondaryCache.getCacheTimeout()).thenReturn(CACHE_VALIDITY_TIME);
 
         tileProvider.setSecondaryTileCache(secondaryCache);
         tileUrl = "http://localhost:" + testTileServer.getPort() + "/tile.png";

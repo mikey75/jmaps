@@ -13,7 +13,7 @@ import java.time.Duration;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Defaults {
 
-    public static final Duration DEFAULT_CACHE_VALIDITY_TIME = Duration.ofDays(30);
+    public static final Duration DEFAULT_CACHE_TIMEOUT = Duration.ofDays(30);
     // default cache dir base
     private static final String HOME = System.getProperty("user.home");
     private static final String DEFAULT_CACHE_DIR = Paths.get(HOME, ".jmaps-cache").toString();
