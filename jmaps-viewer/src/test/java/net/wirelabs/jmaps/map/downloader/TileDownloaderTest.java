@@ -37,7 +37,7 @@ class TileDownloaderTest {
 
     private static final File CACHE_DIR = new File("target/testcache");
     private static final File TEST_TILE_FILE = new File("src/test/resources/tiles/tile.png");
-    private static final Duration CACHE_VALIDITY_TIME = Duration.ofSeconds(2);
+    private static final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
 
     @BeforeEach
     void before() throws IOException {
@@ -46,8 +46,6 @@ class TileDownloaderTest {
         tileProvider = spy(new TileDownloader(mapViewer));
 
         primaryCache = tileProvider.primaryTileCache;
-        secondaryCache = spy(new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT));
-        when(secondaryCache.getCacheTimeout()).thenReturn(CACHE_VALIDITY_TIME);
 
         tileProvider.setSecondaryTileCache(secondaryCache);
         tileUrl = "http://localhost:" + testTileServer.getPort() + "/tile.png";
@@ -61,6 +59,9 @@ class TileDownloaderTest {
 
     @Test
     void shouldDownloadTileAndUpdateCachesIfNotPreviouslyCached() {
+
+        secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT);
+        tileProvider.setSecondaryTileCache(secondaryCache);
 
         downloadTile();
         assertDownloadCalled(times(1));
@@ -76,6 +77,7 @@ class TileDownloaderTest {
     void shouldNotDownloadTileIfItIsInPrimaryCache() throws IOException {
 
         primaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
+
         assertThat(tileProvider.getTile(tileUrl)).isNotNull();
         assertDownloadCalled(never());
     }
@@ -83,7 +85,9 @@ class TileDownloaderTest {
     @Test
     void shouldPutFileInPrimaryCacheIfSecondaryCacheDisabled() {
 
-        secondaryCache = null; // secondaryCacheEnabled() zwróci false
+        // secondaryCacheEnabled() zwróci false
+        tileProvider.setSecondaryTileCache(null);
+
         downloadTile();
         assertDownloadCalled(times(1));
         assertTileInPrimaryCache(tileUrl);
@@ -93,6 +97,10 @@ class TileDownloaderTest {
 
     @Test
     void shouldNotDownloadTileIfItIsInTheSecondaryCache() throws IOException {
+
+        secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT);
+        tileProvider.setSecondaryTileCache(secondaryCache);
+
         // put imagefile to secondary cache
         secondaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
 
@@ -106,6 +114,9 @@ class TileDownloaderTest {
 
     @Test
     void shouldNotDownloadTileIfItIsNotExpired() throws IOException {
+        secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT);
+        tileProvider.setSecondaryTileCache(secondaryCache);
+
         // should not download file if it has not expired
         secondaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
         tileProvider.getTile(tileUrl);
@@ -114,6 +125,9 @@ class TileDownloaderTest {
 
     @Test
     void shouldDownloadTileIfItIsExpired() throws IOException {
+
+        secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), SHORT_TIMEOUT_FOR_VALIDITY_TESTS);
+        tileProvider.setSecondaryTileCache(secondaryCache);
 
         secondaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
         // check if tile expired after waiting validity time (plus some margin for test time)
@@ -153,7 +167,7 @@ class TileDownloaderTest {
     }
 
     private void assertTileExpired() {
-        Awaitility.await().pollDelay(CACHE_VALIDITY_TIME.plus(Duration.ofMillis(1500))).untilAsserted(
+        Awaitility.await().pollDelay(SHORT_TIMEOUT_FOR_VALIDITY_TESTS.plus(Duration.ofMillis(1500))).untilAsserted(
                 () -> assertThat(secondaryCache.keyExpired(tileUrl)).isTrue()
         );
     }
