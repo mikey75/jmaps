@@ -8,10 +8,10 @@ import java.awt.*;
 
 
 @NoArgsConstructor
-public class TitledPanel extends JPanel {
+public abstract class TitledPanel extends JPanel {
 
 
-    public TitledPanel(String name) {
+    protected TitledPanel(String name) {
 
         setBorder(new TitledBorder(name));
 

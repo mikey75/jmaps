@@ -44,7 +44,7 @@ public class MapRenderer {
     }
 
     public void renderMap(Graphics graphicsContext) {
-        if (mapViewer.hasLayers()) {
+        if (mapViewer.getCurrentMap().layersPresent()) {
             renderTiles(graphicsContext, mapViewer.getZoom(), mapViewer.getTopLeftCornerPoint());
             renderUserOverlays((Graphics2D) graphicsContext);
             renderDefaultOverlays((Graphics2D) graphicsContext);
@@ -53,7 +53,7 @@ public class MapRenderer {
 
     private void renderTiles(final Graphics g, final int zoom, Point topLeftCorner) {
 
-        int tileSize = mapViewer.getBaseLayer().getTileSize();
+        int tileSize = mapViewer.getCurrentMap().getBaseLayer().getTileSize();
 
         createOutputCanvas(tileSize);
 
@@ -89,7 +89,7 @@ public class MapRenderer {
     }
 
     private boolean isTileLegal(int tileX, int tileY, int zoom) {
-        Dimension mapsize = mapViewer.getBaseLayer().getMapSize(zoom);
+        Dimension mapsize = mapViewer.getCurrentMap().getBaseLayer().getMapSize(zoom);
         return tileX >= 0 && tileY >= 0 && tileX < mapsize.width && tileY < mapsize.height;
     }
 
@@ -109,7 +109,7 @@ public class MapRenderer {
         tempImageGraphics.setBackground(Defaults.EMPTY_FILL_COLOR);
         tempImageGraphics.clearRect(0, 0, tempImage.getWidth(), tempImage.getHeight());
 
-        for (Layer layer : mapViewer.getEnabledLayers()) {
+        for (Layer layer : mapViewer.getCurrentMap().getEnabledLayers()) {
 
             String tileUrl = layer.createTileUrl(tileX, tileY, zoom + layer.getZoomOffset());
             Optional<BufferedImage> b = Optional.ofNullable(tileDownloader.getTile(tileUrl));

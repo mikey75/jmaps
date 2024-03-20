@@ -6,85 +6,42 @@ import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.layer.*;
 import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
+import net.wirelabs.jmaps.map.readers.MapReader;
 
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
+import java.io.File;
 
 /**
  * Created 11/8/23 by Michał Szwaczko (mikey@wirelabs.net)
+ * <p>
+ * Create mapviewer-usable map object
+ * from map xml definition file
  */
-@Slf4j
 @Getter
-public class MapManager {
+@Slf4j
+public class MapCreator {
 
-    // model for map object
-    private String mapName = "[no name defined]";
-    private String mapCopyrightAttribution = "[no attribution in definition]";
-    private final List<Layer> layers = new CopyOnWriteArrayList<>();
+    public MapObject createMap(File xmlMapFile) {
 
+        MapObject map = new MapObject();
+        MapDefinition mapDefinition = MapReader.loadMapDefinitionFile(xmlMapFile);
+        log.info("Creating map: [{}]", mapDefinition.getName());
 
-    public Layer getBaseLayer() {
-        return layers.get(0);
-    }
+        map.setMapName(mapDefinition.getName());
+        map.setMapCopyrightAttribution(mapDefinition.getCopyright());
 
-    public boolean layersPresent() {
-        return !layers.isEmpty();
-    }
-
-    public List<Layer> getEnabledLayers() {
-        return layers.stream()
-                .filter(Layer::isEnabled)
-                .collect(Collectors.toList());
-    }
-
-    public void createMap(MapDefinition mapDefinition) {
-        log.info("Setting map to {}", mapDefinition.getName());
-
-        mapName = mapDefinition.getName();
-        mapCopyrightAttribution = mapDefinition.getCopyright();
-        createLayers(mapDefinition);
-
-    }
-
-    public int getMaxZoom() {
-        return layers.stream()
-                .map(layer -> layer.getMaxZoom() - layer.getZoomOffset())
-                .mapToInt(v -> v)
-                .min().orElse(0);
-
-    }
-
-    public int getMinZoom() {
-        return layers
-                .stream()
-                .map(Layer::getMinZoom)
-                .mapToInt(val -> val)
-                .max().orElse(0);
-
-
-    }
-
-    private void createLayers(MapDefinition mapDefinition) {
-        List<LayerDefinition> layerDefinitions = mapDefinition.getLayers();
-        layers.clear();
-        for (LayerDefinition layerDefinition : layerDefinitions) {
-            Layer mapLayer = createMapLayerFromDefinition(layerDefinition);
-            if (layerMatches(mapLayer)) {
-                layers.add(mapLayer);
+        for (LayerDefinition layerDefinition : mapDefinition.getLayers()) {
+            Layer mapLayer = createMapLayer(layerDefinition);
+            if (layerMatchesExistingLayers(map, mapLayer)) {
+                map.addLayer(mapLayer);
                 log.info("Added layer {}, CRS:{}, TileSize:{}", mapLayer.getName(), mapLayer.getProjectionEngine().getCrs(), mapLayer.getTileSize());
             } else {
                 log.error("Layer not added!");
             }
         }
-
+        return map;
     }
 
-    boolean isMultilayer() {
-        return layers.size() > 1;
-    }
-
-    private Layer createMapLayerFromDefinition(LayerDefinition layerDefinition) {
+    private Layer createMapLayer(LayerDefinition layerDefinition) {
 
         Layer layer;
         LayerType type = layerDefinition.getType();
@@ -112,9 +69,10 @@ public class MapManager {
         }
     }
 
-    private boolean layerMatches(Layer layerAdded) {
+    // check if added layer matches current map layers
+    private boolean layerMatchesExistingLayers(MapObject map, Layer layerAdded) {
         // layer should have unique name, matching tilesize and crs
-        for (Layer existingLayer : layers) {
+        for (Layer existingLayer : map.getLayers()) {
             if (layerAdded.getName().equals(existingLayer.getName())) {
                 log.warn("Layer mismatch: layer named {} already exists", layerAdded.getName());
                 return false;

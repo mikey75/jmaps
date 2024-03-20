@@ -21,7 +21,7 @@ public class MapAttributionPainter extends TextPrinter  {
     public void print(Graphics2D graphics, MapViewer mapViewer, int width, int height) {
 
         // get attribution text
-        String attributionText = mapViewer.getMapCopyrightAttribution();
+        String attributionText = mapViewer.getCurrentMap().getMapCopyrightAttribution();
         if (!attributionText.isBlank()) {
             printText(graphics, width, height, attributionText);
         }

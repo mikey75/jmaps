@@ -1,8 +1,6 @@
 package net.wirelabs.jmaps.map;
 
 import net.wirelabs.jmaps.map.geo.Coordinate;
-import net.wirelabs.jmaps.map.painters.CurrentPositionPainter;
-import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,7 +9,6 @@ import java.awt.geom.Point2D;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.map;
 
 class MapViewerTest {
 
@@ -40,7 +37,7 @@ class MapViewerTest {
         assertThat(mapviewer.isShowCoordinates()).isFalse();
 
         assertThat(mapviewer.getZoom()).isEqualTo(3);
-        assertThat(mapviewer.hasLayers()).isFalse();
+        assertThat(mapviewer.getCurrentMap().layersPresent()).isFalse();
 
     }
 
@@ -54,30 +51,30 @@ class MapViewerTest {
         assertThat(mapviewer.getUserAgent()).isEqualTo(NEW_USER_AGENT);
         assertThat(mapviewer.getTilerThreads()).isEqualTo(10);
 
-        mapviewer.setMap(EXAMPLE_MAPFILE);
-        assertThat(mapviewer.hasLayers()).isTrue();
-        assertThat(mapviewer.getEnabledLayers()).hasSize(1);
-        assertThat(mapviewer.getBaseLayer().getName()).isEqualTo("Open Street Map");
+        mapviewer.setCurrentMap(EXAMPLE_MAPFILE);
+        assertThat(mapviewer.getCurrentMap().layersPresent()).isTrue();
+        assertThat(mapviewer.getCurrentMap().getEnabledLayers()).hasSize(1);
+        assertThat(mapviewer.getCurrentMap().getBaseLayer().getName()).isEqualTo("Open Street Map");
 
-        mapviewer.setMap(EXAMPLE_MAPFILE_DOUBLE_LAYER);
-        assertThat(mapviewer.hasLayers()).isTrue();
-        assertThat(mapviewer.getEnabledLayers()).hasSize(2);
-        assertThat(mapviewer.getEnabledLayers().get(0).getName()).isEqualTo("podklad");
-        assertThat(mapviewer.getEnabledLayers().get(1).getName()).isEqualTo("cieniowanie");
+        mapviewer.setCurrentMap(EXAMPLE_MAPFILE_DOUBLE_LAYER);
+        assertThat(mapviewer.getCurrentMap().layersPresent()).isTrue();
+        assertThat(mapviewer.getCurrentMap().getEnabledLayers()).hasSize(2);
+        assertThat(mapviewer.getCurrentMap().getEnabledLayers().get(0).getName()).isEqualTo("podklad");
+        assertThat(mapviewer.getCurrentMap().getEnabledLayers().get(1).getName()).isEqualTo("cieniowanie");
     }
 
     @Test
     void testMapLoading() {
 
         // map without home set
-        mapviewer.setMap(EXAMPLE_MAPFILE);
-        expectedTopLeftCornerPoint = new Point2D.Double(mapviewer.getBaseLayer().getMapSizeInPixels(mapviewer.getZoom()).width / 2.0, mapviewer.getBaseLayer().getMapSizeInPixels(mapviewer.getZoom()).height / 2.0);
+        mapviewer.setCurrentMap(EXAMPLE_MAPFILE);
+        expectedTopLeftCornerPoint = new Point2D.Double(mapviewer.getCurrentMap().getBaseLayer().getMapSizeInPixels(mapviewer.getZoom()).width / 2.0, mapviewer.getCurrentMap().getBaseLayer().getMapSizeInPixels(mapviewer.getZoom()).height / 2.0);
         assertTopLeftPointCorrect(false, expectedTopLeftCornerPoint);
 
         // map with home set
         mapviewer.setHome(LUBLIN_PL);
-        mapviewer.setMap(EXAMPLE_MAPFILE);
-        expectedTopLeftCornerPoint = mapviewer.getBaseLayer().latLonToPixel(LUBLIN_PL, mapviewer.getZoom());
+        mapviewer.setCurrentMap(EXAMPLE_MAPFILE);
+        expectedTopLeftCornerPoint = mapviewer.getCurrentMap().getBaseLayer().latLonToPixel(LUBLIN_PL, mapviewer.getZoom());
         assertTopLeftPointCorrect(true , expectedTopLeftCornerPoint);
 
     }

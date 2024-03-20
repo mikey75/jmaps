@@ -91,7 +91,7 @@ public class ConfigPanel extends TitledPanel {
                 URL path = getClass().getClassLoader().getResource(selected.getMapFile());
                 if (path != null) {
                     File file = new File(path.getFile());
-                    mapViewer.setMap(file);
+                    mapViewer.setCurrentMap(file);
                 }
             }
         });
@@ -121,7 +121,7 @@ public class ConfigPanel extends TitledPanel {
         btnAddLayer.addActionListener(e ->
                 invokeFileChooser("Map definition files", "xml", () -> {
                     File mapxml = fileChooser.getSelectedFile();// user selects a file
-                    mapViewer.setMap(mapxml);
+                    mapViewer.setCurrentMap(mapxml);
                 }));
     }
 
