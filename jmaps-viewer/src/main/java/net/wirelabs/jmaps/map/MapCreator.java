@@ -10,6 +10,8 @@ import net.wirelabs.jmaps.map.readers.MapReader;
 
 import java.io.File;
 
+import static net.wirelabs.jmaps.map.layer.LayerType.*;
+
 /**
  * Created 11/8/23 by Michał Szwaczko (mikey@wirelabs.net)
  * <p>
@@ -43,30 +45,19 @@ public class MapCreator {
 
     private Layer createMapLayer(LayerDefinition layerDefinition) {
 
-        Layer layer;
         LayerType type = layerDefinition.getType();
 
-        if (type == null ) {
-            throw new CriticalMapException("Layer type not given or unknown");
-        }
+        if (type == WMTS)
+            return new WMTSLayer(layerDefinition);
 
-        switch (type) {
-            case WMTS: {
-               layer = new WMTSLayer(layerDefinition);
-               return layer;
-            }
-            case XYZ: {
-                layer = new XYZLayer(layerDefinition);
-                return layer;
-            }
-            case VE: {
-                layer = new VEarthLayer(layerDefinition);
-                return layer;
-            }
-            default: {
-                throw new CriticalMapException("Layer type not currently supported");
-            }
-        }
+        if (type == XYZ)
+            return new XYZLayer(layerDefinition);
+
+        if (type == VE)
+            return new VEarthLayer(layerDefinition);
+
+        throw new CriticalMapException("Layer type not given or unknown");
+
     }
 
     // check if added layer matches current map layers

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<map name="Map1">
+
+    <layer>
+        <name>layer1</name>
+        <type>XYZ</type>
+        <url>url</url>
+    </layer>
+
+    <layer>
+        <name>layer2</name>
+        <type>XYZ</type>
+        <url>url</url>
+    </layer>
+
+    <copyright>jmaps</copyright>
+</map>
+

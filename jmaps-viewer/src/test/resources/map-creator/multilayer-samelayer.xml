@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<map name="Map1">
+
+    <layer>
+        <name>podklad</name>
+        <type>VE</type>
+        <url>url</url>
+    </layer>
+
+    <layer>
+        <name>podklad</name>
+        <type>VE</type>
+        <url>url</url>
+    </layer>
+
+    <copyright>jmaps</copyright>
+</map>

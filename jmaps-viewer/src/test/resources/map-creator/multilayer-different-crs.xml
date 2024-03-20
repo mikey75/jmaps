@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<map name="Map1">
+
+    <layer>
+        <name>layer1</name>
+        <type>VE</type>
+        <url>url</url>
+        <crs>EPSG:3857</crs>
+    </layer>
+
+    <layer>
+        <name>layer2</name>
+        <type>VE</type>
+        <url>url</url>
+        <crs>EPSG:3128</crs>
+    </layer>
+
+    <copyright>jmaps</copyright>
+</map>
