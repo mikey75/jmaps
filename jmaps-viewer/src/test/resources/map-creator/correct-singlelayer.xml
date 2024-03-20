@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<map name="Map1">
+    <layer>
+        <name>Open Street Map</name>
+        <type>XYZ</type>
+        <url>url</url>
+    </layer>
+    <copyright>jmaps</copyright>
+</map>

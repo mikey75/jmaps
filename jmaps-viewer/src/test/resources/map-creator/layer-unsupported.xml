@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<map name="Map1">
+
+    <layer>
+        <name>layer1</name>
+        <type>unsupported</type>
+        <url>unsupported</url>
+    </layer>
+
+    <copyright>jmaps</copyright>
+</map>

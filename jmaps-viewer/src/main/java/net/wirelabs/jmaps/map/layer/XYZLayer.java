@@ -27,8 +27,9 @@ public class XYZLayer extends Layer {
     
     public XYZLayer(LayerDefinition layerDefinition) {
         super(layerDefinition.getName(), layerDefinition.getUrl());
-        projectionEngine = new ProjectionEngine("EPSG:3857");
 
+        setProjectionEngine(new ProjectionEngine(layerDefinition.getCrs()));
+        setTileSize(layerDefinition.getTileSize());
         setMaxZoom(layerDefinition.getMaxZoom());
         setMinZoom(layerDefinition.getMinZoom());
         setSwapAxis(layerDefinition.isSwapAxis());

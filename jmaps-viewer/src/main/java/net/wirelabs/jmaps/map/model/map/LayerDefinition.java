@@ -28,6 +28,8 @@ public class LayerDefinition {
     @XmlElement(required = true)
     private LayerType type;
     @XmlElement
+    private String crs = "EPSG:3857"; // default crs/ settable
+    @XmlElement
     boolean swapAxis = false;
     @XmlElement
     private int tileSize = 256;
