@@ -37,18 +37,18 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
     @Override
     public void mouseWheelMoved(MouseWheelEvent evt) {
 
-        if (mapViewer.hasLayers()) {
+        if (mapViewer.getCurrentMap().layersPresent()) {
 
             updateMousePoint(evt);
 
-            Layer baseLayer = mapViewer.getBaseLayer();
+            Layer baseLayer = mapViewer.getCurrentMap().getBaseLayer();
             // location of mouse at current zoom
             Coordinate mouseLatLon = baseLayer.pixelToLatLon(mousePoint, mapViewer.getZoom());
 
             int zoom = mapViewer.getZoom() - evt.getWheelRotation();
 
-            int minZoomAllLayers = mapViewer.getMinZoom();
-            int maxZoomAllLayers = mapViewer.getMaxZoom();
+            int minZoomAllLayers = mapViewer.getCurrentMap().getMinZoom();
+            int maxZoomAllLayers = mapViewer.getCurrentMap().getMaxZoom();
 
             if (zoom >= minZoomAllLayers && zoom <= maxZoomAllLayers) {
                 // get mouse location in pixels in new zoom
@@ -119,8 +119,8 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
     }
 
     private void clipToBounds(Point topLeftCornerPoint) {
-        if (mapViewer.hasLayers()) {
-            Layer baseLayer = mapViewer.getBaseLayer();
+        if (mapViewer.getCurrentMap().layersPresent()) {
+            Layer baseLayer = mapViewer.getCurrentMap().getBaseLayer();
 
             int zoom = mapViewer.getZoom();
             int maxX = baseLayer.getMapSizeInPixels(zoom).width - mapViewer.getWidth();

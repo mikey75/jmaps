@@ -9,9 +9,7 @@ import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
 import net.wirelabs.jmaps.map.layer.Layer;
-import net.wirelabs.jmaps.map.model.map.MapDefinition;
 import net.wirelabs.jmaps.map.painters.Painter;
-import net.wirelabs.jmaps.map.readers.MapReader;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +27,7 @@ public class MapViewer extends JPanel {
     private final transient MapRenderer mapRenderer;
     private final transient MouseHandler mouseHandler;
     private final transient TileDownloader tileDownloader;
-    private final transient MapManager mapManager;
+    private final transient MapCreator mapCreator;
 
     // current map top left corner in pixels
     @Getter
@@ -54,13 +52,15 @@ public class MapViewer extends JPanel {
     private boolean showAttribution = true;
     @Getter
     private final List<Painter<MapViewer>> userOverlays = new ArrayList<>();
+    @Getter
+    private transient MapObject currentMap = new MapObject();
 
     public MapViewer() {
         tileDownloader = new TileDownloader(this);
         mapRenderer = new MapRenderer(this, tileDownloader);
-        mapManager = new MapManager();
         mouseHandler = new MouseHandler(this);
-        mapInfoPanel = new MapInfoPanel(this, mapManager);
+        mapInfoPanel = new MapInfoPanel(this);
+        mapCreator = new MapCreator();
         add(mapInfoPanel);
     }
 
@@ -77,10 +77,10 @@ public class MapViewer extends JPanel {
     }
 
     public void setZoom(int zoom) {
-        if (hasLayers()) {
+        if (currentMap.layersPresent()) {
 
-            int minZoomAllLayers = getMinZoom();
-            int maxZoomAllLayers = getMaxZoom();
+            int minZoomAllLayers = currentMap.getMinZoom();
+            int maxZoomAllLayers = currentMap.getMaxZoom();
 
             if (zoom < minZoomAllLayers) zoom = minZoomAllLayers;
             if (zoom > maxZoomAllLayers) zoom = maxZoomAllLayers;
@@ -89,21 +89,16 @@ public class MapViewer extends JPanel {
         this.zoom = zoom;
     }
 
-    public int getMaxZoom() {
-        return mapManager.getMaxZoom();
-    }
-
-    public int getMinZoom() {
-        return mapManager.getMinZoom();
-    }
-
-    // sets location (given in wgs84 coordinates)
-    // on the map at current zoom and centers on it
-    // if location is null or does not match map bounds - center on map's center point
+    /**
+     * Sets location on the map at current zoom and centers on it
+     * If location is null or does not match map bounds -> center on map's geometric center point
+     *
+     * @param location WGS84 coordinates of the location
+     */
     public void centerOnLocation(Coordinate location) {
         // if location is NULL or outside map bounds, center on map geometric centre
-        Layer baseLayer = getBaseLayer();
-        Rectangle2D mapBounds  = new Rectangle2D.Double(0,0,getBaseLayer().getMapSizeInPixels(zoom).width, getBaseLayer().getMapSizeInPixels(zoom).height);
+        Layer baseLayer = currentMap.getBaseLayer();
+        Rectangle2D mapBounds  = new Rectangle2D.Double(0,0,baseLayer.getMapSizeInPixels(zoom).width, baseLayer.getMapSizeInPixels(zoom).height);
 
        if (location == null || !mapBounds.contains(baseLayer.latLonToPixel(location, zoom))) {
             double x = baseLayer.getMapSizeInPixels(zoom).width / 2.0;
@@ -116,14 +111,13 @@ public class MapViewer extends JPanel {
     }
 
     /**
-     * Set visible map from xml file
+     * Set current map from xml definition file
      *
      * @param xmlMapFile map xml definition
      */
-    public void setMap(File xmlMapFile) {
+    public void setCurrentMap(File xmlMapFile) {
         try {
-            MapDefinition mapDefinition = MapReader.loadMapDefinitionFile(xmlMapFile);
-            mapManager.createMap(mapDefinition);
+            currentMap = mapCreator.createMap(xmlMapFile);
             // update layers panel
             updateLayersPanel();
             // if any overlay has drawn something (i.e getObjects is not empty) -> fit best to those objects
@@ -152,14 +146,6 @@ public class MapViewer extends JPanel {
         repaint();
     }
 
-    public boolean hasLayers() {
-        return mapManager.layersPresent();
-    }
-
-    public Layer getBaseLayer() {
-        return mapManager.getBaseLayer();
-    }
-
     public Point2D getCurrentMousePosition() {
         return mouseHandler.getMousePoint();
     }
@@ -171,8 +157,8 @@ public class MapViewer extends JPanel {
      * @param coordinates list of coordinates (for instance a route, or set of waypoints)
      */
     public void setBestFit(List<Coordinate> coordinates) {
-        if (hasLayers()) {
-            for (int fitZoom = getBaseLayer().getMaxZoom(); fitZoom > 0; fitZoom--) {
+        if (getCurrentMap().layersPresent()) {
+            for (int fitZoom = currentMap.getBaseLayer().getMaxZoom(); fitZoom > 0; fitZoom--) {
                 Rectangle2D routeRec = getEnclosingRectangle(coordinates, fitZoom);
                 if (routeRec.getWidth() <= getWidth() && routeRec.getHeight() <= getHeight()) {
                     setPositionAndZoom(GeoUtils.calculateCenterOfCoordinateSet(coordinates), fitZoom);
@@ -192,12 +178,12 @@ public class MapViewer extends JPanel {
     private Rectangle2D getEnclosingRectangle(List<Coordinate> coords, int zoom) {
 
         // --- setup first point rectangle
-        Point2D firstPoint = getBaseLayer().latLonToPixel(coords.get(0), zoom);
+        Point2D firstPoint = currentMap.getBaseLayer().latLonToPixel(coords.get(0), zoom);
         Rectangle2D r2 = new Rectangle2D.Double(firstPoint.getX(), firstPoint.getY(), 0, 0);
 
         // add points to rectangle
         for (Coordinate c : coords) {
-            r2.add(getBaseLayer().latLonToPixel(c, zoom));
+            r2.add(currentMap.getBaseLayer().latLonToPixel(c, zoom));
         }
         // translate world pixel into canvas pixel
         r2.setRect(r2.getX() - topLeftCornerPoint.x, r2.getY() - topLeftCornerPoint.y, r2.getWidth(), r2.getHeight());
@@ -206,26 +192,17 @@ public class MapViewer extends JPanel {
 
     }
 
-    public List<Layer> getEnabledLayers() {
-        return mapManager.getEnabledLayers();
-    }
-
-    public String getMapCopyrightAttribution() {
-        return mapManager.getMapCopyrightAttribution();
-    }
-
     public void setImageCacheSize(long size) {
         tileDownloader.setImageCacheSize(size);
     }
 
     public void updateLayersPanel() {
 
-        if (mapManager.isMultilayer()) {
+        if (currentMap.isMultilayer()) {
             mapInfoPanel.addLayers();
-            mapInfoPanel.setVisible(true);
-        } else {
-            mapInfoPanel.setVisible(false);
         }
+        mapInfoPanel.setVisible(currentMap.isMultilayer());
+
     }
 }
 

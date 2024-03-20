@@ -10,12 +10,9 @@ import javax.swing.border.TitledBorder;
 public class MapInfoPanel extends JPanel {
 
     private final MapViewer mapViewer;
-    private final transient MapManager mapManager;
 
-    public MapInfoPanel(MapViewer mapViewer, MapManager mapManager) {
+    public MapInfoPanel(MapViewer mapViewer) {
         this.mapViewer = mapViewer;
-        this.mapManager = mapManager;
-
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setOpaque(true);
         setBorder(new TitledBorder("Layers"));
@@ -26,7 +23,7 @@ public class MapInfoPanel extends JPanel {
 
         removeAll();
 
-        for (Layer layer: mapManager.getLayers()) {
+        for (Layer layer: mapViewer.getCurrentMap().getLayers()) {
             JCheckBox layerCheckbox = new JCheckBox(layer.getName());
             layerCheckbox.setSelected(layer.isEnabled());
             layerCheckbox.addActionListener( e -> {
