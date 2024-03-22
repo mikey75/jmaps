@@ -68,7 +68,7 @@ class MapViewerTest {
 
         // map without home set
         mapviewer.setCurrentMap(EXAMPLE_MAPFILE);
-        expectedTopLeftCornerPoint = new Point2D.Double(mapviewer.getCurrentMap().getBaseLayer().getMapSizeInPixels(mapviewer.getZoom()).width / 2.0, mapviewer.getCurrentMap().getBaseLayer().getMapSizeInPixels(mapviewer.getZoom()).height / 2.0);
+        expectedTopLeftCornerPoint = new Point2D.Double(mapviewer.getMapSizeInPixels(mapviewer.getZoom()).width / 2.0, mapviewer.getMapSizeInPixels(mapviewer.getZoom()).height / 2.0);
         assertTopLeftPointCorrect(false, expectedTopLeftCornerPoint);
 
         // map with home set

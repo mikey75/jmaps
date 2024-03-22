@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.downloader.TileDownloader;
-import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
 import net.wirelabs.jmaps.map.layer.Layer;
@@ -98,11 +97,12 @@ public class MapViewer extends JPanel {
     public void centerOnLocation(Coordinate location) {
         // if location is NULL or outside map bounds, center on map geometric centre
         Layer baseLayer = currentMap.getBaseLayer();
-        Rectangle2D mapBounds  = new Rectangle2D.Double(0,0,baseLayer.getMapSizeInPixels(zoom).width, baseLayer.getMapSizeInPixels(zoom).height);
+        Rectangle2D mapBounds  = new Rectangle2D.Double(0,0,getMapSizeInPixels(zoom).width, getMapSizeInPixels(zoom).height);
 
        if (location == null || !mapBounds.contains(baseLayer.latLonToPixel(location, zoom))) {
-            double x = baseLayer.getMapSizeInPixels(zoom).width / 2.0;
-            double y = baseLayer.getMapSizeInPixels(zoom).height / 2.0;
+
+           double x = getMapSizeInPixels(zoom).width/2.0; //baseLayer.getMapSizeInPixels(zoom).width / 2.0;
+            double y = getMapSizeInPixels(zoom).height/2.0; //baseLayer.getMapSizeInPixels(zoom).height / 2.0;
             topLeftCornerPoint.setLocation((int) (x - getWidth() / 2.0), (int) (y - getHeight() / 2.0));
         } else {
             Point2D p = baseLayer.latLonToPixel(location, zoom);
@@ -110,6 +110,13 @@ public class MapViewer extends JPanel {
         }
     }
 
+    public Dimension getMapSizeInPixels(int zoom) {
+        Layer baselayer = currentMap.getBaseLayer();
+        return new Dimension (
+                baselayer.getSizeInTiles(zoom).width * baselayer.getTileSize(),
+                baselayer.getSizeInTiles(zoom).height * baselayer.getTileSize());
+
+    }
     /**
      * Set current map from xml definition file
      *
@@ -131,7 +138,7 @@ public class MapViewer extends JPanel {
                 setPositionAndZoom(getHome(), getZoom());
             }
 
-        } catch (CriticalMapException ex) {
+        } catch (Exception ex) {
             log.info("Map not created {}", ex.getMessage(), ex);
         }
     }

@@ -1,13 +1,10 @@
 package net.wirelabs.jmaps.map.layer;
 
 import net.wirelabs.jmaps.map.geo.Coordinate;
-import net.wirelabs.jmaps.map.geo.ProjectionEngine;
 import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
-
-import static net.wirelabs.jmaps.map.geo.GeoUtils.*;
 
 /**
  * XYZ layer, also called basic layer, slippy map,  tile layer etc
@@ -24,24 +21,16 @@ import static net.wirelabs.jmaps.map.geo.GeoUtils.*;
  */
 
 public class XYZLayer extends Layer {
-    
-    public XYZLayer(LayerDefinition layerDefinition) {
-        super(layerDefinition.getName(), layerDefinition.getUrl());
 
-        setProjectionEngine(new ProjectionEngine(layerDefinition.getCrs()));
-        setTileSize(layerDefinition.getTileSize());
-        setMaxZoom(layerDefinition.getMaxZoom());
-        setMinZoom(layerDefinition.getMinZoom());
-        setSwapAxis(layerDefinition.isSwapAxis());
-        setOpacity(layerDefinition.getOpacity());
-        setZoomOffset(layerDefinition.getZoomOffset());
+    public XYZLayer(LayerDefinition layerDefinition) {
+        super(layerDefinition);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Dimension getMapSize(int zoom) {
+    public Dimension getSizeInTiles(int zoom) {
         int z = (int) Math.pow(2, zoom);
         return new Dimension(z, z);
     }
@@ -56,49 +45,22 @@ public class XYZLayer extends Layer {
     }
 
     @Override
-    public Point2D getTopLeftCorner() {
-        Coordinate c = new Coordinate(-180, 85.06); // upper left
+    // get top left corner in meters
+    public Point2D getTopLeftCornerInMeters() {
+
+        // for default EPSG-3857 it is (-180,85.06)
+        // which translates to -(equator length / 2), (polar length / 2)
+
+        double pl = getProjectionEngine().getPolarLength() / 2.0d;
+        double eq = -getProjectionEngine().getEquatorLength() / 2.0d;
+        Coordinate c = new Coordinate(eq, pl); // upper left
         return new Point2D.Double(c.getLongitude(), c.getLatitude());
     }
 
     @Override
-    public Point2D latLonToPixel(Coordinate latLon, int zoom) {
-
-        double epsilon = Math.sin(deg2rad(latLon.getLatitude()));
-
-        if (latLon.getLatitude() > getTopLeftCorner().getY()) latLon.setLatitude(getTopLeftCorner().getY());
-        if (latLon.getLatitude() < -getTopLeftCorner().getY()) latLon.setLatitude(-getTopLeftCorner().getY());
-
-        double lon = centerInPixels(zoom).getX() + (latLon.getLongitude() * oneDegreeLonInPixels(zoom));
-        double lat = centerInPixels(zoom).getY() + 0.5 * Math.log((1 + epsilon) / (1 - epsilon)) * -oneRadianLonInPixels(zoom);
-
-        return new Point2D.Double(lon, lat);
-
+    public double getMetersPerPixelAtZoom(int zoom) {
+        return getProjectionEngine().getEquatorLength() / getSizeInTiles(zoom).width / tileSize;
     }
 
-    @Override
-    public Coordinate pixelToLatLon(Point2D pixel, int zoom) {
-
-        double lon = (pixel.getX() - centerInPixels(zoom).getX()) / oneDegreeLonInPixels(zoom);
-        double e1 = (pixel.getY() - centerInPixels(zoom).getY()) /  -oneRadianLonInPixels(zoom);
-        double lat = (2 * Math.atan(Math.exp(e1)) - HALF_PI) / deg2rad(1);
-
-        return new Coordinate(lon, lat);
-
-    }
-
-    private Point2D centerInPixels(int zoom) {
-        double centerx = (getMapSize(zoom).width * getTileSize()) / 2d;
-        double centery = (getMapSize(zoom).height * getTileSize()) / 2d;
-        return new Point2D.Double(centerx, centery);
-    }
-
-    private double oneDegreeLonInPixels(int zoom) {
-        return (getMapSize(zoom).width * getTileSize()) / 360d;
-    }
-
-    private double oneRadianLonInPixels(int zoom) {
-        return (getMapSize(zoom).width * getTileSize()) / deg2rad(360d);
-    }
 
 }

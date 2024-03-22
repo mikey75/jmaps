@@ -1,6 +1,9 @@
 package net.wirelabs.jmaps.map.geo;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.locationtech.proj4j.CRSFactory;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.locationtech.proj4j.ProjCoordinate;
@@ -13,14 +16,16 @@ import static net.wirelabs.jmaps.map.geo.GeoUtils.TWO_PI;
  * uses proj4j - great library from osgeo.
  */
 @Getter
+@NoArgsConstructor
 public class ProjectionEngine {
 
-    private final CoordinateReferenceSystem crs;
+    private CoordinateReferenceSystem crs;
     private final ProjCoordinate projectionResult = new ProjCoordinate();
     private final ProjCoordinate projectionSource = new ProjCoordinate();
     private final CRSFactory csFactory = new CRSFactory();
 
-    public ProjectionEngine(String crsName) {
+
+    public void setCrs(String crsName) {
         crs = csFactory.createFromName(crsName);
     }
 
