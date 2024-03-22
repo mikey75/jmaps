@@ -6,7 +6,6 @@ import net.wirelabs.jmaps.map.model.map.MapDefinition;
 import org.junit.jupiter.api.Test;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.UnmarshalException;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -20,22 +19,20 @@ class MapReaderTest {
     private static final File MAPFILE = new File("src/test/resources/map.xml");
     private static final File MAPFILE_BAD = new File("src/test/resources/map-bad.xml");
     private static final File MAPFILE_NONEXISTING = new File("nonexisting");
+    private static final MapReader mapReader = new MapReader();
 
     @Test
     void shouldNotLoadNonExistingMapDefinitionFile() {
 
         assertThatExceptionOfType(CriticalMapException.class)
-                .isThrownBy(() -> MapReader.loadMapDefinitionFile(MAPFILE_NONEXISTING))
+                .isThrownBy(() -> mapReader.loadMapDefinitionFile(MAPFILE_NONEXISTING))
                 .withMessageMatching("Could not load map definition");
     }
 
 
     @Test
     void shouldLoadMapDefinitionFile() throws JAXBException {
-
-        // MapReader mapReader = new MapReader();
-
-        MapDefinition m = MapReader.loadMapDefinitionFile(MAPFILE);
+        MapDefinition m = mapReader.loadMapDefinitionFile(MAPFILE);
 
         assertThat(m.getName()).isEqualTo("Mapa 1");
         assertThat(m.getLayers()).hasSize(1);
@@ -50,7 +47,7 @@ class MapReaderTest {
     void shouldNotLoadBadMapDefinitionFile() {
 
         assertThatExceptionOfType(CriticalMapException.class)
-                .isThrownBy(() -> MapReader.loadMapDefinitionFile(MAPFILE_BAD))
+                .isThrownBy(() -> mapReader.loadMapDefinitionFile(MAPFILE_BAD))
                 .withMessageContaining("Could not load map definition");
 
     }

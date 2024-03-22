@@ -28,7 +28,8 @@ class ProjectionEngineTest {
     void testProjection(String crs, Coordinate expectedCoord) {
 
         // given
-        ProjectionEngine projectionEngine = new ProjectionEngine(crs);
+        ProjectionEngine projectionEngine = new ProjectionEngine();
+        projectionEngine.setCrs(crs);
         // when
         Coordinate projectedCoord = projectionEngine.project(GPS_COORDINATE_LUBLIN);
         // then
@@ -36,7 +37,8 @@ class ProjectionEngineTest {
     }
 
     void testInverseProjection(String crs, Coordinate srcCoord) {
-        ProjectionEngine projectionEngine = new ProjectionEngine(crs);
+        ProjectionEngine projectionEngine = new ProjectionEngine();
+        projectionEngine.setCrs(crs);
         // when
         Coordinate projectedCoord = projectionEngine.unproject(srcCoord);
         // then

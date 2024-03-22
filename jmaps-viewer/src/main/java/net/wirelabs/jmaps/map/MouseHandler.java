@@ -120,11 +120,11 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
 
     private void clipToBounds(Point topLeftCornerPoint) {
         if (mapViewer.getCurrentMap().layersPresent()) {
-            Layer baseLayer = mapViewer.getCurrentMap().getBaseLayer();
+            //Layer baseLayer = mapViewer.getCurrentMap().getBaseLayer();
 
             int zoom = mapViewer.getZoom();
-            int maxX = baseLayer.getMapSizeInPixels(zoom).width - mapViewer.getWidth();
-            int maxY = baseLayer.getMapSizeInPixels(zoom).height - mapViewer.getHeight();
+            int maxX = mapViewer.getMapSizeInPixels(zoom).width - mapViewer.getWidth();
+            int maxY = mapViewer.getMapSizeInPixels(zoom).height - mapViewer.getHeight();
 
             if (topLeftCornerPoint.x < 0) {
                 topLeftCornerPoint.x = 0;

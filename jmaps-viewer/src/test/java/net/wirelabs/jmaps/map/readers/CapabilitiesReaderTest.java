@@ -15,7 +15,7 @@ import java.nio.file.Files;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class WMTSCapReaderTest {
+class CapabilitiesReaderTest {
 
     private static final String TEST_CACHE_ROOT = "target/testcache/wmts-cache";
     private static final File EXPECTED_CACHED_FILE = new File(TEST_CACHE_ROOT,"localhost/wmts/capabilities.xml");

@@ -17,10 +17,10 @@ import java.io.File;
  * Created 6/5/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
 @Slf4j
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+
 public class MapReader {
 
-    public static MapDefinition loadMapDefinitionFile(File mapDefinitionFile) {
+    public  MapDefinition loadMapDefinitionFile(File mapDefinitionFile) {
         try {
             JAXBContext context = JAXBContext.newInstance(MapDefinition.class);
             Unmarshaller jaxb = context.createUnmarshaller();

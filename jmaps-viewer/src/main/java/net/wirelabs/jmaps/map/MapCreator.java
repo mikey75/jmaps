@@ -8,7 +8,9 @@ import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
 import net.wirelabs.jmaps.map.readers.MapReader;
 
+import javax.xml.bind.JAXBException;
 import java.io.File;
+import java.io.IOException;
 
 import static net.wirelabs.jmaps.map.layer.LayerType.*;
 
@@ -25,7 +27,9 @@ public class MapCreator {
     public MapObject createMap(File xmlMapFile) {
 
         MapObject map = new MapObject();
-        MapDefinition mapDefinition = MapReader.loadMapDefinitionFile(xmlMapFile);
+        MapReader mapReader = new MapReader();
+
+        MapDefinition mapDefinition = mapReader.loadMapDefinitionFile(xmlMapFile);
         log.info("Creating map: [{}]", mapDefinition.getName());
 
         map.setMapName(mapDefinition.getName());
@@ -41,6 +45,7 @@ public class MapCreator {
             }
         }
         return map;
+
     }
 
     private Layer createMapLayer(LayerDefinition layerDefinition) {

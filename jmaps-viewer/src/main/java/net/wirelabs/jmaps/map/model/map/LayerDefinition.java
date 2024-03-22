@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 /**
  * Created 6/5/23 by Michał Szwaczko (mikey@wirelabs.net)
  * LayerDefinition descriptor for all possible layer types
+ * with default values if not set in xml description
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @NoArgsConstructor
@@ -28,7 +29,7 @@ public class LayerDefinition {
     @XmlElement(required = true)
     private LayerType type;
     @XmlElement
-    private String crs = "EPSG:3857"; // default crs/ settable
+    private String crs;
     @XmlElement
     boolean swapAxis = false;
     @XmlElement
@@ -48,8 +49,4 @@ public class LayerDefinition {
     @XmlElement
     private String wmtsLayer;
 
-    public LayerDefinition(String name, String url) {
-        this.name = name;
-        this.url = url;
-    }
 }
