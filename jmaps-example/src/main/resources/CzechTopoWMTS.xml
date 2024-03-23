@@ -4,9 +4,8 @@
         <name>layer1</name>
         <type>WMTS</type>
         <url>http://geoportal.cuzk.cz/WMTS_ZM/WMTService.aspx</url>
-        <swapAxis>true</swapAxis>
         <wmtsLayer>zm</wmtsLayer>
-        <tileMatrixSet>jtsk:epsg:5514</tileMatrixSet>
+        <tileMatrixSet>wgs84:pseudomercator:epsg:3857</tileMatrixSet>
     </layer>
     <copyright>© ČÚZK</copyright>
 </map>
