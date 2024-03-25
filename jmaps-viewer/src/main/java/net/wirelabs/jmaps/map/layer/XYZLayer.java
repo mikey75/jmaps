@@ -44,18 +44,7 @@ public class XYZLayer extends Layer {
 
     }
 
-    @Override
-    // get top left corner in meters
-    public Point2D getTopLeftCornerInMeters() {
 
-        // for default EPSG-3857 it is (-180,85.06)
-        // which translates to -(equator length / 2), (polar length / 2)
-
-        double pl = getProjectionEngine().getPolarLength() / 2.0d;
-        double eq = -getProjectionEngine().getEquatorLength() / 2.0d;
-        Coordinate c = new Coordinate(eq, pl); // upper left
-        return new Point2D.Double(c.getLongitude(), c.getLatitude());
-    }
 
     @Override
     public double getMetersPerPixelAtZoom(int zoom) {

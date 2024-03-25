@@ -97,7 +97,7 @@ public class WMTSLayer extends Layer {
 
     }
 
-    @Override
+
     public Point2D getTopLeftCornerInMeters() {
         double[] tlc = capabilities.getContents().getTileMatrixSet(defaultTms)
                 .getTileMatrix(0).getTopLeftCorner();
