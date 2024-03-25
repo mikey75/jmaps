@@ -78,14 +78,14 @@ public abstract class Layer  {
 
 
     /**
-     * Convert pixel to lat/lon
+     * Convert pixel to lat/lon in layer's current CRS
      * @param pixel current pixel
      * @param zoom zoomlevel
      * @return lat/lon coordinate
      */
     public Coordinate pixelToLatLon(Point2D pixel, int zoom) {
         Point2D tlc = getTopLeftCornerInMeters();
-        // convert pixel to meters
+        // convert pixel to crs units
         Coordinate coord = new Coordinate(
                 tlc.getX() + (pixel.getX() * getMetersPerPixelAtZoom(zoom)),
                 tlc.getY() - (pixel.getY() * getMetersPerPixelAtZoom(zoom)));
@@ -94,16 +94,27 @@ public abstract class Layer  {
     }
 
     /**
+     * Gets top left corner of the map in map's crs units
+     * @return point with top left corner coordinates
+     */
+    // get top left corner in meters
+    public Point2D getTopLeftCornerInMeters() {
+
+        // for default EPSG-3857 it is (-180,85.06)
+        // which translates to -(equator length / 2), (polar length / 2)
+
+        double pl = getProjectionEngine().getPolarLength() / 2.0d;
+        double eq = -getProjectionEngine().getEquatorLength() / 2.0d;
+        Coordinate c = new Coordinate(eq, pl); // upper left
+        return new Point2D.Double(c.getLongitude(), c.getLatitude());
+    }
+    /**
      * Get meters per pixel at given zoom
      * @param zoom zoom level
      * @return meters per pixel
      */
     public abstract double getMetersPerPixelAtZoom(int zoom);
-    /**
-     * Gets top left corner of the map in map's crs units
-     * @return point with top left corner coordinates
-     */
-    public abstract Point2D getTopLeftCornerInMeters();
+
 
     /**
      * Creates download url from parameters for given layer type
