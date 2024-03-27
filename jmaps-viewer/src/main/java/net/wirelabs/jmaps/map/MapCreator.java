@@ -50,18 +50,13 @@ public class MapCreator {
 
     private Layer createMapLayer(LayerDefinition layerDefinition) {
 
-        LayerType type = layerDefinition.getType();
-
-        if (type == WMTS)
-            return new WMTSLayer(layerDefinition);
-
-        if (type == XYZ)
-            return new XYZLayer(layerDefinition);
-
-        if (type == VE)
-            return new VEarthLayer(layerDefinition);
-
-        throw new CriticalMapException("Layer type not given or unknown");
+        try {
+            LayerType type = layerDefinition.getType();
+            return type.layer.getDeclaredConstructor(LayerDefinition.class).newInstance(layerDefinition);
+        } catch (Exception e) {
+            log.info("Layer type not given or unknown");
+            throw new CriticalMapException("Layer type not given or unknown");
+        }
 
     }
 
