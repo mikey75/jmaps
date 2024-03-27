@@ -21,14 +21,20 @@ import java.awt.geom.Point2D;
  */
 public class MouseHandler extends MouseInputAdapter implements MouseWheelListener {
 
-    private Point prevMousePosition;
-    private Cursor priorCursor;
+
     private final MapViewer mapViewer;
+
+    private Cursor priorCursor;
+    private final Point topLeftCorner;
+
     @Getter
-    private final Point mousePoint = new Point();
+    private final Point currentMousePosition = new Point();
+    private final Point prevMousePosition = new Point();
 
     public MouseHandler(MapViewer mapViewer) {
         this.mapViewer = mapViewer;
+        this.topLeftCorner = mapViewer.getTopLeftCornerPoint();
+
         mapViewer.addMouseMotionListener(this);
         mapViewer.addMouseListener(this);
         mapViewer.addMouseWheelListener(this);
@@ -43,7 +49,7 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
 
             Layer baseLayer = mapViewer.getCurrentMap().getBaseLayer();
             // location of mouse at current zoom
-            Coordinate mouseLatLon = baseLayer.pixelToLatLon(mousePoint, mapViewer.getZoom());
+            Coordinate mouseLatLon = baseLayer.pixelToLatLon(currentMousePosition, mapViewer.getZoom());
 
             int zoom = mapViewer.getZoom() - evt.getWheelRotation();
 
@@ -77,7 +83,7 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
         if (!SwingUtilities.isLeftMouseButton(mouseEvent))
             return;
 
-        prevMousePosition = mouseEvent.getPoint();
+        prevMousePosition.setLocation(mouseEvent.getPoint());
         priorCursor = mapViewer.getCursor();
         mapViewer.setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
 
@@ -88,68 +94,66 @@ public class MouseHandler extends MouseInputAdapter implements MouseWheelListene
         if (!SwingUtilities.isLeftMouseButton(mouseEvent))
             return;
 
-        Point currentMousePosition = mouseEvent.getPoint();
-        if (prevMousePosition != null) {
+        Point currentMousePoint = mouseEvent.getPoint();
 
+            int deltaX = prevMousePosition.x - currentMousePoint.x;
+            int deltaY = prevMousePosition.y - currentMousePoint.y;
 
-            Point topLeftCornerPoint = mapViewer.getTopLeftCornerPoint();
+            topLeftCorner.translate(deltaX, deltaY);
 
-            int deltaX = prevMousePosition.x - currentMousePosition.x;
-            int deltaY = prevMousePosition.y - currentMousePosition.y;
+            clipToBounds();
 
-            topLeftCornerPoint.translate(deltaX, deltaY);
-
-            clipToBounds(topLeftCornerPoint);
-
-            prevMousePosition = currentMousePosition;
+            prevMousePosition.setLocation(currentMousePoint);
 
             updateMousePoint(mouseEvent);
             mapViewer.repaint();
 
-        }
     }
 
     @Override
     public void mouseReleased(MouseEvent evt) {
         if (!SwingUtilities.isLeftMouseButton(evt))
             return;
-        prevMousePosition = null;
+        prevMousePosition.setLocation(0,0);
         mapViewer.setCursor(priorCursor);
 
     }
 
-    private void clipToBounds(Point topLeftCornerPoint) {
+    private void clipToBounds() {
         if (mapViewer.getCurrentMap().layersPresent()) {
-            //Layer baseLayer = mapViewer.getCurrentMap().getBaseLayer();
 
             int zoom = mapViewer.getZoom();
             int maxX = mapViewer.getMapSizeInPixels(zoom).width - mapViewer.getWidth();
             int maxY = mapViewer.getMapSizeInPixels(zoom).height - mapViewer.getHeight();
 
-            if (topLeftCornerPoint.x < 0) {
-                topLeftCornerPoint.x = 0;
+            if (topLeftCorner.x < 0) {
+                topLeftCorner.x = 0;
             }
-            if (topLeftCornerPoint.y < 0) {
-                topLeftCornerPoint.y = 0;
+            if (topLeftCorner.y < 0) {
+                topLeftCorner.y = 0;
             }
 
-            if (topLeftCornerPoint.x >= maxX) {
-                topLeftCornerPoint.x = maxX;
+            if (topLeftCorner.x >= maxX) {
+                topLeftCorner.x = maxX;
             }
-            if (topLeftCornerPoint.y >= maxY) {
-                topLeftCornerPoint.y = maxY;
+            if (topLeftCorner.y >= maxY) {
+                topLeftCorner.y = maxY;
             }
         }
     }
 
     private void updateMousePoint(MouseEvent mouseEvent) {
-        mousePoint.x = mouseEvent.getX() + mapViewer.getTopLeftCornerPoint().x;
-        mousePoint.y = mouseEvent.getY() + mapViewer.getTopLeftCornerPoint().y;
+        currentMousePosition.setLocation(
+                mouseEvent.getX() + topLeftCorner.x,
+                mouseEvent.getY() + topLeftCorner.y
+        );
     }
 
     private void updateTopLeftCornerPoint(MouseWheelEvent mouseEvent, Point2D point) {
-        mapViewer.getTopLeftCornerPoint().x = (int) point.getX() - mouseEvent.getX();
-        mapViewer.getTopLeftCornerPoint().y = (int) point.getY() - mouseEvent.getY();
+        topLeftCorner.setLocation(
+                (int) point.getX() - mouseEvent.getX(),
+                (int) point.getY() - mouseEvent.getY()
+        );
     }
 }
 

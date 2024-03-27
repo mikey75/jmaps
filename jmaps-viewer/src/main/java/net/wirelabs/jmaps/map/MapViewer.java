@@ -154,7 +154,7 @@ public class MapViewer extends JPanel {
     }
 
     public Point2D getCurrentMousePosition() {
-        return mouseHandler.getMousePoint();
+        return mouseHandler.getCurrentMousePosition();
     }
 
     /**
