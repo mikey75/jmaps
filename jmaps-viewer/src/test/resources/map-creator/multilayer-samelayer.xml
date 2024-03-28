@@ -3,13 +3,13 @@
 
     <layer>
         <name>podklad</name>
-        <type>VE</type>
+        <type>QUAD</type>
         <url>url</url>
     </layer>
 
     <layer>
         <name>podklad</name>
-        <type>VE</type>
+        <type>QUAD</type>
         <url>url</url>
     </layer>
 

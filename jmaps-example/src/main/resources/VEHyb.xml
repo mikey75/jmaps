@@ -2,7 +2,7 @@
 <map name="Mapa 1">
     <layer>
         <name>VirtEarth Hybrid</name>
-        <type>VE</type>
+        <type>QUAD</type>
         <url>http://h{quadchar}.ortho.tiles.virtualearth.net/tiles/h{quad}.jpeg?g=1</url>
     </layer>
     <copyright>© Microsoft https://www.microsoft.com/en-us/maps/licensing</copyright>
