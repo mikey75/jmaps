@@ -3,14 +3,14 @@
 
     <layer>
         <name>layer1</name>
-        <type>VE</type>
+        <type>QUAD</type>
         <url>url</url>
         <crs>EPSG:3857</crs>
     </layer>
 
     <layer>
         <name>layer2</name>
-        <type>VE</type>
+        <type>QUAD</type>
         <url>url</url>
         <crs>EPSG:3128</crs>
     </layer>

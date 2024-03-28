@@ -3,14 +3,14 @@
 
     <layer>
         <name>layer1</name>
-        <type>VE</type>
+        <type>QUAD</type>
         <url>url</url>
         <tileSize>256</tileSize>
     </layer>
 
     <layer>
         <name>layer2</name>
-        <type>VE</type>
+        <type>QUAD</type>
         <url>url</url>
         <tileSize>128</tileSize>
     </layer>

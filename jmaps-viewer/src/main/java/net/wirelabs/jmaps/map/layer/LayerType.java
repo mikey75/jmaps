@@ -10,7 +10,7 @@ public enum LayerType {
 
     XYZ(XYZLayer.class),        // osm style
     WMTS(WMTSLayer.class),      // wmts
-    VE(VEarthLayer.class)      // ms virtual earth
+    QUAD(QuadLayer.class)      // quad based tiles e.g ms virtual earth
     ;
 
     public final Class<? extends Layer> layer;
