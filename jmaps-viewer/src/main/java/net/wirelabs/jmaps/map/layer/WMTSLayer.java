@@ -1,19 +1,15 @@
 package net.wirelabs.jmaps.map.layer;
 
 
+import net.wirelabs.jmaps.map.geo.GeoUtils;
 import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import net.wirelabs.jmaps.map.model.wmts.Capabilities;
-import net.wirelabs.jmaps.map.geo.Coordinate;
-import net.wirelabs.jmaps.map.geo.GeoUtils;
-
-import net.wirelabs.jmaps.map.readers.WMTSCapReader;
 import okhttp3.HttpUrl;
 
-
-import javax.xml.bind.JAXBException;
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.geom.Point2D;
-import java.io.IOException;
+
+import static net.wirelabs.jmaps.map.readers.WMTSCapReader.loadCapabilities;
 
 
 /**
@@ -35,7 +31,7 @@ public class WMTSLayer extends Layer {
 
         super(layerDefinition);
 
-        capabilities = WMTSCapReader.loadCapabilities(getCapabilitiesUrl());
+        capabilities = loadCapabilities(getCapabilitiesUrl());
 
         defaultTms = layerDefinition.getTileMatrixSet();
         defaultLayer = layerDefinition.getWmtsLayer();

@@ -2,7 +2,6 @@ package net.wirelabs.jmaps.map.model.map;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,7 +19,6 @@ import java.util.List;
 @XmlRootElement(name = "map")
 @NoArgsConstructor
 @Getter
-@Setter
 public class MapDefinition  {
 
     @XmlAttribute(name = "name")
