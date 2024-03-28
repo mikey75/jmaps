@@ -1,7 +1,5 @@
 package net.wirelabs.jmaps.map.readers;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
