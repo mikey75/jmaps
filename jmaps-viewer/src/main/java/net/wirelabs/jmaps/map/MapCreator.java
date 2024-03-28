@@ -3,16 +3,14 @@ package net.wirelabs.jmaps.map;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
-import net.wirelabs.jmaps.map.layer.*;
+import net.wirelabs.jmaps.map.layer.Layer;
+import net.wirelabs.jmaps.map.layer.LayerType;
 import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import net.wirelabs.jmaps.map.model.map.MapDefinition;
-import net.wirelabs.jmaps.map.readers.MapReader;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
-import java.io.IOException;
 
-import static net.wirelabs.jmaps.map.layer.LayerType.*;
+import static net.wirelabs.jmaps.map.readers.MapReader.loadMapDefinitionFile;
 
 /**
  * Created 11/8/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -27,9 +25,8 @@ public class MapCreator {
     public MapObject createMap(File xmlMapFile) {
 
         MapObject map = new MapObject();
-        MapReader mapReader = new MapReader();
 
-        MapDefinition mapDefinition = mapReader.loadMapDefinitionFile(xmlMapFile);
+        MapDefinition mapDefinition = loadMapDefinitionFile(xmlMapFile);
         log.info("Creating map: [{}]", mapDefinition.getName());
 
         map.setMapName(mapDefinition.getName());
