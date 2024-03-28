@@ -2,7 +2,7 @@ package net.wirelabs.jmaps.map.geo;
 
 import org.junit.jupiter.api.Test;
 
-import static net.wirelabs.jmaps.TestUtils.roundDouble;
+import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -27,12 +27,45 @@ class GeoUtilsTest {
 
     @Test
     void testDeg2rad() {
-        assertThat(roundDouble(GeoUtils.deg2rad(1), 7)).isEqualTo(0.0174533);
+        assertThat(GeoUtils.deg2rad(90)).isEqualTo(90 * GeoUtils.ONE_DEG_IN_RAD);
 
     }
 
     @Test
     void testRad2Deg() {
-        assertThat(roundDouble(GeoUtils.rad2deg(0.0174533), 6)).isEqualTo(1.000000);
+        assertThat(GeoUtils.rad2deg(90 * GeoUtils.ONE_DEG_IN_RAD)).isEqualTo(90);
+    }
+
+    @Test
+    void shouldCalculateCenterOfCoordinateSet() {
+
+        // suppose a square of
+        // topLeft = (0,4) topRight = (4,4)
+        // bottomLeft = (0,0) bottomRight= (4,0)
+
+        Coordinate topLeft = new Coordinate(0,4);
+        Coordinate topRight = new Coordinate(4,4);
+        Coordinate bottomLeft = new Coordinate(0,0);
+        Coordinate bottomRight = new Coordinate(4, 0);
+
+        // so the center should be (bottomrx - bottomlx)/2 (toprighty - bottomrighty)/2
+        // which is (4-0)/2, (4-0)/2 => (2,2)
+
+        Coordinate calculatedCenter = GeoUtils.calculateCenterOfCoordinateSet(List.of(topLeft, topRight,bottomLeft,bottomRight));
+        assertThat(calculatedCenter.getLongitude()).isEqualTo(2.0);
+        assertThat(calculatedCenter.getLatitude()).isEqualTo(2.0);
+
+        // now suppose a triangle fit in that square
+        // A =0,0 , B=4.0, C = 2.4
+        Coordinate A = new Coordinate(0,0);
+        Coordinate B = new Coordinate(4,0);
+        Coordinate C = new Coordinate(2,4);
+
+        // the center should also be (2,2) since the method calculates the center of the square
+        // which contain the given coords
+        calculatedCenter = GeoUtils.calculateCenterOfCoordinateSet(List.of(A,B,C));
+        assertThat(calculatedCenter.getLongitude()).isEqualTo(2.0);
+        assertThat(calculatedCenter.getLatitude()).isEqualTo(2.0);
+
     }
 }

@@ -1,8 +1,6 @@
 package net.wirelabs.jmaps.map.geo;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * Created 5/22/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -16,14 +14,12 @@ import lombok.Setter;
  * are stored in geographical namespace i.e lon/lat/elevation.
  */
 
-@NoArgsConstructor
 @Getter
-@Setter
 public class Coordinate {
 
-    private double longitude;     // x
-    private double latitude;      // y
-    private double altitude;     // z
+    private final double longitude;     // x
+    private final double latitude;      // y
+    private final double altitude;      // z
 
     public Coordinate(double longitude, double latitude, double altitude) {
 
