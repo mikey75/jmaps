@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 public class MapViewer extends JPanel {
 
     private final transient MapRenderer mapRenderer;
+    @Getter
     private final transient MouseHandler mouseHandler;
     private final transient TileDownloader tileDownloader;
     private final transient MapCreator mapCreator;
@@ -69,23 +70,6 @@ public class MapViewer extends JPanel {
         super.paintComponent(graphicsContext);
         mapRenderer.renderMap(graphicsContext);
         super.paintBorder(graphicsContext);
-    }
-
-    public void setLocalCache(Cache<String, BufferedImage> cache) {
-        tileDownloader.setSecondaryTileCache(cache);
-    }
-
-    public void setZoom(int zoom) {
-        if (currentMap.layersPresent()) {
-
-            int minZoomAllLayers = currentMap.getMinZoom();
-            int maxZoomAllLayers = currentMap.getMaxZoom();
-
-            if (zoom < minZoomAllLayers) zoom = minZoomAllLayers;
-            if (zoom > maxZoomAllLayers) zoom = maxZoomAllLayers;
-
-        }
-        this.zoom = zoom;
     }
 
     /**
@@ -175,32 +159,40 @@ public class MapViewer extends JPanel {
         }
     }
 
-    /**
-     * Calculate enclosing rectangle such that all coordinate points fit inside it
-     * The resulting rectangle is in screen pixels, not world coordinates
-     * @param coords list of coordinates (for instance a route, or set of waypoints)
-     * @param zoom zoom level
-     * @return resulting rectangle
-     */
     private Rectangle2D getEnclosingRectangle(List<Coordinate> coords, int zoom) {
 
-        // --- setup first point rectangle
-        Point2D firstPoint = currentMap.getBaseLayer().latLonToPixel(coords.get(0), zoom);
-        Rectangle2D r2 = new Rectangle2D.Double(firstPoint.getX(), firstPoint.getY(), 0, 0);
+        Layer baseLayer = currentMap.getBaseLayer();
 
-        // add points to rectangle
-        for (Coordinate c : coords) {
-            r2.add(currentMap.getBaseLayer().latLonToPixel(c, zoom));
-        }
+        List<Coordinate> pixelCoords = coords.stream()
+                .map(coord -> new Coordinate(baseLayer.latLonToPixel(coord, zoom).getX(), baseLayer.latLonToPixel(coord, zoom).getY()))
+                .collect(Collectors.toList());
+
+        Rectangle2D r2 = GeoUtils.calculateEnclosingRectangle(pixelCoords);
         // translate world pixel into canvas pixel
         r2.setRect(r2.getX() - topLeftCornerPoint.x, r2.getY() - topLeftCornerPoint.y, r2.getWidth(), r2.getHeight());
-        // draw
         return r2;
 
     }
 
     public void setImageCacheSize(long size) {
         tileDownloader.setImageCacheSize(size);
+    }
+
+    public void setLocalCache(Cache<String, BufferedImage> cache) {
+        tileDownloader.setSecondaryTileCache(cache);
+    }
+
+    public void setZoom(int zoom) {
+        if (currentMap.layersPresent()) {
+
+            int minZoomAllLayers = currentMap.getMinZoom();
+            int maxZoomAllLayers = currentMap.getMaxZoom();
+
+            if (zoom < minZoomAllLayers) zoom = minZoomAllLayers;
+            if (zoom > maxZoomAllLayers) zoom = maxZoomAllLayers;
+
+        }
+        this.zoom = zoom;
     }
 
     public void updateLayersPanel() {
