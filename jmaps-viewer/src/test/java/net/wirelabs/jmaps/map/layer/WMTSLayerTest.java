@@ -1,12 +1,12 @@
 package net.wirelabs.jmaps.map.layer;
 
-import net.wirelabs.jmaps.TestHttpServer;
+import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import okhttp3.HttpUrl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.File;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,21 +15,27 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class WMTSLayerTest {
     private String testUrl;
     private LayerDefinition wmtsLayerDefinition;
+    private MockHttpServer server;
 
     @BeforeEach
     void before() throws IOException {
 
         // serve fake capabilities
-        File testCapabilitiesFile = new File("src/test/resources/wmts/capabilities.xml");
-        TestHttpServer server = new TestHttpServer(testCapabilitiesFile);
-        testUrl = "http://localhost:" + server.getPort() + "/wmts";
 
+        server = new MockHttpServer();
+        testUrl = "http://localhost:55555/valid1";
         wmtsLayerDefinition = new LayerDefinition();
         wmtsLayerDefinition.setType(LayerType.WMTS);
         wmtsLayerDefinition.setName("TestWmts");
         wmtsLayerDefinition.setUrl(testUrl);
 
     }
+
+    @AfterEach
+    void after() throws IOException {
+        server.stop();
+    }
+
     @Test
     void shouldProperlyInitializeDefaultWMTSLayer() {
         // example of wmts map

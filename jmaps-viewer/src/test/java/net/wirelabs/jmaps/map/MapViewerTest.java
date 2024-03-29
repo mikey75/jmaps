@@ -1,16 +1,19 @@
 package net.wirelabs.jmaps.map;
 
+import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.geo.Coordinate;
+import net.wirelabs.jmaps.map.readers.WMTSCapReader;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.File;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MapViewerTest {
+class MapViewerTest  {
 
     private static final File EXAMPLE_MAPFILE = new File("src/test/resources/maps/OpenStreetMap.xml");
     private static final File EXAMPLE_MAPFILE_DOUBLE_LAYER = new File("src/test/resources/maps/GeoportalLayered.xml");
@@ -42,7 +45,8 @@ class MapViewerTest {
     }
 
     @Test
-    void testCustomMapviewerInitialization() {
+    void testCustomMapviewerInitialization() throws IOException {
+
         mapviewer.setTilerThreads(10);
         mapviewer.setUserAgent(NEW_USER_AGENT);
         mapviewer.setShowAttribution(true);
@@ -55,12 +59,14 @@ class MapViewerTest {
         assertThat(mapviewer.getCurrentMap().layersPresent()).isTrue();
         assertThat(mapviewer.getCurrentMap().getEnabledLayers()).hasSize(1);
         assertThat(mapviewer.getCurrentMap().getBaseLayer().getName()).isEqualTo("Open Street Map");
-        // todo - make it use local http server - now it goes online during tests ;)
-        //mapviewer.setCurrentMap(EXAMPLE_MAPFILE_DOUBLE_LAYER);
-        //assertThat(mapviewer.getCurrentMap().layersPresent()).isTrue();
-        //assertThat(mapviewer.getCurrentMap().getEnabledLayers()).hasSize(2);
-        //assertThat(mapviewer.getCurrentMap().getEnabledLayers().get(0).getName()).isEqualTo("podklad");
-        //assertThat(mapviewer.getCurrentMap().getEnabledLayers().get(1).getName()).isEqualTo("cieniowanie");
+
+        MockHttpServer server = new MockHttpServer();
+        WMTSCapReader.setCacheDir("target");
+        mapviewer.setCurrentMap(EXAMPLE_MAPFILE_DOUBLE_LAYER);
+        assertThat(mapviewer.getCurrentMap().layersPresent()).isTrue();
+        assertThat(mapviewer.getCurrentMap().getEnabledLayers()).hasSize(2);
+        assertThat(mapviewer.getCurrentMap().getEnabledLayers().get(0).getName()).isEqualTo("podklad");
+        assertThat(mapviewer.getCurrentMap().getEnabledLayers().get(1).getName()).isEqualTo("cieniowanie");
     }
 
     @Test

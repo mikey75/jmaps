@@ -1,7 +1,7 @@
 package net.wirelabs.jmaps.map.downloader;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
-import net.wirelabs.jmaps.TestHttpServer;
+import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
@@ -28,27 +28,24 @@ import static org.mockito.Mockito.*;
 
 class TileDownloaderTest {
 
-    private TileDownloader tileProvider;
-    private ConcurrentLinkedHashMap<String, BufferedImage> primaryCache;
-    private DirectoryBasedCache secondaryCache;
-
-    private TestHttpServer testTileServer;
-    private String tileUrl;
-
+    private final DirectoryBasedCache secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT);
+    private final MockHttpServer testTileServer = new MockHttpServer();
     private static final File CACHE_DIR = new File("target/testcache");
-    private static final File TEST_TILE_FILE = new File("src/test/resources/tiles/tile.png");
+    private static final File TEST_TILE_FILE = MockHttpServer.TEST_TILE_FILE;
     private static final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
+
+    private String tileUrl;
+    private final MapViewer mapViewer = new MapViewer();
+    private final TileDownloader tileProvider = spy(new TileDownloader(mapViewer));
+    private ConcurrentLinkedHashMap<String, BufferedImage> primaryCache;
 
     @BeforeEach
     void before() throws IOException {
-        MapViewer mapViewer = new MapViewer();
-        testTileServer = new TestHttpServer(TEST_TILE_FILE);
-        tileProvider = spy(new TileDownloader(mapViewer));
+        //mapViewer = new MapViewer();
 
         primaryCache = tileProvider.primaryTileCache;
-
         tileProvider.setSecondaryTileCache(secondaryCache);
-        tileUrl = "http://localhost:" + testTileServer.getPort() + "/tile.png";
+        tileUrl = "http://localhost:55555/tile.png";
         FileUtils.deleteDirectory(CACHE_DIR);
     }
 
@@ -59,9 +56,6 @@ class TileDownloaderTest {
 
     @Test
     void shouldDownloadTileAndUpdateCachesIfNotPreviouslyCached() {
-
-        secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT);
-        tileProvider.setSecondaryTileCache(secondaryCache);
 
         downloadTile();
         assertDownloadCalled(times(1));
@@ -85,7 +79,7 @@ class TileDownloaderTest {
     @Test
     void shouldPutFileInPrimaryCacheIfSecondaryCacheDisabled() {
 
-        // secondaryCacheEnabled() zwróci false
+        // no secondary cache, secondaryCacheEnabled() returns false
         tileProvider.setSecondaryTileCache(null);
 
         downloadTile();
@@ -97,9 +91,6 @@ class TileDownloaderTest {
 
     @Test
     void shouldNotDownloadTileIfItIsInTheSecondaryCache() throws IOException {
-
-        secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT);
-        tileProvider.setSecondaryTileCache(secondaryCache);
 
         // put imagefile to secondary cache
         secondaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
@@ -114,8 +105,6 @@ class TileDownloaderTest {
 
     @Test
     void shouldNotDownloadTileIfItIsNotExpired() throws IOException {
-        secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT);
-        tileProvider.setSecondaryTileCache(secondaryCache);
 
         // should not download file if it has not expired
         secondaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
@@ -125,9 +114,8 @@ class TileDownloaderTest {
 
     @Test
     void shouldDownloadTileIfItIsExpired() throws IOException {
-
-        secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), SHORT_TIMEOUT_FOR_VALIDITY_TESTS);
-        tileProvider.setSecondaryTileCache(secondaryCache);
+        // set short timeout for test
+        secondaryCache.setCacheTimeout(SHORT_TIMEOUT_FOR_VALIDITY_TESTS);
 
         secondaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
         // check if tile expired after waiting validity time (plus some margin for test time)
@@ -136,8 +124,6 @@ class TileDownloaderTest {
         downloadTile();
         assertDownloadCalled(times(1));
     }
-
-
 
     @Test
     void shouldDownloadAndUpdatePrimaryIfNoSecondaryCacheEnabled() {
