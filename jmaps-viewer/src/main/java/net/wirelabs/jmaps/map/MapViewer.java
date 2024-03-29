@@ -85,8 +85,8 @@ public class MapViewer extends JPanel {
 
        if (location == null || !mapBounds.contains(baseLayer.latLonToPixel(location, zoom))) {
 
-           double x = getMapSizeInPixels(zoom).width/2.0; //baseLayer.getMapSizeInPixels(zoom).width / 2.0;
-            double y = getMapSizeInPixels(zoom).height/2.0; //baseLayer.getMapSizeInPixels(zoom).height / 2.0;
+           double x = getMapSizeInPixels(zoom).width/2.0;
+            double y = getMapSizeInPixels(zoom).height/2.0;
             topLeftCornerPoint.setLocation((int) (x - getWidth() / 2.0), (int) (y - getHeight() / 2.0));
         } else {
             Point2D p = baseLayer.latLonToPixel(location, zoom);
@@ -137,9 +137,6 @@ public class MapViewer extends JPanel {
         repaint();
     }
 
-    public Point2D getCurrentMousePosition() {
-        return mouseHandler.getCurrentMousePosition();
-    }
 
     /**
      * Sets current zoom level and center so that the all coordinate points given
