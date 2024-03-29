@@ -4,7 +4,7 @@
     <layer>
         <name>podklad</name>
         <type>WMTS</type>
-        <url>https://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/G2_MOBILE_500</url>
+        <url>http://localhost:55555/valid1</url>
         <minZoom>2</minZoom>
         <swapAxis>true</swapAxis>
     </layer>
@@ -12,7 +12,7 @@
     <layer>
         <name>cieniowanie</name>
         <type>WMTS</type>
-        <url>https://mapy.geoportal.gov.pl/wss/service/PZGIK/NMT/GRID1/WMTS/ShadedRelief</url>
+        <url>http://localhost:55555/valid2</url>
         <minZoom>2</minZoom>
         <opacity>0.3</opacity>
         <zoomOffset>-2</zoomOffset>

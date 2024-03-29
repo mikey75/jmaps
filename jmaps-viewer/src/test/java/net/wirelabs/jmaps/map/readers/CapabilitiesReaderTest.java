@@ -1,6 +1,6 @@
 package net.wirelabs.jmaps.map.readers;
 
-import net.wirelabs.jmaps.TestHttpServer;
+import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.model.wmts.Capabilities;
 import org.junit.jupiter.api.AfterEach;
@@ -18,19 +18,22 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 class CapabilitiesReaderTest {
 
     private static final String TEST_CACHE_ROOT = "target/testcache/wmts-cache";
-    private static final File EXPECTED_CACHED_FILE = new File(TEST_CACHE_ROOT,"localhost/wmts/capabilities.xml");
 
     private static final File VALID_CAPABILITIES_FILE = new File("src/test/resources/wmts/capabilities.xml");
-    private static final File INVALID_CAPABILITIES_FILE = new File("src/test/resources/wmts/invalid.xml");
+    private static final File EXPECTED_VALID_CACHED_FILE = new File(TEST_CACHE_ROOT,"localhost/valid1/capabilities.xml");
 
-    TestHttpServer server;
+    private MockHttpServer server;
 
     @BeforeEach
     void deleteCacheFile() throws IOException {
         // delete cached file if any
-        Files.deleteIfExists(EXPECTED_CACHED_FILE.toPath());
+        Files.deleteIfExists(EXPECTED_VALID_CACHED_FILE.toPath());
+
+        // setup fake web with capabilities.xml
         // set test cache dir
         WMTSCapReader.setCacheDir(TEST_CACHE_ROOT);
+        // setup mock server
+        server = new MockHttpServer();
     }
 
     @AfterEach
@@ -43,9 +46,8 @@ class CapabilitiesReaderTest {
     @Test
     void shouldLoadCapabilitieXMLFromNetwork() throws IOException {
 
-        // setup fake web with capabilities.xml
-        server = new TestHttpServer(VALID_CAPABILITIES_FILE);
-        String testUrl = "http://localhost:" + server.getPort() + "/wmts";
+
+        String testUrl = "http://localhost:55555/valid1";
 
         Capabilities caps = WMTSCapReader.loadCapabilities(testUrl);
 
@@ -56,37 +58,37 @@ class CapabilitiesReaderTest {
 
     @Test
     void shouldNotLoadAndCacheNonXMLFileFromNetwork() throws Exception {
-        server = new TestHttpServer(INVALID_CAPABILITIES_FILE);
-        String testUrl = "http://localhost:" + server.getPort() + "/wmts";
+
+        String testUrl = "http://localhost:55555/invalid";
 
         assertThatExceptionOfType(CriticalMapException.class)
                 .isThrownBy(() -> WMTSCapReader.loadCapabilities(testUrl))
                 .withMessageContaining("Could not parse Capabilities.xml");
 
-        assertThat(EXPECTED_CACHED_FILE).doesNotExist();
+        assertThat(EXPECTED_VALID_CACHED_FILE).doesNotExist();
 
     }
 
     @Test
     void shouldNotLoadNonexistingCapabilitiesURL() {
-
+        String testUrl = "http://localhost:55555/nonexisting";
         assertThatExceptionOfType(CriticalMapException.class)
-                .isThrownBy(() -> WMTSCapReader.loadCapabilities("nonexisting"))
+                .isThrownBy(() -> WMTSCapReader.loadCapabilities(testUrl))
                 .withMessageContaining("Could not parse Capabilities.xml");
     }
 
     @Test
     void shouldLoadCachedCopyOfXMLCapabilities() throws IOException {
 
-        Files.copy(VALID_CAPABILITIES_FILE.toPath(), EXPECTED_CACHED_FILE.toPath());
-        String testUrl = "http://localhost/wmts";
+        Files.copy(VALID_CAPABILITIES_FILE.toPath(), EXPECTED_VALID_CACHED_FILE.toPath());
+        String testUrl = "http://localhost:55555/valid1";
         Capabilities capabilities = WMTSCapReader.loadCapabilities(testUrl);
         assertFileIsCreatedAndHasCorrectContent(capabilities);
     }
 
     private void assertFileIsCreatedAndHasCorrectContent(Capabilities capabilities) throws IOException {
         assertThat(capabilities).isNotNull();
-        assertThat(EXPECTED_CACHED_FILE)
+        assertThat(EXPECTED_VALID_CACHED_FILE)
                 .exists()
                 .isFile()
                 .hasContent(Files.readString(VALID_CAPABILITIES_FILE.toPath(), StandardCharsets.UTF_8));

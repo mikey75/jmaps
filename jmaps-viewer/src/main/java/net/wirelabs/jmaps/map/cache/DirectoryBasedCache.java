@@ -1,6 +1,7 @@
 package net.wirelabs.jmaps.map.cache;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.Defaults;
 
@@ -22,7 +23,8 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
 
     private final Path baseDir;
     @Getter
-    private final Duration cacheTimeout;
+    @Setter
+    private Duration cacheTimeout;
 
     public DirectoryBasedCache() {
         this(Defaults.DEFAULT_TILECACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);

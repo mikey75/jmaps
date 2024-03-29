@@ -78,7 +78,7 @@ public class WMTSCapReader {
         return (Capabilities) jaxb.unmarshal(capabilitiesFile);
     }
 
-    static void setCacheDir(String cacheDir) {
+    public static void setCacheDir(String cacheDir) {
         descriptorCacheDir = cacheDir;
     }
 }
