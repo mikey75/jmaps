@@ -35,12 +35,12 @@ public class GeoUtils {
     }
 
     /**
-     * Calculate the geometric center of set of coordinates - in lat/lon units
-     * @param coordinates set of coordinates
-     * @return lat/lon of the center point
+     * Calculate enclosing rectangle such that all coordinate points fit inside it
+     * The resulting rectangle is in screen pixels, not world coordinates
+     * @param coordinates list of coordinates (for instance a route, or set of waypoints)
+     * @return resulting rectangle
      */
-    public static Coordinate calculateCenterOfCoordinateSet(List<Coordinate> coordinates) {
-        // calculate enclosing rectangle for all coordinates
+    public static Rectangle2D calculateEnclosingRectangle(List<Coordinate> coordinates) {
         Point2D firstPoint = new Point2D.Double(coordinates.get(0).getLongitude(), coordinates.get(0).getLatitude());
         Rectangle2D r2 = new Rectangle2D.Double(firstPoint.getX(), firstPoint.getY(), 0, 0);
 
@@ -48,6 +48,17 @@ public class GeoUtils {
             Point2D p = new Point2D.Double(c.getLongitude(), c.getLatitude());
             r2.add(p);
         }
+        return r2;
+    }
+
+    /**
+     * Calculate the geometric center of set of coordinates - in lat/lon units
+     * @param coordinates set of coordinates
+     * @return lat/lon of the center point
+     */
+    public static Coordinate calculateCenterOfCoordinateSet(List<Coordinate> coordinates) {
+        // calculate enclosing rectangle for all coordinates
+        Rectangle2D r2 = calculateEnclosingRectangle(coordinates);
         // return center of that rectangle
         return new Coordinate(r2.getCenterX(), r2.getCenterY());
     }
