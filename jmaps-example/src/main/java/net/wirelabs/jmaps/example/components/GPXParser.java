@@ -1,4 +1,4 @@
-package net.wirelabs.jmaps.example.gpx;
+package net.wirelabs.jmaps.example.components;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,6 +11,10 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.example.gpx.GpxType;
+import net.wirelabs.jmaps.example.gpx.TrkType;
+import net.wirelabs.jmaps.example.gpx.TrksegType;
+import net.wirelabs.jmaps.example.gpx.WptType;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 
 /**

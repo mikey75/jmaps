@@ -2,7 +2,6 @@ package net.wirelabs.jmaps.example.components;
 
 import lombok.extern.slf4j.Slf4j;
 import net.miginfocom.swing.MigLayout;
-import net.wirelabs.jmaps.example.gpx.GPXParser;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 
