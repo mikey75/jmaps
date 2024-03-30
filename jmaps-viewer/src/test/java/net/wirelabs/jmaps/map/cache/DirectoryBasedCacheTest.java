@@ -47,6 +47,26 @@ class DirectoryBasedCacheTest {
     }
 
     @Test
+    void testDefaultCacheSettings() {
+        cache = new DirectoryBasedCache();
+        assertThat(cache.getCacheTimeout()).isEqualTo(Defaults.DEFAULT_CACHE_TIMEOUT);
+        assertThat(cache.getBaseDir()).hasToString(Defaults.DEFAULT_TILECACHE_DIR);
+    }
+
+    @Test
+    void shouldNotCacheFileIfIOErrorOnWrite() throws IOException {
+        cache = spy(new DirectoryBasedCache());
+        doThrow(IOException.class).when(cache).writeImageToFile(any(), any());
+
+        // put in cache, this should fail now
+        cache.put(XYZ_URL_WITH_QUERY, TEST_IMAGE);
+
+        // assert file not in cache
+        assertThat(cache.get(XYZ_URL_WITH_QUERY)).isNull();
+
+    }
+
+    @Test
     void testCachePutWithDifferentUrlSchemas() {
 
         cache = new DirectoryBasedCache(CACHE_DIR.toPath().toString(), Defaults.DEFAULT_CACHE_TIMEOUT);
