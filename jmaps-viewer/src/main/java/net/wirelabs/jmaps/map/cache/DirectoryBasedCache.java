@@ -19,12 +19,11 @@ import java.time.Duration;
  * Created 1/2/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
 @Slf4j
+@Getter
 public class DirectoryBasedCache implements Cache<String, BufferedImage> {
 
     private final Path baseDir;
-    @Getter
-    @Setter
-    private Duration cacheTimeout;
+    @Setter private Duration cacheTimeout;
 
     public DirectoryBasedCache() {
         this(Defaults.DEFAULT_TILECACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
@@ -66,10 +65,14 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
             if (!file.exists()) {
                 Files.createDirectories(file.toPath());
             }
-            ImageIO.write(b, "png",file);
+            writeImageToFile(b,file);
         } catch (IOException ex) {
             log.error("File cache put failed for {}", key, ex);
         }
+    }
+
+    void writeImageToFile(BufferedImage image, File file) throws IOException {
+        ImageIO.write(image, "png", file);
     }
 
     public boolean keyExpired(String key) {
