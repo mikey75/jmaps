@@ -62,10 +62,6 @@ class MapCreatorTest {
 
     }
 
-    @Test
-    void shoulCreateCorrectMultilayerMAP() {
-
-    }
 
     private void assertMapObject(MapObject map, boolean layersPresent, int layerCount, String mapName) {
         assertThat(map.layersPresent()).isEqualTo(layersPresent);
