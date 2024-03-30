@@ -23,7 +23,7 @@ class WMTSLayerTest {
         // serve fake capabilities
 
         server = new MockHttpServer();
-        testUrl = "http://localhost:55555/valid1";
+        testUrl = "http://localhost:"+ server.getPort() +"/valid1";
         wmtsLayerDefinition = new LayerDefinition();
         wmtsLayerDefinition.setType(LayerType.WMTS);
         wmtsLayerDefinition.setName("TestWmts");

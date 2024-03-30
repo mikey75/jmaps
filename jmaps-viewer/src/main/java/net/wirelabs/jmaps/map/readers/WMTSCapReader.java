@@ -41,8 +41,9 @@ public class WMTSCapReader {
                 return parseCapabilitiesFromFile(cachedFile);
             }
         } catch (Exception e) {
-            log.error("Could not load WMTS capabilities descriptor", e);
-            throw new CriticalMapException("WMTS - Could not parse Capabilities.xml");
+            String message = "Could not parse WMTS capabilities from " + getCapabilitiesUrl;
+            log.warn(message);
+            throw new CriticalMapException(message);
         }
 
     }

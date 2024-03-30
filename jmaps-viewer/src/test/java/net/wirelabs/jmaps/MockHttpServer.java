@@ -1,5 +1,6 @@
 package net.wirelabs.jmaps;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.mockwebserver.Dispatcher;
 import okhttp3.mockwebserver.MockResponse;
@@ -9,6 +10,7 @@ import okio.Buffer;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.nio.file.Files;
 
 /**
@@ -23,9 +25,12 @@ public class MockHttpServer {
     private static final File INVALID_CAPABILITIES_FILE = new File("src/test/resources/wmts/invalid.xml");
 
     public static final File TEST_TILE_FILE = new File("src/test/resources/tiles/tile.png");
+    @Getter
+    private final int port;
 
     public MockHttpServer(int port) {
         try {
+            this.port = port;
             server.setDispatcher(dispatcher);
             server.start(port);
         } catch (IOException ex) {
@@ -34,10 +39,15 @@ public class MockHttpServer {
         }
     }
 
-    public MockHttpServer()  {
-        this(55555);    // default port for tests
+    public MockHttpServer() throws IOException {
+        this(getRandomFreeTcpPort());    // default port for tests
     }
 
+    protected static int getRandomFreeTcpPort() throws IOException {
+        try (ServerSocket serverSocket = new ServerSocket(0)) {
+            return serverSocket.getLocalPort();
+        }
+    }
     final Dispatcher dispatcher = new Dispatcher() {
 
         @Override

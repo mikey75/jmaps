@@ -3,6 +3,8 @@ package net.wirelabs.jmaps.map;
 import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.readers.WMTSCapReader;
+import org.apache.commons.io.FileUtils;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +12,8 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,6 +26,7 @@ class MapViewerTest  {
     private static final String NEW_USER_AGENT = "Test-agent 1.0";
     private MapViewer mapviewer;
     private Point2D expectedTopLeftCornerPoint;
+    private MockHttpServer server;
 
     @BeforeEach
     void setup() {
@@ -60,13 +65,28 @@ class MapViewerTest  {
         assertThat(mapviewer.getCurrentMap().getEnabledLayers()).hasSize(1);
         assertThat(mapviewer.getCurrentMap().getBaseLayer().getName()).isEqualTo("Open Street Map");
 
-        MockHttpServer server = new MockHttpServer();
+        server = new MockHttpServer();
         WMTSCapReader.setCacheDir("target");
-        mapviewer.setCurrentMap(EXAMPLE_MAPFILE_DOUBLE_LAYER);
+
+        // fixup urls in mapDefinition to connect to test http server port
+        File newFile = fixupUrls(EXAMPLE_MAPFILE_DOUBLE_LAYER);
+
+        // set map with changed file
+        mapviewer.setCurrentMap(newFile);
+
         assertThat(mapviewer.getCurrentMap().layersPresent()).isTrue();
         assertThat(mapviewer.getCurrentMap().getEnabledLayers()).hasSize(2);
         assertThat(mapviewer.getCurrentMap().getEnabledLayers().get(0).getName()).isEqualTo("podklad");
         assertThat(mapviewer.getCurrentMap().getEnabledLayers().get(1).getName()).isEqualTo("cieniowanie");
+    }
+
+    @NotNull
+    private File fixupUrls(File file) throws IOException {
+        String lines = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
+        String replaced = lines.replaceAll("\\$\\{testport}", String.valueOf(server.getPort()));
+        File newFile = File.createTempFile("test","test");
+        FileUtils.writeStringToFile(newFile,replaced,StandardCharsets.UTF_8);
+        return newFile;
     }
 
     @Test
