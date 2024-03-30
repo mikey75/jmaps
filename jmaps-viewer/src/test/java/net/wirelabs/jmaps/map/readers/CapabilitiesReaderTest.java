@@ -47,7 +47,7 @@ class CapabilitiesReaderTest {
     void shouldLoadCapabilitieXMLFromNetwork() throws IOException {
 
 
-        String testUrl = "http://localhost:55555/valid1";
+        String testUrl = "http://localhost:" + server.getPort() +"/valid1";
 
         Capabilities caps = WMTSCapReader.loadCapabilities(testUrl);
 
@@ -59,11 +59,11 @@ class CapabilitiesReaderTest {
     @Test
     void shouldNotLoadAndCacheNonXMLFileFromNetwork() throws Exception {
 
-        String testUrl = "http://localhost:55555/invalid";
+        String testUrl = "http://localhost:" + server.getPort()+ "/invalid";
 
         assertThatExceptionOfType(CriticalMapException.class)
                 .isThrownBy(() -> WMTSCapReader.loadCapabilities(testUrl))
-                .withMessageContaining("Could not parse Capabilities.xml");
+                .withMessageContaining("Could not parse WMTS capabilities from " + testUrl);
 
         assertThat(EXPECTED_VALID_CACHED_FILE).doesNotExist();
 
@@ -71,17 +71,17 @@ class CapabilitiesReaderTest {
 
     @Test
     void shouldNotLoadNonexistingCapabilitiesURL() {
-        String testUrl = "http://localhost:55555/nonexisting";
+        String testUrl = "http://localhost:"+ server.getPort()+"/nonexisting";
         assertThatExceptionOfType(CriticalMapException.class)
                 .isThrownBy(() -> WMTSCapReader.loadCapabilities(testUrl))
-                .withMessageContaining("Could not parse Capabilities.xml");
+                .withMessageContaining("Could not parse WMTS capabilities from "+ testUrl);
     }
 
     @Test
     void shouldLoadCachedCopyOfXMLCapabilities() throws IOException {
 
         Files.copy(VALID_CAPABILITIES_FILE.toPath(), EXPECTED_VALID_CACHED_FILE.toPath());
-        String testUrl = "http://localhost:55555/valid1";
+        String testUrl = "http://localhost:"+server.getPort()+"/valid1";
         Capabilities capabilities = WMTSCapReader.loadCapabilities(testUrl);
         assertFileIsCreatedAndHasCorrectContent(capabilities);
     }

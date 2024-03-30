@@ -1,6 +1,7 @@
 package net.wirelabs.jmaps.map.downloader;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
+import lombok.NoArgsConstructor;
 import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
@@ -29,7 +30,7 @@ import static org.mockito.Mockito.*;
 class TileDownloaderTest {
 
     private final DirectoryBasedCache secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT);
-    private final MockHttpServer testTileServer = new MockHttpServer();
+    private MockHttpServer testTileServer;
     private static final File CACHE_DIR = new File("target/testcache");
     private static final File TEST_TILE_FILE = MockHttpServer.TEST_TILE_FILE;
     private static final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
@@ -44,11 +45,11 @@ class TileDownloaderTest {
     @BeforeEach
     void before() throws IOException {
         //mapViewer = new MapViewer();
-
+        testTileServer = new MockHttpServer();
         primaryCache = tileProvider.primaryTileCache;
         tileProvider.setSecondaryTileCache(secondaryCache);
-        tileUrl = "http://localhost:55555/tile.png";
-        failTileUrl = "http://localhost:55555/nonexisting";
+        tileUrl = "http://localhost:" + testTileServer.getPort() + "/tile.png";
+        failTileUrl = "http://localhost:" +testTileServer.getPort() +"/nonexisting";
         FileUtils.deleteDirectory(CACHE_DIR);
     }
 
