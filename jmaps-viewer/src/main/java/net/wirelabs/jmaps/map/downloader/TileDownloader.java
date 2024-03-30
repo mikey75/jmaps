@@ -70,9 +70,9 @@ public class TileDownloader {
             if (response.isSuccessful()) {
                 readAndCacheImage(tileUrl, response);
             }
-            response.body().close();
-        } catch (IOException e) {
-            log.debug(e.getMessage());
+            response.close();
+        } catch (Exception e) {
+            log.debug("Could not download {} - {} : {}", tileUrl, e.getClass().getSimpleName() ,e.getMessage());
         } catch (OutOfMemoryError e) {
             log.error("DANG! Local memory cache run out of memory");
             log.error("Prunning memory cache...");

@@ -35,6 +35,8 @@ class TileDownloaderTest {
     private static final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
 
     private String tileUrl;
+    private String failTileUrl;
+
     private final MapViewer mapViewer = new MapViewer();
     private final TileDownloader tileProvider = spy(new TileDownloader(mapViewer));
     private ConcurrentLinkedHashMap<String, BufferedImage> primaryCache;
@@ -46,6 +48,7 @@ class TileDownloaderTest {
         primaryCache = tileProvider.primaryTileCache;
         tileProvider.setSecondaryTileCache(secondaryCache);
         tileUrl = "http://localhost:55555/tile.png";
+        failTileUrl = "http://localhost:55555/nonexisting";
         FileUtils.deleteDirectory(CACHE_DIR);
     }
 
@@ -62,6 +65,18 @@ class TileDownloaderTest {
 
         assertTileInSecondaryCache(tileUrl);
         assertTileInPrimaryCache(tileUrl);
+
+    }
+
+    @Test
+    void shouldNotDownloadNonExistingResource() {
+        // download url that returns 404
+        tileProvider.download(failTileUrl);
+        // assert dowload attempted
+        assertDownloadCalled(times(1));
+        // assert tile not in caches
+        assertThat(primaryCache.get(tileUrl)).isNull();
+        assertThat(secondaryCache.get(tileUrl)).isNull();
 
     }
 
