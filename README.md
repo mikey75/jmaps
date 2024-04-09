@@ -2,6 +2,7 @@
 
 - Supports OpenStreetMap style slippy maps
 - Supports WMTS maps
+- Supports QUAD tile maps (e.g virtual earth)
 - Supports most CRS projections (via proj4j)
 - Supports multiple layer maps with transparency/zoom offsets
 - Comes with example application and example map definitions.
@@ -20,5 +21,5 @@ Here's a few pictures telling thousand words ;)
 - Example of multilayer map (2 layers - one is a base topo map, the other is elevation profile). 
 You can enable/disable given layer from the view.
 ![sample4](images/4.png "Sample 4")
-- Virtual Earth Maps 
+- Virtual Earth Maps (example of quad tiles) 
 ![sample5](images/5.png "Sample 5")
