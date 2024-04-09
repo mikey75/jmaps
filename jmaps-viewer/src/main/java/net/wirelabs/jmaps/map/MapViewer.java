@@ -1,10 +1,12 @@
 package net.wirelabs.jmaps.map;
 
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.cache.Cache;
-import net.wirelabs.jmaps.map.downloader.TileDownloader;
+import net.wirelabs.jmaps.map.downloader.DownloadingTileProvider;
+import net.wirelabs.jmaps.map.downloader.TileProvider;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
 import net.wirelabs.jmaps.map.layer.Layer;
@@ -26,13 +28,17 @@ public class MapViewer extends JPanel {
     private final transient MapRenderer mapRenderer;
     @Getter
     private final transient MouseHandler mouseHandler;
-    private final transient TileDownloader tileDownloader;
+    private final transient TileProvider downloadingTileProvider;
     private final transient MapCreator mapCreator;
 
     // current map top left corner in pixels
     @Getter
     private final Point topLeftCornerPoint = new Point();
     private final MapInfoPanel mapInfoPanel;
+    @Getter
+    private final transient ConcurrentLinkedHashMap<String, BufferedImage> primaryTileCache;
+    @Getter @Setter
+    private transient Cache<String, BufferedImage> secondaryTileCache;
     @Getter @Setter
     private String userAgent = Defaults.DEFAULT_USER_AGENT;
     @Getter @Setter
@@ -56,11 +62,16 @@ public class MapViewer extends JPanel {
     private transient MapObject currentMap = new MapObject();
 
     public MapViewer() {
-        tileDownloader = new TileDownloader(this);
-        mapRenderer = new MapRenderer(this, tileDownloader);
+        downloadingTileProvider = new DownloadingTileProvider(this);
+        mapRenderer = new MapRenderer(this, downloadingTileProvider);
         mouseHandler = new MouseHandler(this);
         mapInfoPanel = new MapInfoPanel(this);
         mapCreator = new MapCreator();
+
+        primaryTileCache = new ConcurrentLinkedHashMap.Builder<String, BufferedImage>()
+                .maximumWeightedCapacity(Defaults.DEFAULT_IMGCACHE_SIZE)
+                .build();
+
         add(mapInfoPanel);
     }
 
@@ -172,11 +183,7 @@ public class MapViewer extends JPanel {
     }
 
     public void setImageCacheSize(long size) {
-        tileDownloader.setImageCacheSize(size);
-    }
-
-    public void setLocalCache(Cache<String, BufferedImage> cache) {
-        tileDownloader.setSecondaryTileCache(cache);
+        primaryTileCache.setCapacity(size);
     }
 
     public void setZoom(int zoom) {

@@ -1,10 +1,11 @@
 package net.wirelabs.jmaps.map;
 
+
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.painters.CurrentPositionPainter;
 import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
 import net.wirelabs.jmaps.map.painters.Painter;
-import net.wirelabs.jmaps.map.downloader.TileDownloader;
+import net.wirelabs.jmaps.map.downloader.TileProvider;
 import net.wirelabs.jmaps.map.painters.TextPrinter;
 
 
@@ -29,16 +30,16 @@ import java.util.Optional;
 public class MapRenderer {
 
     private final MapViewer mapViewer;
-    private final TileDownloader tileDownloader;
+    private final TileProvider tileProvider;
 
     private final TextPrinter coordinatePrinter;
     private final TextPrinter mapAttributionPrinter;
     private VolatileImage tempImage;
     private Graphics2D tempImageGraphics;
 
-    public MapRenderer(MapViewer mapViewer, TileDownloader tileDownloader) {
+    public MapRenderer(MapViewer mapViewer, TileProvider tileProvider) {
         this.mapViewer = mapViewer;
-        this.tileDownloader = tileDownloader;
+        this.tileProvider = tileProvider;
         this.coordinatePrinter = new CurrentPositionPainter();
         this.mapAttributionPrinter = new MapAttributionPainter();
     }
@@ -112,7 +113,7 @@ public class MapRenderer {
         for (Layer layer : mapViewer.getCurrentMap().getEnabledLayers()) {
 
             String tileUrl = layer.createTileUrl(tileX, tileY, zoom + layer.getZoomOffset());
-            Optional<BufferedImage> b = Optional.ofNullable(tileDownloader.getTile(tileUrl));
+            Optional<BufferedImage> b = Optional.ofNullable(tileProvider.getTile(tileUrl));
             if (b.isPresent()) {
                 // if layer's opacity is < 1.0 - apply layer's opacity alpha, otherwise set alpha 1.0f
                 AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.min(layer.getOpacity(), 1.0f));

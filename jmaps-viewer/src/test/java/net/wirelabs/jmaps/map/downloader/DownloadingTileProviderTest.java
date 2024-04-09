@@ -1,7 +1,6 @@
 package net.wirelabs.jmaps.map.downloader;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
-import lombok.NoArgsConstructor;
 import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
@@ -27,7 +26,7 @@ import static org.mockito.Mockito.*;
  * Created 11/10/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
 
-class TileDownloaderTest {
+class DownloadingTileProviderTest {
 
     private final DirectoryBasedCache secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT);
     private MockHttpServer testTileServer;
@@ -39,15 +38,15 @@ class TileDownloaderTest {
     private String failTileUrl;
 
     private final MapViewer mapViewer = new MapViewer();
-    private final TileDownloader tileProvider = spy(new TileDownloader(mapViewer));
+    private final DownloadingTileProvider tileProvider = spy(new DownloadingTileProvider(mapViewer));
     private ConcurrentLinkedHashMap<String, BufferedImage> primaryCache;
 
     @BeforeEach
     void before() throws IOException {
         //mapViewer = new MapViewer();
         testTileServer = new MockHttpServer();
-        primaryCache = tileProvider.primaryTileCache;
-        tileProvider.setSecondaryTileCache(secondaryCache);
+        primaryCache = mapViewer.getPrimaryTileCache();
+        mapViewer.setSecondaryTileCache(secondaryCache);
         tileUrl = "http://localhost:" + testTileServer.getPort() + "/tile.png";
         failTileUrl = "http://localhost:" +testTileServer.getPort() +"/nonexisting";
         FileUtils.deleteDirectory(CACHE_DIR);
@@ -96,7 +95,7 @@ class TileDownloaderTest {
     void shouldPutFileInPrimaryCacheIfSecondaryCacheDisabled() {
 
         // no secondary cache, secondaryCacheEnabled() returns false
-        tileProvider.setSecondaryTileCache(null);
+        mapViewer.setSecondaryTileCache(null);
 
         downloadTile();
         assertDownloadCalled(times(1));
@@ -144,7 +143,7 @@ class TileDownloaderTest {
     @Test
     void shouldDownloadAndUpdatePrimaryIfNoSecondaryCacheEnabled() {
 
-        tileProvider.setSecondaryTileCache(null);
+        mapViewer.setSecondaryTileCache(null);
         downloadTile();
         assertDownloadCalled(times(1));
         assertTileInPrimaryCache(tileUrl);
