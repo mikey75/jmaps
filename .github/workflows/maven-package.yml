@@ -22,7 +22,7 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
-        server-id: evbus-github
+        server-id: jmaps-parent-github
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Maven
