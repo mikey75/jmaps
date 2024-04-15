@@ -4,6 +4,7 @@ import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import net.miginfocom.swing.MigLayout;
 import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.downloader.DownloadingTileProvider;
 import net.wirelabs.jmaps.map.downloader.TileProvider;
@@ -72,7 +73,8 @@ public class MapViewer extends JPanel {
                 .maximumWeightedCapacity(Defaults.DEFAULT_IMGCACHE_SIZE)
                 .build();
 
-        add(mapInfoPanel);
+        setLayout(new MigLayout("", "[90%][]", "[]"));
+        add(mapInfoPanel, "cell 1 1, grow");
     }
 
     // the method that does the actual painting
