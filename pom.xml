@@ -5,12 +5,27 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.wirelabs</groupId>
-    <artifactId>jmaps-parent</artifactId>
+    <artifactId>jmaps</artifactId>
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>jmaps-example</module>
         <module>jmaps-viewer</module>
     </modules>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <name>Central Repository OSSRH snapshots</name>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <name>Central Repository OSSRH releses</name>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+
+    </distributionManagement>
+
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -23,6 +38,75 @@
         <okhttp.version>4.12.0</okhttp.version>
     </properties>
 
-    <packaging>pom</packaging>
+    <scm>
+        <developerConnection>scm:git:git@github.com:mikey75/jmaps.git</developerConnection>
+        <connection>scm:git:git@github.com:mikey75/jmaps.git</connection>
+        <url>git@github.com:mikey75/jmaps.git</url>
+    </scm>
 
+    <name>jMmaps</name>
+    <description>Java Swing component to interact with online maps</description>
+    <url>https://github.com/mikey75/jmaps</url>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Michał Szwaczko</name>
+            <email>mikey@wirelabs.net</email>
+            <organization>Late Night Coding</organization>
+            <organizationUrl>https://github.com/mikey75</organizationUrl>
+        </developer>
+    </developers>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>2.2.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.4</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <packaging>pom</packaging>
 </project>

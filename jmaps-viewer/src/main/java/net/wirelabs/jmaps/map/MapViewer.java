@@ -87,7 +87,7 @@ public class MapViewer extends JPanel {
 
     /**
      * Sets location on the map at current zoom and centers on it
-     * If location is null or does not match map bounds -> center on map's geometric center point
+     * If location is null or does not match map bounds then center on map's geometric center point
      *
      * @param location WGS84 coordinates of the location
      */
