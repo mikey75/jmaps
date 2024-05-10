@@ -7,6 +7,13 @@
 - Supports multiple layer maps with transparency/zoom offsets
 - Comes with example application and example map definitions.
 - Supports user overlays - you can plot anything on the map (waypoints, GPS tracks etc)
+# Usage: 
+
+          <dependency>
+            <groupId>net.wirelabs</groupId>
+            <artifactId>jmaps-viewer</artifactId>
+            <version>1.0</version>
+          </dependency>
 
 # Samples:
 jMaps comes with sample demo application. 
