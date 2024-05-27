@@ -75,6 +75,8 @@ public class MapViewer extends JPanel {
 
         setLayout(new MigLayout("", "[90%][]", "[]"));
         add(mapInfoPanel, "cell 1 1, grow");
+        // add listener to recenter map on map resize
+        addComponentListener(new RecenterMapListener(this));
     }
 
     // the method that does the actual painting
@@ -124,19 +126,25 @@ public class MapViewer extends JPanel {
             currentMap = mapCreator.createMap(xmlMapFile);
             // update layers panel
             updateLayersPanel();
-            // if any overlay has drawn something (i.e getObjects is not empty) -> fit best to those objects
-            List<Coordinate> allObjects = userOverlays.stream()
-                    .flatMap(listContainer -> listContainer.getObjects().stream())
-                    .collect(Collectors.toList());
-
-            if (!allObjects.isEmpty()) {
-                setBestFit(allObjects);
-            } else {
-                setPositionAndZoom(getHome(), getZoom());
-            }
+            // center map or best fit the route/waypoints
+            centerMapOrBestFit();
 
         } catch (Exception ex) {
             log.info("Map not created {}", ex.getMessage(), ex);
+        }
+    }
+
+     void centerMapOrBestFit() {
+        // if any overlay has drawn something (i.e getObjects is not empty) -> fit best to those objects
+        List<Coordinate> allObjects = userOverlays.stream()
+                .flatMap(listContainer -> listContainer.getObjects().stream())
+                .collect(Collectors.toList());
+
+        if (!allObjects.isEmpty()) {
+            setBestFit(allObjects);
+        } else {
+            // otherwise center map
+            setPositionAndZoom(getHome(), getZoom());
         }
     }
 
