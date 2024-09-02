@@ -39,7 +39,6 @@
                             <sources>
                                 <source>src/main/resources/schemas/gpx.xsd</source>
                             </sources>
-                            <packageName>net.wirelabs.jmaps.example.gpx</packageName>
                         </configuration>
                     </execution>
                 </executions>

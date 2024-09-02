@@ -10,11 +10,11 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 
+import com.topografix.gpx._1._1.GpxType;
+import com.topografix.gpx._1._1.TrkType;
+import com.topografix.gpx._1._1.TrksegType;
+import com.topografix.gpx._1._1.WptType;
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.example.gpx.GpxType;
-import net.wirelabs.jmaps.example.gpx.TrkType;
-import net.wirelabs.jmaps.example.gpx.TrksegType;
-import net.wirelabs.jmaps.example.gpx.WptType;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 
 /**
@@ -29,7 +29,7 @@ class GPXParser {
     public GPXParser() {
 
         try {
-            JAXBContext jc = JAXBContext.newInstance("net.wirelabs.jmaps.example.gpx");
+            JAXBContext jc = JAXBContext.newInstance("com.topografix.gpx._1._1");
             this.unmarshaller = jc.createUnmarshaller();
         } catch (JAXBException e) {
             log.error("JAXB exception {}", e.getMessage(), e);
