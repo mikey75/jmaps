@@ -1,0 +1,9 @@
+1.1
+    - Formalize map files format (use xsd schema), add validation of mapfiles against the schema
+    - Logback version up, beacause of upstream vulnerabilities suggested by dependabot
+    - Generate GPX Pojos in schema specified namespace location, no repackage
+    - Some minor lint warning fixes
+    - Move maven publishing to separate profile - fixes gpg request during normal dev build
+    - Recenter/refit map on component/window resize
+1.0
+    - Initial release
