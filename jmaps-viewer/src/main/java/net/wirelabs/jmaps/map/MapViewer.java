@@ -61,6 +61,7 @@ public class MapViewer extends JPanel {
     private final List<Painter<MapViewer>> userOverlays = new ArrayList<>();
     @Getter
     private transient MapObject currentMap = new MapObject();
+    private final transient MapFileValidator mapFileValidator = new MapFileValidator();
 
     public MapViewer() {
         downloadingTileProvider = new DownloadingTileProvider(this);
@@ -123,11 +124,15 @@ public class MapViewer extends JPanel {
      */
     public void setCurrentMap(File xmlMapFile) {
         try {
-            currentMap = mapCreator.createMap(xmlMapFile);
-            // update layers panel
-            updateLayersPanel();
-            // center map or best fit the route/waypoints
-            centerMapOrBestFit();
+            if (mapFileValidator.validateMapFile(xmlMapFile)) {
+                currentMap = mapCreator.createMap(xmlMapFile);
+                // update layers panel
+                updateLayersPanel();
+                // center map or best fit the route/waypoints
+                centerMapOrBestFit();
+            } else {
+                JOptionPane.showMessageDialog(getParent(),"The map definition you are trying to load\n is not compliant with jmaps map!");
+            }
 
         } catch (Exception ex) {
             log.info("Map not created {}", ex.getMessage(), ex);

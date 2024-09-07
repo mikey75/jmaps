@@ -14,7 +14,8 @@ public enum ExampleMap {
     TOPO_HIPSO("Poland Topo + Hipso, WMTS", "GeoportalLayered.xml"),
     VIRT_EARTH_SAT("Virtual Earth Satelite", "VESat.xml"),
     VIRT_EARTH_MAP("Virtual Earth Map", "VEMap.xml"),
-    VIRT_EARTH_HYB("Virtual Earth Hybrid", "VEHyb.xml");
+    VIRT_EARTH_HYB("Virtual Earth Hybrid", "VEHyb.xml"),
+    BAD_MAP("Bad map - will not load","bad.xml");
 
     private final String name;
     private final String mapFile;
