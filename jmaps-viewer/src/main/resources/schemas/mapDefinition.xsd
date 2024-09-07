@@ -1,0 +1,33 @@
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+    <xsd:element name="map">
+        <xsd:complexType >
+            <xsd:sequence>
+                <xsd:element maxOccurs="unbounded" ref="layer"/>
+                <xsd:element type="xsd:string" name="copyright"/>
+            </xsd:sequence>
+            <xsd:attribute type="xsd:string" name="name" use="required"/>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:element name="layer">
+        <xsd:complexType>
+            <xsd:all> <!-- order is unimportant, otherwise change to xsd:sequence -->
+                <!-- name type and url are required -->
+                <xsd:element type="xsd:string" name="name"/>
+                <xsd:element type="xsd:string" name="type"/>
+                <xsd:element type="xsd:string" name="url"/>
+                <!-- those are not required cause they are changed with defaults in code if missing -->
+                <xsd:element type="xsd:string" name="crs" minOccurs="0"/>
+                <xsd:element type="xsd:int" name="minZoom" minOccurs="0"/>
+                <xsd:element type="xsd:int" name="maxZoom" minOccurs="0"/>
+                <xsd:element type="xsd:int" name="zoomOffset" minOccurs="0"/>
+                <xsd:element type="xsd:int" name="tileSize" minOccurs="0"/>
+                <xsd:element type="xsd:boolean" name="swapAxis" minOccurs="0"/>
+                <xsd:element type="xsd:float" name="opacity" minOccurs="0"/>
+                <xsd:element type="xsd:string" name="tileMatrixSet" minOccurs="0"/>
+                <xsd:element type="xsd:string" name="wmtsLayer" minOccurs="0"/>
+            </xsd:all>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

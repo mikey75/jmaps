@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<m name="Mapa 1">
+    <l>
+        <nam>CyclOSM Map</nam>
+        <typ>XYZ</typ>
+        <u>https://a.tile-cyclosm.openstreetmap.fr/cyclosm/{z}/{x}/{y}.png</u>
+    </l>
+    <c>CyclOSM | Map data © OpenStreetMap contributors</c>
+</m>
