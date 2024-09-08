@@ -1,4 +1,5 @@
 1.1
+    - Example app migrated to xmlbeans instead of jaxb
     - Formalize map files format (use xsd schema), add validation of mapfiles against the schema
     - Logback version up, beacause of upstream vulnerabilities suggested by dependabot
     - Generate GPX Pojos in schema specified namespace location, no repackage
