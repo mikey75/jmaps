@@ -1,43 +1,25 @@
 package net.wirelabs.jmaps.example.components;
 
+import com.topografix.gpx.x1.x1.GpxDocument;
+import com.topografix.gpx.x1.x1.TrkType;
+import com.topografix.gpx.x1.x1.TrksegType;
+import com.topografix.gpx.x1.x1.WptType;
+import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.map.geo.Coordinate;
+import org.apache.xmlbeans.XmlException;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
-import com.topografix.gpx._1._1.GpxType;
-import com.topografix.gpx._1._1.TrkType;
-import com.topografix.gpx._1._1.TrksegType;
-import com.topografix.gpx._1._1.WptType;
-import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.map.geo.Coordinate;
 
 /**
  * Created 8/3/22 by Michał Szwaczko (mikey@wirelabs.net)
  */
 @Slf4j
-public
-class GPXParser {
-
-    private Unmarshaller unmarshaller;
-
-    public GPXParser() {
-
-        try {
-            JAXBContext jc = JAXBContext.newInstance("com.topografix.gpx._1._1");
-            this.unmarshaller = jc.createUnmarshaller();
-        } catch (JAXBException e) {
-            log.error("JAXB exception {}", e.getMessage(), e);
-        }
-
-    }
-
-
+public class GPXParser {
 
     /**
      * Parses gpx file in geoposition format
@@ -74,21 +56,21 @@ class GPXParser {
      */
     public List<WptType> parseGpxFile(File file) {
         try {
-            JAXBElement<GpxType> root = (JAXBElement<GpxType>) unmarshaller.unmarshal(file);
+            GpxDocument gpxDocument = GpxDocument.Factory.parse(file);
 
-            List<TrkType> tracks = root.getValue().getTrk();
+            List<TrkType> tracks = gpxDocument.getGpx().getTrkList();
             List<WptType> result = new ArrayList<>();
 
             if (!tracks.isEmpty()) {
                 for (TrkType track : tracks) {
-                    track.getTrkseg().stream()
-                            .map(TrksegType::getTrkpt)
+                    track.getTrksegList().stream()
+                            .map(TrksegType::getTrkptList)
                             .forEach(result::addAll);
                 }
                 return result;
             }
 
-        } catch (JAXBException e) {
+        } catch (IOException | XmlException e) {
             log.warn("File does not contain a gpx track");
         }
         return Collections.emptyList();

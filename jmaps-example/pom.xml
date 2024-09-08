@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>jmaps</artifactId>
         <groupId>net.wirelabs</groupId>
@@ -21,28 +22,52 @@
             <artifactId>miglayout-swing</artifactId>
             <version>5.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>5.2.1</version>
+        </dependency>
+        <!-- log4j is for xmlbeans only, it needs it -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.23.1</version>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <version>2.5.0</version>
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>5.2.1</version>
                 <executions>
                     <execution>
-                        <id>xjc-schema1</id>
                         <goals>
-                            <goal>xjc</goal>
+                            <goal>compile</goal>
                         </goals>
-                        <configuration>
-                            <sources>
-                                <source>src/main/resources/schemas/gpx.xsd</source>
-                            </sources>
-                        </configuration>
                     </execution>
                 </executions>
+
+                <configuration>
+                    <sourceDir>${project.basedir}/src/main/resources/schemas</sourceDir>
+                    <recurseSourceSubdirs>true</recurseSourceSubdirs>
+                    <sourceSchemas>gpx.xsd</sourceSchemas>
+                    <repackage>net.wirelabs.jmaps</repackage>
+                    <buildSchemas>true</buildSchemas>
+                    <name>xml</name>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-core</artifactId>
+                        <version>2.23.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
         </plugins>
+
     </build>
 </project>
