@@ -21,7 +21,7 @@ import java.util.List;
 @Getter
 public class MapDefinition  {
 
-    @XmlAttribute(name = "name")
+    @XmlElement(name = "name")
     private String name;
     @XmlElement(name = "layer")
     private List<LayerDefinition> layers = new ArrayList<>();

@@ -3,10 +3,10 @@
     <xsd:element name="map">
         <xsd:complexType >
             <xsd:sequence>
+                <xsd:element type="xsd:string" name="name" />
                 <xsd:element maxOccurs="unbounded" ref="layer"/>
                 <xsd:element type="xsd:string" name="copyright"/>
             </xsd:sequence>
-            <xsd:attribute type="xsd:string" name="name" use="required"/>
         </xsd:complexType>
     </xsd:element>
 
