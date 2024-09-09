@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<map name="Mapa 1">
+<map>
+    <name>Virtual Earth Hybrid</name>
     <layer>
         <name>VirtEarth Hybrid</name>
         <type>QUAD</type>

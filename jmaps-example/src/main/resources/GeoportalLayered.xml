@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<map name="Mapa 1">
-
+<map>
+    <name>Geoportal Layered</name>
     <layer>
         <name>podklad</name>
         <type>WMTS</type>
