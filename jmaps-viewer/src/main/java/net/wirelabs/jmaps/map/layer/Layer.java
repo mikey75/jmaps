@@ -5,7 +5,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.ProjectionEngine;
-import net.wirelabs.jmaps.map.model.map.LayerDefinition;
+import net.wirelabs.jmaps.model.map.LayerDocument;
 
 
 import java.awt.*;
@@ -32,18 +32,18 @@ public abstract class Layer  {
 
     private final ProjectionEngine projectionEngine = new ProjectionEngine();
 
-    protected Layer(LayerDefinition layerDefinition) {
+    protected Layer(LayerDocument.Layer layerDefinition) {
         this.name = layerDefinition.getName();
         this.url = layerDefinition.getUrl();
-        this.type = layerDefinition.getType();
+        this.type = LayerType.valueOf(layerDefinition.getType());
         this.crs = layerDefinition.getCrs();
 
-        this.tileSize = layerDefinition.getTileSize();
-        this.maxZoom = layerDefinition.getMaxZoom();
-        this.minZoom = layerDefinition.getMinZoom();
-        this.opacity = layerDefinition.getOpacity();
-        this.zoomOffset = layerDefinition.getZoomOffset();
-        this.swapAxis = layerDefinition.isSwapAxis();
+        this.tileSize = (layerDefinition.getTileSize() == 0) ? LayerDefaults.TILE_SIZE : layerDefinition.getTileSize() ;
+        this.maxZoom = (layerDefinition.getMaxZoom() == 0) ? LayerDefaults.MAX_ZOOM : layerDefinition.getMaxZoom();
+        this.minZoom = (layerDefinition.getMinZoom() == 0) ? LayerDefaults.MIN_ZOOM : layerDefinition.getMinZoom();
+        this.opacity = (layerDefinition.getOpacity() == 0) ? LayerDefaults.OPACITY : layerDefinition.getOpacity();
+        this.zoomOffset = (layerDefinition.getZoomOffset() == 0) ? LayerDefaults.ZOOM_OFFSET : layerDefinition.getZoomOffset();
+        this.swapAxis = (!layerDefinition.getSwapAxis()) ? LayerDefaults.SWAP_AXIS : layerDefinition.getSwapAxis();
 
         setProjection(crs);
     }

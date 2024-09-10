@@ -1,4 +1,6 @@
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns="http://www.wirelabs.net/jmaps/model/map"
+        targetNamespace="http://www.wirelabs.net/jmaps/model/map" elementFormDefault="qualified">
 
     <xsd:element name="map">
         <xsd:complexType >

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>jmaps</artifactId>
         <groupId>net.wirelabs</groupId>
@@ -131,6 +132,18 @@
             <version>5.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.xmlbeans</groupId>
+            <artifactId>xmlbeans</artifactId>
+            <version>5.2.1</version>
+        </dependency>
+        <!-- log4j is for xmlbeans only, it needs it -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.23.1</version>
+        </dependency>
+
     </dependencies>
     <build>
         <plugins>
@@ -143,6 +156,38 @@
                     <argLine>-Dfile.encoding=UTF-8</argLine>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.xmlbeans</groupId>
+                <artifactId>xmlbeans</artifactId>
+                <version>5.2.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    <sourceDir>${project.basedir}/src/main/resources/schemas</sourceDir>
+                    <recurseSourceSubdirs>true</recurseSourceSubdirs>
+                    <sourceSchemas>mapDefinition.xsd</sourceSchemas>
+                    <repackage>net.wirelabs.jmaps.mapdef</repackage>
+                    <buildSchemas>true</buildSchemas>
+                    <name>xml</name>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.apache.logging.log4j</groupId>
+                        <artifactId>log4j-core</artifactId>
+                        <version>2.23.1</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
         </plugins>
+
+
     </build>
 </project>

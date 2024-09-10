@@ -1,7 +1,7 @@
 package net.wirelabs.jmaps.map.layer;
 
 import net.wirelabs.jmaps.map.geo.Coordinate;
-import net.wirelabs.jmaps.map.model.map.LayerDefinition;
+import net.wirelabs.jmaps.model.map.LayerDocument;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,14 +17,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class XYZLayerTest {
 
-    private LayerDefinition xyzLayerDefinition;
-
-
+    private LayerDocument.Layer xyzLayerDefinition;
 
     @BeforeEach
     void before() {
-        xyzLayerDefinition = new LayerDefinition();
-        xyzLayerDefinition.setType(LayerType.XYZ);
+        xyzLayerDefinition =LayerDocument.Layer.Factory.newInstance();
+        xyzLayerDefinition.setType(String.valueOf(LayerType.XYZ));
         xyzLayerDefinition.setName("TestXYZ");
         xyzLayerDefinition.setUrl("http://localhost/{z}/{x}/{y}.png");
     }

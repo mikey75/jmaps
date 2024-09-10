@@ -4,11 +4,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
-import net.wirelabs.jmaps.map.model.map.MapDefinition;
+import net.wirelabs.jmaps.model.map.MapDocument;
+import org.apache.xmlbeans.XmlException;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Map reader - handles reading map definition xml
@@ -20,13 +20,12 @@ import java.io.File;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MapReader {
 
-    public  static MapDefinition loadMapDefinitionFile(File mapDefinitionFile) {
+    public  static MapDocument loadMapDefinitionFile(File mapDefinitionFile) {
         try {
-            JAXBContext context = JAXBContext.newInstance(MapDefinition.class);
-            Unmarshaller jaxb = context.createUnmarshaller();
-            return (MapDefinition) jaxb.unmarshal(mapDefinitionFile);
-        } catch (Exception e) {
-            throw new CriticalMapException("Could not load map definition", e);
+            return MapDocument.Factory.parse(mapDefinitionFile);
+        } catch (IOException | XmlException e) {
+            log.error("Could not load map definition: {}", e.getMessage());
+            throw new CriticalMapException("Could not load map definition!\nDetails: check logs");
         }
     }
 }

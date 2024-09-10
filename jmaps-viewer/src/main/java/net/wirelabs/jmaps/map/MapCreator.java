@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.layer.LayerType;
-import net.wirelabs.jmaps.map.model.map.LayerDefinition;
-import net.wirelabs.jmaps.map.model.map.MapDefinition;
+import net.wirelabs.jmaps.model.map.LayerDocument;
+import net.wirelabs.jmaps.model.map.MapDocument;
 
 import java.io.File;
 
@@ -26,13 +26,13 @@ public class MapCreator {
 
         MapObject map = new MapObject();
 
-        MapDefinition mapDefinition = loadMapDefinitionFile(xmlMapFile);
-        log.info("Creating map: [{}]", mapDefinition.getName());
+        MapDocument mapDefinition = loadMapDefinitionFile(xmlMapFile);
+        log.info("Creating map: [{}]", mapDefinition.getMap().getName());
 
-        map.setMapName(mapDefinition.getName());
-        map.setMapCopyrightAttribution(mapDefinition.getCopyright());
+        map.setMapName(mapDefinition.getMap().getName());
+        map.setMapCopyrightAttribution(mapDefinition.getMap().getCopyright());
 
-        for (LayerDefinition layerDefinition : mapDefinition.getLayers()) {
+        for (LayerDocument.Layer layerDefinition : mapDefinition.getMap().getLayerList()) {
             Layer mapLayer = createMapLayer(layerDefinition);
             if (layerMatchesExistingLayers(map, mapLayer)) {
                 map.addLayer(mapLayer);
@@ -45,11 +45,11 @@ public class MapCreator {
 
     }
 
-    private Layer createMapLayer(LayerDefinition layerDefinition) {
+    private Layer createMapLayer(LayerDocument.Layer layerDefinition) {
 
         try {
-            LayerType type = layerDefinition.getType();
-            return type.layer.getDeclaredConstructor(LayerDefinition.class).newInstance(layerDefinition);
+            LayerType type = LayerType.valueOf(layerDefinition.getType());
+            return type.layer.getDeclaredConstructor(LayerDocument.Layer.class).newInstance(layerDefinition);
         } catch (Exception e) {
             log.info("Layer type not given or unknown");
             throw new CriticalMapException("Layer type not given or unknown");

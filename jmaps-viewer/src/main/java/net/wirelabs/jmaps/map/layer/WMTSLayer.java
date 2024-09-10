@@ -2,8 +2,8 @@ package net.wirelabs.jmaps.map.layer;
 
 
 import net.wirelabs.jmaps.map.geo.GeoUtils;
-import net.wirelabs.jmaps.map.model.map.LayerDefinition;
 import net.wirelabs.jmaps.map.model.wmts.Capabilities;
+import net.wirelabs.jmaps.model.map.LayerDocument;
 import okhttp3.HttpUrl;
 
 import java.awt.*;
@@ -27,7 +27,7 @@ public class WMTSLayer extends Layer {
     protected String defaultTms;
     protected String defaultLayer;
 
-    public WMTSLayer(LayerDefinition layerDefinition) {
+    public WMTSLayer(LayerDocument.Layer layerDefinition) {
 
         super(layerDefinition);
 

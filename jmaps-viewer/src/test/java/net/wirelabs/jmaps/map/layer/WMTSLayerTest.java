@@ -1,7 +1,7 @@
 package net.wirelabs.jmaps.map.layer;
 
 import net.wirelabs.jmaps.MockHttpServer;
-import net.wirelabs.jmaps.map.model.map.LayerDefinition;
+import net.wirelabs.jmaps.model.map.LayerDocument;
 import okhttp3.HttpUrl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class WMTSLayerTest {
     private String testUrl;
-    private LayerDefinition wmtsLayerDefinition;
+    private LayerDocument.Layer wmtsLayerDefinition;
     private MockHttpServer server;
 
     @BeforeEach
@@ -24,8 +24,8 @@ class WMTSLayerTest {
 
         server = new MockHttpServer();
         testUrl = "http://localhost:"+ server.getPort() +"/valid1";
-        wmtsLayerDefinition = new LayerDefinition();
-        wmtsLayerDefinition.setType(LayerType.WMTS);
+        wmtsLayerDefinition = LayerDocument.Layer.Factory.newInstance();
+        wmtsLayerDefinition.setType(String.valueOf(LayerType.WMTS));
         wmtsLayerDefinition.setName("TestWmts");
         wmtsLayerDefinition.setUrl(testUrl);
 
