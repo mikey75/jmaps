@@ -38,7 +38,29 @@
 
     <build>
         <plugins>
-
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.4</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>net.wirelabs.jmaps.example.ExampleApplication</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.xmlbeans</groupId>
                 <artifactId>xmlbeans</artifactId>
@@ -66,6 +88,40 @@
                         <version>2.23.1</version>
                     </dependency>
                 </dependencies>
+            </plugin>
+
+            <!-- copy example maps so that they can be used as files not as jar-file resource -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <property name="destDir" value="${basedir}/target/maps"/>
+                                <property name="srcDir" value="${basedir}/example-maps"/>
+                                <mkdir dir="${destDir}"/>
+
+                                <copy file="${srcDir}/bad.xml" tofile="${destDir}/bad.xml"/>
+                                <copy file="${srcDir}/CyclOSM.xml" tofile="${destDir}/CyclOSM.xml"/>
+                                <copy file="${srcDir}/CzechTopoWMTS.xml" tofile="${destDir}/CzechTopoWMTS.xml"/>
+                                <copy file="${srcDir}/GeoportalBDOT.xml" tofile="${destDir}/GeoportalBDOT.xml"/>
+                                <copy file="${srcDir}/GeoportalLayered.xml" tofile="${destDir}/GeoportalLayered.xml"/>
+                                <copy file="${srcDir}/GeoportalTopoRaster.xml" tofile="${destDir}/GeoportalTopoRaster.xml"/>
+                                <copy file="${srcDir}/MTBMap.xml" tofile="${destDir}/MTBMap.xml"/>
+                                <copy file="${srcDir}/OpenStreetMap.xml" tofile="${destDir}/OpenStreetMap.xml"/>
+                                <copy file="${srcDir}/VEHyb.xml" tofile="${destDir}/VEHyb.xml"/>
+                                <copy file="${srcDir}/VEMap.xml" tofile="${destDir}/VEMap.xml"/>
+                                <copy file="${srcDir}/VESat.xml" tofile="${destDir}/VESat.xml"/>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 

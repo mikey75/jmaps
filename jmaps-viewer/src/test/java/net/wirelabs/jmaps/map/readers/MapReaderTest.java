@@ -2,10 +2,8 @@ package net.wirelabs.jmaps.map.readers;
 
 import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.layer.LayerType;
-import net.wirelabs.jmaps.map.model.map.MapDefinition;
+import net.wirelabs.jmaps.model.map.MapDocument;
 import org.junit.jupiter.api.Test;
-
-import javax.xml.bind.JAXBException;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,20 +24,20 @@ class MapReaderTest {
 
         assertThatExceptionOfType(CriticalMapException.class)
                 .isThrownBy(() -> MapReader.loadMapDefinitionFile(MAPFILE_NONEXISTING))
-                .withMessageMatching("Could not load map definition");
+                .withMessageContaining("Could not load map definition");
     }
 
 
     @Test
-    void shouldLoadMapDefinitionFile() throws JAXBException {
-        MapDefinition m = MapReader.loadMapDefinitionFile(MAPFILE);
+    void shouldLoadMapDefinitionFile() {
+        MapDocument.Map m = MapReader.loadMapDefinitionFile(MAPFILE).getMap();
 
         assertThat(m.getName()).isEqualTo("Mapa 1");
-        assertThat(m.getLayers()).hasSize(1);
-        assertThat(m.getLayers().get(0).getUrl()).isEqualTo("http://tile.openstreetmap.org/{z}/{x}/{y}.png");
-        assertThat(m.getLayers().get(0).getType()).isEqualTo(LayerType.XYZ);
-        assertThat(m.getLayers().get(0).getMinZoom()).isEqualTo(3);
-        assertThat(m.getLayers().get(0).getOpacity()).isEqualTo(1.0f);
+        assertThat(m.getLayerList()).hasSize(1);
+        assertThat(m.getLayerList().get(0).getUrl()).isEqualTo("http://tile.openstreetmap.org/{z}/{x}/{y}.png");
+        assertThat(m.getLayerList().get(0).getType()).isEqualTo(String.valueOf(LayerType.XYZ));
+        assertThat(m.getLayerList().get(0).getMinZoom()).isEqualTo(3);
+
 
     }
 

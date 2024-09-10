@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.miginfocom.swing.MigLayout;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.geo.Coordinate;
+import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -11,6 +12,7 @@ import javax.swing.plaf.basic.BasicComboBoxRenderer;
 import java.awt.*;
 import java.io.File;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 
@@ -87,12 +89,12 @@ public class ConfigPanel extends TitledPanel {
             ExampleMap selected = (ExampleMap) exampleMapCombo.getSelectedItem();
 
             if (selected != null) {
-                URL path = getClass().getClassLoader().getResource(selected.getMapFile());
-                if (path != null) {
-                    File file = new File(path.getFile());
-                    mapViewer.setCurrentMap(file);
+                log.info("Selected map: {}", selected.getMapFile());
+                    File finalFile = new File(System.getProperty("user.dir")+"/example-maps", selected.getMapFile());
+                    log.info("Final map path {}", finalFile);
+                    mapViewer.setCurrentMap(finalFile);
+
                 }
-            }
         });
     }
 

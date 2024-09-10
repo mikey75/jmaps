@@ -1,6 +1,6 @@
 package net.wirelabs.jmaps.map.layer;
 
-import net.wirelabs.jmaps.map.model.map.LayerDefinition;
+import net.wirelabs.jmaps.model.map.LayerDocument;
 import java.awt.Dimension;
 
 /**
@@ -19,7 +19,7 @@ import java.awt.Dimension;
 
 public class XYZLayer extends Layer {
 
-    public XYZLayer(LayerDefinition layerDefinition) {
+    public XYZLayer(LayerDocument.Layer layerDefinition) {
         super(layerDefinition);
     }
 

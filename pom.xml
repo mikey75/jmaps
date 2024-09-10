@@ -9,8 +9,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>jmaps-example</module>
         <module>jmaps-viewer</module>
+        <module>jmaps-example</module>
     </modules>
 
     <distributionManagement>

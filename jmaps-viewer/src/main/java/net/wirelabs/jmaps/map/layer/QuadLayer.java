@@ -1,10 +1,10 @@
 package net.wirelabs.jmaps.map.layer;
 
-import net.wirelabs.jmaps.map.model.map.LayerDefinition;
+import net.wirelabs.jmaps.model.map.LayerDocument;
 
 public class QuadLayer extends XYZLayer {
 
-    public QuadLayer(LayerDefinition layerDefinition) {
+    public QuadLayer(LayerDocument.Layer layerDefinition) {
         super(layerDefinition);
     }
     /**
