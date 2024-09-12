@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class WMTSLayerTest {
     private String testUrl;
@@ -77,8 +76,11 @@ class WMTSLayerTest {
         // example of custom wmts map
 
         // override defaults in capabilities.xml
-        String overridenWmtsLayer = "A2";
-        wmtsLayerDefinition.setWmtsLayer(overridenWmtsLayer);
+        // tms and layer are nonexistent in xml file
+        // so defaults shoule be returned
+        wmtsLayerDefinition.setTileMatrixSet("NEW_TMS");
+        wmtsLayerDefinition.setWmtsLayer("A2");
+        // those should be overriden and returned
         wmtsLayerDefinition.setMinZoom(3);
         wmtsLayerDefinition.setSwapAxis(true);
         wmtsLayerDefinition.setCrs("EPSG:3187");
@@ -93,7 +95,7 @@ class WMTSLayerTest {
                 HttpUrl.parse(testUrl).newBuilder()
                         .addQueryParameter("Service","WMTS")
                         .addQueryParameter("Request","GetTile")
-                        .addQueryParameter("Layer",overridenWmtsLayer)
+                        .addQueryParameter("Layer","G2_MOBILE_500")
                         .addQueryParameter("Version","1.0.0")
                         .addQueryParameter("format","image/png")
                         .addQueryParameter("style","default")
@@ -103,11 +105,6 @@ class WMTSLayerTest {
                         .addQueryParameter("TileCol","10")
                         .toString());
 
-
-        // since test capabilities.xml does not have NEW_TMS tilematrixset
-        // it should throws exception
-        wmtsLayerDefinition.setTileMatrixSet("NEW_TMS");
-        assertThatThrownBy(() -> new WMTSLayer(wmtsLayerDefinition)).hasMessage("TileMatrixSet NEW_TMS does not exist in the map");
     }
 
 }

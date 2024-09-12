@@ -1,8 +1,8 @@
 package net.wirelabs.jmaps.map.readers;
 
+import net.opengis.wmts.x10.CapabilitiesDocument;
 import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
-import net.wirelabs.jmaps.map.model.wmts.Capabilities;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -49,7 +49,7 @@ class CapabilitiesReaderTest {
 
         String testUrl = "http://localhost:" + server.getPort() +"/valid1";
 
-        Capabilities caps = WMTSCapReader.loadCapabilities(testUrl);
+        CapabilitiesDocument.Capabilities caps = WMTSCapReader.loadCapabilities(testUrl);
 
         assertFileIsCreatedAndHasCorrectContent(caps);
         server.stop();
@@ -82,11 +82,11 @@ class CapabilitiesReaderTest {
 
         Files.copy(VALID_CAPABILITIES_FILE.toPath(), EXPECTED_VALID_CACHED_FILE.toPath());
         String testUrl = "http://localhost:"+server.getPort()+"/valid1";
-        Capabilities capabilities = WMTSCapReader.loadCapabilities(testUrl);
+        CapabilitiesDocument.Capabilities capabilities = WMTSCapReader.loadCapabilities(testUrl);
         assertFileIsCreatedAndHasCorrectContent(capabilities);
     }
 
-    private void assertFileIsCreatedAndHasCorrectContent(Capabilities capabilities) throws IOException {
+    private void assertFileIsCreatedAndHasCorrectContent(CapabilitiesDocument.Capabilities capabilities) throws IOException {
         assertThat(capabilities).isNotNull();
         assertThat(EXPECTED_VALID_CACHED_FILE)
                 .exists()

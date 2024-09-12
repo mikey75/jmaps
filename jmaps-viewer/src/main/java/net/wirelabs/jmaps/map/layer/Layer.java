@@ -53,8 +53,8 @@ public abstract class Layer  {
             projectionEngine.setCrs(crs);
         } catch (Exception e) {
             // if crs is null or not supported set default
-            projectionEngine.setCrs("EPSG:3857");
-            this.crs = "EPSG:3857";
+            projectionEngine.setCrs(LayerDefaults.CRS);
+            this.crs = LayerDefaults.CRS;
         }
 
     }

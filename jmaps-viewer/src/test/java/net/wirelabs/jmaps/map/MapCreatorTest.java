@@ -3,7 +3,6 @@ package net.wirelabs.jmaps.map;
 import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import org.junit.jupiter.api.Test;
 
-import javax.xml.bind.JAXBException;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -22,7 +21,7 @@ class MapCreatorTest {
     File TWO_LAYERS_DIFFERENT_CRS = new File(testMapsDir,"multilayer-different-crs.xml");
 
     @Test
-    void testCorrectMaps() throws JAXBException {
+    void testCorrectMaps()  {
 
         MapCreator mc = new MapCreator();
 
@@ -35,7 +34,7 @@ class MapCreatorTest {
     }
 
     @Test
-    void testIncorrectMaps() throws JAXBException {
+    void testIncorrectMaps() {
         MapCreator mc = new MapCreator();
         MapObject map;
 
