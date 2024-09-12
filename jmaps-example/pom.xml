@@ -75,9 +75,9 @@
 
                 <configuration>
                     <sourceDir>${project.basedir}/src/main/resources/schemas</sourceDir>
-                    <recurseSourceSubdirs>true</recurseSourceSubdirs>
+                    <recurseSourceSubdirs>false</recurseSourceSubdirs>
                     <sourceSchemas>gpx.xsd</sourceSchemas>
-                    <repackage>net.wirelabs.jmaps</repackage>
+                    <repackage>net.wirelabs.jmaps.example</repackage>
                     <buildSchemas>true</buildSchemas>
                     <name>xml</name>
                 </configuration>

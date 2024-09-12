@@ -3,12 +3,10 @@ package net.wirelabs.jmaps.map.readers;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.opengis.wmts.x10.CapabilitiesDocument;
 import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
-import net.wirelabs.jmaps.map.model.wmts.Capabilities;
+import org.apache.xmlbeans.XmlException;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import java.io.*;
 import java.net.URI;
 import java.net.URL;
@@ -27,7 +25,7 @@ public class WMTSCapReader {
 
     private static String descriptorCacheDir = DEFAULT_WMTS_DESCRIPTOR_CACHE;
 
-    public static Capabilities loadCapabilities(String getCapabilitiesUrl) {
+    public static CapabilitiesDocument.Capabilities loadCapabilities(String getCapabilitiesUrl) {
 
         try {
             URI uri = URI.create(getCapabilitiesUrl);
@@ -48,13 +46,13 @@ public class WMTSCapReader {
 
     }
 
-    private static Capabilities parseCapabilitiesFromNetwork(String url, File cachedFile) throws JAXBException, IOException {
+    private static CapabilitiesDocument.Capabilities parseCapabilitiesFromNetwork(String url, File cachedFile) throws IOException, XmlException {
 
         URL request = new URL(url);
         InputStream networkInputStream = request.openConnection().getInputStream();
 
         File tempFile = createTempFile(networkInputStream);
-        Capabilities caps = parseCapabilitiesFromFile(tempFile);
+        CapabilitiesDocument.Capabilities caps = parseCapabilitiesFromFile(tempFile);
 
         cacheFile(cachedFile, tempFile);
 
@@ -73,10 +71,9 @@ public class WMTSCapReader {
         return tempFile;
     }
 
-    private static Capabilities parseCapabilitiesFromFile(File capabilitiesFile) throws JAXBException {
-        JAXBContext context = JAXBContext.newInstance(Capabilities.class);
-        Unmarshaller jaxb = context.createUnmarshaller();
-        return (Capabilities) jaxb.unmarshal(capabilitiesFile);
+    private static CapabilitiesDocument.Capabilities parseCapabilitiesFromFile(File capabilitiesFile) throws XmlException, IOException {
+        CapabilitiesDocument c = CapabilitiesDocument.Factory.parse(capabilitiesFile);
+        return c.getCapabilities();
     }
 
     public static void setCacheDir(String cacheDir) {

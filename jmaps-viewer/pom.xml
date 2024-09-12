@@ -45,18 +45,6 @@
             <version>1.4.14</version>
         </dependency>
 
-        <!-- xml parsing java 11-->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.3.4</version>
-        </dependency>
 
         <!-- geo projection -->
         <dependency>
@@ -171,12 +159,17 @@
 
                 <configuration>
                     <sourceDir>${project.basedir}/src/main/resources/schemas</sourceDir>
-                    <recurseSourceSubdirs>true</recurseSourceSubdirs>
-                    <sourceSchemas>mapDefinition.xsd</sourceSchemas>
-                    <repackage>net.wirelabs.jmaps.mapdef</repackage>
+                    <recurseSourceSubdirs>false</recurseSourceSubdirs>
+                    <sourceSchemas>mapDefinition.xsd,wmts.xsd</sourceSchemas>
+                    <repackage>net.wirelabs.jmaps.viewer</repackage>
                     <buildSchemas>true</buildSchemas>
                     <name>xml</name>
                 </configuration>
+
+
+
+
+
                 <dependencies>
                     <dependency>
                         <groupId>org.apache.logging.log4j</groupId>
