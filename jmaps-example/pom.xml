@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>jmaps</artifactId>
         <groupId>net.wirelabs</groupId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,7 +13,7 @@
         <dependency>
             <groupId>net.wirelabs</groupId>
             <artifactId>jmaps-viewer</artifactId>
-            <version>1.1-SNAPSHOT</version>
+            <version>1.1</version>
         </dependency>
         <!--Mig Layout -->
         <dependency>
@@ -100,21 +99,21 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <property name="destDir" value="${basedir}/target/maps"/>
-                                <property name="srcDir" value="${basedir}/example-maps"/>
-                                <mkdir dir="${destDir}"/>
+                                <property name="destDir" value="${basedir}/target/maps" />
+                                <property name="srcDir" value="${basedir}/example-maps" />
+                                <mkdir dir="${destDir}" />
 
-                                <copy file="${srcDir}/bad.xml" tofile="${destDir}/bad.xml"/>
-                                <copy file="${srcDir}/CyclOSM.xml" tofile="${destDir}/CyclOSM.xml"/>
-                                <copy file="${srcDir}/CzechTopoWMTS.xml" tofile="${destDir}/CzechTopoWMTS.xml"/>
-                                <copy file="${srcDir}/GeoportalBDOT.xml" tofile="${destDir}/GeoportalBDOT.xml"/>
-                                <copy file="${srcDir}/GeoportalLayered.xml" tofile="${destDir}/GeoportalLayered.xml"/>
-                                <copy file="${srcDir}/GeoportalTopoRaster.xml" tofile="${destDir}/GeoportalTopoRaster.xml"/>
-                                <copy file="${srcDir}/MTBMap.xml" tofile="${destDir}/MTBMap.xml"/>
-                                <copy file="${srcDir}/OpenStreetMap.xml" tofile="${destDir}/OpenStreetMap.xml"/>
-                                <copy file="${srcDir}/VEHyb.xml" tofile="${destDir}/VEHyb.xml"/>
-                                <copy file="${srcDir}/VEMap.xml" tofile="${destDir}/VEMap.xml"/>
-                                <copy file="${srcDir}/VESat.xml" tofile="${destDir}/VESat.xml"/>
+                                <copy file="${srcDir}/bad.xml" tofile="${destDir}/bad.xml" />
+                                <copy file="${srcDir}/CyclOSM.xml" tofile="${destDir}/CyclOSM.xml" />
+                                <copy file="${srcDir}/CzechTopoWMTS.xml" tofile="${destDir}/CzechTopoWMTS.xml" />
+                                <copy file="${srcDir}/GeoportalBDOT.xml" tofile="${destDir}/GeoportalBDOT.xml" />
+                                <copy file="${srcDir}/GeoportalLayered.xml" tofile="${destDir}/GeoportalLayered.xml" />
+                                <copy file="${srcDir}/GeoportalTopoRaster.xml" tofile="${destDir}/GeoportalTopoRaster.xml" />
+                                <copy file="${srcDir}/MTBMap.xml" tofile="${destDir}/MTBMap.xml" />
+                                <copy file="${srcDir}/OpenStreetMap.xml" tofile="${destDir}/OpenStreetMap.xml" />
+                                <copy file="${srcDir}/VEHyb.xml" tofile="${destDir}/VEHyb.xml" />
+                                <copy file="${srcDir}/VEMap.xml" tofile="${destDir}/VEMap.xml" />
+                                <copy file="${srcDir}/VESat.xml" tofile="${destDir}/VESat.xml" />
                             </target>
                         </configuration>
                         <goals>
