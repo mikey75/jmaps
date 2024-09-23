@@ -9,10 +9,12 @@
 - Supports user overlays - you can plot anything on the map (waypoints, GPS tracks etc)
 # Usage: 
 
+Currently latest deployed to maven central is version 1.1
+
           <dependency>
             <groupId>net.wirelabs</groupId>
             <artifactId>jmaps-viewer</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
           </dependency>
 
 # Samples:
