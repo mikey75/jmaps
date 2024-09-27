@@ -7,5 +7,5 @@
 @cd ..
 @cd jmaps-example
 @call %MVN% clean install
-@call %JAVA% -jar target\jmaps-example-1.1-SNAPSHOT-jar-with-dependencies.jar
+@call %JAVA% -jar target\jmaps-example-1.2-SNAPSHOT-jar-with-dependencies.jar
 @cd ..
