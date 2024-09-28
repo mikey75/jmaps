@@ -5,12 +5,8 @@ import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.painters.Painter;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.Stroke;
-import java.awt.geom.Point2D;
+import java.awt.*;
+import java.awt.geom.*;
 import java.util.List;
 
 /**

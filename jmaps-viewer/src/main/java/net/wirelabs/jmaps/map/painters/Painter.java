@@ -4,9 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.*;
 
 /**
  * Created 6/8/23 by Michał Szwaczko (mikey@wirelabs.net)

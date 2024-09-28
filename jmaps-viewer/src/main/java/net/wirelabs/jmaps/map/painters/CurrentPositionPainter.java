@@ -3,7 +3,7 @@ package net.wirelabs.jmaps.map.painters;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 
-import java.awt.Graphics2D;
+import java.awt.*;
 
 /**
  * Created 6/8/23 by Michał Szwaczko (mikey@wirelabs.net)

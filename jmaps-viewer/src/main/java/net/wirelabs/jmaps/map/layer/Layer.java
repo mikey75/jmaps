@@ -7,9 +7,8 @@ import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.geo.ProjectionEngine;
 import net.wirelabs.jmaps.model.map.LayerDocument;
 
-
 import java.awt.*;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 
 
 @Slf4j

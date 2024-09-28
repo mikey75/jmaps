@@ -1,25 +1,12 @@
 package net.wirelabs.jmaps.map;
 
 
-import net.wirelabs.jmaps.map.layer.Layer;
-import net.wirelabs.jmaps.map.painters.CurrentPositionPainter;
-import net.wirelabs.jmaps.map.painters.MapAttributionPainter;
-import net.wirelabs.jmaps.map.painters.Painter;
 import net.wirelabs.jmaps.map.downloader.TileProvider;
-import net.wirelabs.jmaps.map.painters.TextPrinter;
+import net.wirelabs.jmaps.map.layer.Layer;
+import net.wirelabs.jmaps.map.painters.*;
 
-
-import java.awt.AlphaComposite;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Transparency;
-import java.awt.image.BufferedImage;
-import java.awt.image.VolatileImage;
+import java.awt.*;
+import java.awt.image.*;
 import java.util.Optional;
 
 /**

@@ -4,16 +4,12 @@ import lombok.extern.slf4j.Slf4j;
 import net.miginfocom.swing.MigLayout;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.geo.Coordinate;
-import org.apache.commons.io.FileUtils;
 
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.plaf.basic.BasicComboBoxRenderer;
+import javax.swing.filechooser.*;
+import javax.swing.plaf.basic.*;
 import java.awt.*;
 import java.io.File;
-
-import java.io.InputStream;
-import java.net.URL;
 import java.util.List;
 
 /**

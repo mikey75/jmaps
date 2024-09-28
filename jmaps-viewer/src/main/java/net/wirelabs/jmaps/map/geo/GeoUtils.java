@@ -3,8 +3,7 @@ package net.wirelabs.jmaps.map.geo;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 import java.util.List;
 
 /**

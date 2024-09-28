@@ -4,6 +4,7 @@ import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import net.wirelabs.jmaps.map.layer.LayerType;
 import net.wirelabs.jmaps.model.map.MapDocument;
 import org.junit.jupiter.api.Test;
+
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;

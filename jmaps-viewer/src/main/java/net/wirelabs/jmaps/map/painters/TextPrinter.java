@@ -3,12 +3,8 @@ package net.wirelabs.jmaps.map.painters;
 import lombok.Setter;
 import net.wirelabs.jmaps.map.MapViewer;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.geom.Rectangle2D;
+import java.awt.*;
+import java.awt.geom.*;
 
 /**
  * Created 10/29/23 by Michał Szwaczko (mikey@wirelabs.net)

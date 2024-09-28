@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import java.util.stream.Stream;
 
 import static net.wirelabs.jmaps.TestUtils.roundDouble;

@@ -2,10 +2,8 @@ package net.wirelabs.jmaps.map;
 
 import net.wirelabs.jmaps.map.layer.Layer;
 
-import javax.swing.BoxLayout;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.border.TitledBorder;
+import javax.swing.*;
+import javax.swing.border.*;
 
 public class MapInfoPanel extends JPanel {
 
