@@ -6,13 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.Defaults;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 
 /**
@@ -29,8 +28,8 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
         this(Defaults.DEFAULT_TILECACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
     }
 
-    public DirectoryBasedCache(String cacheDir, Duration cacheTimeout) {
-        this.baseDir = Paths.get(cacheDir);
+    public DirectoryBasedCache(Path cacheDir, Duration cacheTimeout) {
+        this.baseDir = cacheDir;
         this.cacheTimeout = cacheTimeout;
 
         if (cacheTimeout.isZero()) {

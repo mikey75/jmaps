@@ -8,21 +8,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 
 import static net.wirelabs.jmaps.TestUtils.compareImages;
-import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * Created 5/28/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
 class DirectoryBasedCacheTest {
 
-    private static final File CACHE_DIR = new File("target/testcache/tile-cache");
+    private static final Path CACHE_DIR = Paths.get("target/testcache/tile-cache");
     private static final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
 
     private static final File TEST_IMAGE_FILE = new File("src/test/resources/tiles/tile.png");
@@ -41,7 +43,7 @@ class DirectoryBasedCacheTest {
     @BeforeEach
     void init() throws IOException {
 
-        FileUtils.deleteDirectory(CACHE_DIR);
+        FileUtils.deleteDirectory(CACHE_DIR.toFile());
         TEST_IMAGE = ImageIO.read(TEST_IMAGE_FILE);
         TEST_IMAGE_OTHER = ImageIO.read(TEST_IMAGE_OTHER_FILE);
     }
@@ -50,7 +52,7 @@ class DirectoryBasedCacheTest {
     void testDefaultCacheSettings() {
         cache = new DirectoryBasedCache();
         assertThat(cache.getCacheTimeout()).isEqualTo(Defaults.DEFAULT_CACHE_TIMEOUT);
-        assertThat(cache.getBaseDir()).hasToString(Defaults.DEFAULT_TILECACHE_DIR);
+        assertThat(cache.getBaseDir()).isEqualTo(Defaults.DEFAULT_TILECACHE_DIR);
     }
 
     @Test
@@ -69,7 +71,7 @@ class DirectoryBasedCacheTest {
     @Test
     void testCachePutWithDifferentUrlSchemas() {
 
-        cache = new DirectoryBasedCache(CACHE_DIR.toPath().toString(), Defaults.DEFAULT_CACHE_TIMEOUT);
+        cache = new DirectoryBasedCache(CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
         cache.put(XYZ_URL_WITHOUT_QUERY, TEST_IMAGE);
         cache.put(XYZ_URL_WITH_QUERY, TEST_IMAGE);
         cache.put(WMTS_URL, TEST_IMAGE);
@@ -86,7 +88,7 @@ class DirectoryBasedCacheTest {
     @Test
     void testGetNonExisting() {
         // if getting file that does not exist in cache, get should return null
-        cache = new DirectoryBasedCache(CACHE_DIR.toPath().toString(), Defaults.DEFAULT_CACHE_TIMEOUT);
+        cache = new DirectoryBasedCache(CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
         String NON_EXISTING_URL = "nonexisting";
         assertThat(cache.get(NON_EXISTING_URL)).isNull();
     }
@@ -94,7 +96,7 @@ class DirectoryBasedCacheTest {
     @Test
     void testTimeoutZero() {
         // if cache timeout is zero, expiration check should never be called
-        cache = spy(new DirectoryBasedCache(CACHE_DIR.toPath().toString(), Duration.ZERO));
+        cache = spy(new DirectoryBasedCache(CACHE_DIR, Duration.ZERO));
 
         cache.put(GENERIC_URL, TEST_IMAGE);
         cache.get(GENERIC_URL);
@@ -104,7 +106,7 @@ class DirectoryBasedCacheTest {
 
     @Test
     void shouldCheckCacheEntryValidity() {
-        cache = new DirectoryBasedCache(CACHE_DIR.toPath().toString(), SHORT_TIMEOUT_FOR_VALIDITY_TESTS);
+        cache = new DirectoryBasedCache(CACHE_DIR, SHORT_TIMEOUT_FOR_VALIDITY_TESTS);
         // should be valid right after putting in
         cache.put(GENERIC_URL, TEST_IMAGE);
         assertThat(cache.keyExpired(GENERIC_URL)).isFalse();
@@ -119,7 +121,7 @@ class DirectoryBasedCacheTest {
     @Test
     void shouldUpdateTileAtLocationIfDataChanged() {
 
-        cache = new DirectoryBasedCache(CACHE_DIR.toPath().toString(), Defaults.DEFAULT_CACHE_TIMEOUT);
+        cache = new DirectoryBasedCache(CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
         cache.put(GENERIC_URL, TEST_IMAGE);
         retrieveFromCacheAndCheckContent(GENERIC_URL, TEST_IMAGE);
 

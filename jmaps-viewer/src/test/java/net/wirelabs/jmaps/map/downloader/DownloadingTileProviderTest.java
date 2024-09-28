@@ -13,9 +13,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.verification.VerificationMode;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,9 +29,9 @@ import static org.mockito.Mockito.*;
 
 class DownloadingTileProviderTest {
 
-    private final DirectoryBasedCache secondaryCache = new DirectoryBasedCache(CACHE_DIR.getPath(), Defaults.DEFAULT_CACHE_TIMEOUT);
+    private final DirectoryBasedCache secondaryCache = new DirectoryBasedCache(CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
     private MockHttpServer testTileServer;
-    private static final File CACHE_DIR = new File("target/testcache");
+    private static final Path CACHE_DIR = new File("target/testcache").toPath();
     private static final File TEST_TILE_FILE = MockHttpServer.TEST_TILE_FILE;
     private static final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
 
@@ -49,7 +50,7 @@ class DownloadingTileProviderTest {
         mapViewer.setSecondaryTileCache(secondaryCache);
         tileUrl = "http://localhost:" + testTileServer.getPort() + "/tile.png";
         failTileUrl = "http://localhost:" +testTileServer.getPort() +"/nonexisting";
-        FileUtils.deleteDirectory(CACHE_DIR);
+        FileUtils.deleteDirectory(CACHE_DIR.toFile());
     }
 
     @AfterEach
@@ -162,9 +163,7 @@ class DownloadingTileProviderTest {
     }
 
     private void downloadTile() {
-        Awaitility.await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> {
-            assertThat(tileProvider.getTile(tileUrl)).isNotNull();
-        });
+        Awaitility.await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> assertThat(tileProvider.getTile(tileUrl)).isNotNull());
     }
 
     private void assertTileExpired() {

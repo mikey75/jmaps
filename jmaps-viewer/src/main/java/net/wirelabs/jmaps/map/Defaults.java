@@ -3,7 +3,8 @@ package net.wirelabs.jmaps.map;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.awt.Color;
+import java.awt.*;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 
@@ -16,13 +17,13 @@ public class Defaults {
     public static final Duration DEFAULT_CACHE_TIMEOUT = Duration.ofDays(30);
     // default cache dir base
     private static final String HOME = System.getProperty("user.home");
-    private static final String DEFAULT_CACHE_DIR = Paths.get(HOME, ".jmaps-cache").toString();
+    private static final Path DEFAULT_CACHE_DIR = Paths.get(HOME, ".jmaps-cache");
 
     // default cache dir for storing WMTS service descriptors (capabilities.xml etc)
-    public static final String DEFAULT_WMTS_DESCRIPTOR_CACHE = Paths.get(DEFAULT_CACHE_DIR, "wmts-cache").toString();
+    public static final Path DEFAULT_WMTS_DESCRIPTOR_CACHE = Paths.get(DEFAULT_CACHE_DIR.toString(), "wmts-cache");
 
     // default cache dir $HOME/.jmaps-cache/tile-cache
-    public static final String DEFAULT_TILECACHE_DIR = Paths.get(DEFAULT_CACHE_DIR, "tile-cache").toString();
+    public static final Path DEFAULT_TILECACHE_DIR = Paths.get(DEFAULT_CACHE_DIR.toString(), "tile-cache");
 
     // default user-agent
     public static final String DEFAULT_USER_AGENT = "JMaps Tiler v.1.0";
