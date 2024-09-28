@@ -1,9 +1,7 @@
 package net.wirelabs.jmaps.map.cache;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.map.Defaults;
 
 import javax.imageio.ImageIO;
 import java.awt.image.*;
@@ -19,24 +17,14 @@ import java.time.Duration;
  */
 @Slf4j
 @Getter
-public class DirectoryBasedCache implements Cache<String, BufferedImage> {
-
-    private final Path baseDir;
-    @Setter private Duration cacheTimeout;
+public class DirectoryBasedCache extends BaseCache implements Cache<String, BufferedImage> {
 
     public DirectoryBasedCache() {
-        this(Defaults.DEFAULT_TILECACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
+        super();
     }
 
     public DirectoryBasedCache(Path cacheDir, Duration cacheTimeout) {
-        this.baseDir = cacheDir;
-        this.cacheTimeout = cacheTimeout;
-
-        if (cacheTimeout.isZero()) {
-            log.info("Directory based cache expiration checking disabled!");
-        } else {
-            log.info("Directory based cache expiration timeout set to {}", cacheTimeout);
-        }
+        super(cacheDir, cacheTimeout);
     }
 
     @Override
@@ -44,18 +32,12 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
 
         try {
             File f = getLocalFile(key);
-            if (validityTimeGreaterThanZero() && (keyExpired(key))) {
-                return null;
-            }
             return ImageIO.read(Files.newInputStream(f.toPath()));
         } catch (IOException e) {
             return null;
         }
     }
 
-    private boolean validityTimeGreaterThanZero() {
-        return getCacheTimeout().toMillis() > Duration.ZERO.toMillis();
-    }
 
     @Override
     public void put(String key, BufferedImage b) {
@@ -64,7 +46,7 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
             if (!file.exists()) {
                 Files.createDirectories(file.toPath());
             }
-            writeImageToFile(b,file);
+            writeImageToFile(b, file);
         } catch (IOException ex) {
             log.error("File cache put failed for {}", key, ex);
         }
@@ -75,17 +57,21 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
     }
 
     public boolean keyExpired(String key) {
-        File file = getLocalFile(key);
 
-        long expirationTime = System.currentTimeMillis() - getCacheTimeout().toMillis();
+        long now = System.currentTimeMillis();
+        long expirationTime = now - getCacheTimeout().toMillis();
         long lastWrittenOn;
 
+        // if expiration time = current time -> no expiration set (cache timeout = 0) - so key never expires
+        if (now == expirationTime) return false;
+
         try {
+            File file = getLocalFile(key);
             lastWrittenOn = Files.getLastModifiedTime(file.toPath()).toMillis();
         } catch (IOException e) {
             return false;
         }
-        return  (lastWrittenOn < expirationTime);
+        return (lastWrittenOn < expirationTime);
 
     }
 
@@ -119,7 +105,7 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
         }
         name = normalizeUrl(name);
 
-        return new File(baseDir.toFile(), name);
+        return new File(getBaseDir().toFile(), name);
     }
 
     private String normalizeUrl(String name) {
@@ -132,4 +118,6 @@ public class DirectoryBasedCache implements Cache<String, BufferedImage> {
         }
         return name;
     }
+
+
 }

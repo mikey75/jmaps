@@ -3,6 +3,7 @@ package net.wirelabs.jmaps.map.cache;
 import net.wirelabs.jmaps.TestUtils;
 import net.wirelabs.jmaps.map.Defaults;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.ThreadUtils;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -113,10 +114,19 @@ class DirectoryBasedCacheTest {
         // should not be valid after validity time has passed
         Awaitility.await().atMost(Duration.ofMillis(SHORT_TIMEOUT_FOR_VALIDITY_TESTS.toMillis() + 100)).
                 untilAsserted(() -> assertThat(cache.keyExpired(GENERIC_URL)).isTrue());
-        // so cache.get() should return null now
-        assertThat(cache.get(GENERIC_URL)).isNull();
     }
 
+    @Test
+    void shouldNeverInvalidateCacheEntryWhenCacheTimeoutZero() throws InterruptedException {
+        cache = new DirectoryBasedCache(CACHE_DIR,Duration.ZERO);
+        // check for 2 seconds every 200ms
+        // to check if it is always not expired when time passes
+        long end = System.currentTimeMillis() + Duration.ofSeconds(2).toMillis();
+        while (System.currentTimeMillis() < end ) {
+            assertThat(cache.keyExpired(GENERIC_URL)).isFalse();
+            ThreadUtils.sleep(Duration.ofMillis(200));
+        }
+    }
 
     @Test
     void shouldUpdateTileAtLocationIfDataChanged() {

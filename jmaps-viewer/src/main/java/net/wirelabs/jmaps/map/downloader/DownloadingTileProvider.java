@@ -95,10 +95,10 @@ public class DownloadingTileProvider implements TileProvider {
             return img.get();
         }
 
-        // now check configured local cache
+        // now check configured local cache - if the image is there, and it's cache validity is not expired - return it
         if (secondaryCacheEnabled()) {
                 Optional<BufferedImage> image = Optional.ofNullable(mapViewer.getSecondaryTileCache().get(url));
-                if (image.isPresent()) {
+                if (image.isPresent() && !mapViewer.getSecondaryTileCache().keyExpired(url)) {
                     mapViewer.getPrimaryTileCache().put(url, image.get());
                     return image.get();
                 }
@@ -106,8 +106,7 @@ public class DownloadingTileProvider implements TileProvider {
 
         }
 
-        // else submit tile for download from the web
-        // but don't submit if it is already submitted
+        // else submit tile for download from the web, but only if it's not already submitted
         if (!tilesLoading.contains(url)) {
             tilesLoading.add(url);
             getExecutorService().submit(() -> download(url));

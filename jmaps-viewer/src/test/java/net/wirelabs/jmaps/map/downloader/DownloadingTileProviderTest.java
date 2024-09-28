@@ -142,6 +142,19 @@ class DownloadingTileProviderTest {
     }
 
     @Test
+    void shouldCheckNeverExpired() throws IOException {
+        secondaryCache.setCacheTimeout(Duration.ZERO);
+        secondaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
+        // check if tile not expired after waiting any validity time (plus some margin for test time)
+        assertTileNotExpired();
+        // download tile
+        downloadTile();
+        // assert it never happened - tile is valid no need to redownload
+        assertDownloadCalled(never());
+
+    }
+
+    @Test
     void shouldDownloadAndUpdatePrimaryIfNoSecondaryCacheEnabled() {
 
         mapViewer.setSecondaryTileCache(null);
@@ -164,6 +177,12 @@ class DownloadingTileProviderTest {
 
     private void downloadTile() {
         Awaitility.await().atMost(Duration.ofSeconds(5)).untilAsserted(() -> assertThat(tileProvider.getTile(tileUrl)).isNotNull());
+    }
+
+    private void assertTileNotExpired() {
+        Awaitility.await().pollDelay(SHORT_TIMEOUT_FOR_VALIDITY_TESTS.plus(Duration.ofMillis(1500))).untilAsserted(
+                () -> assertThat(secondaryCache.keyExpired(tileUrl)).isFalse()
+        );
     }
 
     private void assertTileExpired() {
