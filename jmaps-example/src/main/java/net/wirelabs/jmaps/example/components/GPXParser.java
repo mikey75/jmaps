@@ -1,9 +1,6 @@
 package net.wirelabs.jmaps.example.components;
 
-import com.topografix.gpx.x1.x1.GpxDocument;
-import com.topografix.gpx.x1.x1.TrkType;
-import com.topografix.gpx.x1.x1.TrksegType;
-import com.topografix.gpx.x1.x1.WptType;
+import com.topografix.gpx.x1.x1.*;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import org.apache.xmlbeans.XmlException;

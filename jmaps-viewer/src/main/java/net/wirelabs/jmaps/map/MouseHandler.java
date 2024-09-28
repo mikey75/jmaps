@@ -1,20 +1,14 @@
 package net.wirelabs.jmaps.map;
 
 import lombok.Getter;
-
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.layer.Layer;
 
-
-
-import javax.swing.SwingUtilities;
-import javax.swing.event.MouseInputAdapter;
-import java.awt.Cursor;
-import java.awt.Point;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-import java.awt.geom.Point2D;
+import javax.swing.*;
+import javax.swing.event.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
 
 /**
  * Created 6/7/23 by Michał Szwaczko (mikey@wirelabs.net)

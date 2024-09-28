@@ -1,7 +1,8 @@
 package net.wirelabs.jmaps.map.painters;
 
 import net.wirelabs.jmaps.map.MapViewer;
-import java.awt.Graphics2D;
+
+import java.awt.*;
 
 /**
  * Created 12/20/22 by Michał Szwaczko (mikey@wirelabs.net)

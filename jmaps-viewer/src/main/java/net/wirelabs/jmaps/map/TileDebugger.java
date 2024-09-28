@@ -3,10 +3,8 @@ package net.wirelabs.jmaps.map;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.geom.Rectangle2D;
+import java.awt.*;
+import java.awt.geom.*;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TileDebugger {

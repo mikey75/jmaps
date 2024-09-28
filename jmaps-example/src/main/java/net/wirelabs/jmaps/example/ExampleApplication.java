@@ -5,8 +5,8 @@ import net.wirelabs.jmaps.example.components.ConfigPanel;
 import net.wirelabs.jmaps.example.components.MainWindow;
 import net.wirelabs.jmaps.example.components.MapPanel;
 
-import javax.swing.JFrame;
-import java.awt.EventQueue;
+import javax.swing.*;
+import java.awt.*;
 
 @Slf4j
 public class ExampleApplication {

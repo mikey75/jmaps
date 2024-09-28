@@ -3,7 +3,7 @@ package net.wirelabs.jmaps.example.components;
 import lombok.NoArgsConstructor;
 
 import javax.swing.*;
-import javax.swing.border.TitledBorder;
+import javax.swing.border.*;
 import java.awt.*;
 
 

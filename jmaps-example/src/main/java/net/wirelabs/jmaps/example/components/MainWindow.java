@@ -2,10 +2,8 @@ package net.wirelabs.jmaps.example.components;
 
 import net.miginfocom.swing.MigLayout;
 
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.WindowConstants;
-import java.awt.LayoutManager;
+import javax.swing.*;
+import java.awt.*;
 
 /**
  * Created 10/28/23 by Michał Szwaczko (mikey@wirelabs.net)

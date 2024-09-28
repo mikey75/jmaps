@@ -1,7 +1,8 @@
 package net.wirelabs.jmaps.map.layer;
 
 import net.wirelabs.jmaps.model.map.LayerDocument;
-import java.awt.Dimension;
+
+import java.awt.*;
 
 /**
  * XYZ layer, also called basic layer, slippy map,  tile layer etc

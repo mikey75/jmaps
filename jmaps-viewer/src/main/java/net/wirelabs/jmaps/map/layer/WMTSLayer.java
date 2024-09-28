@@ -10,9 +10,8 @@ import net.wirelabs.jmaps.model.map.LayerDocument;
 import okhttp3.HttpUrl;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import java.util.Optional;
-
 
 import static net.wirelabs.jmaps.map.readers.WMTSCapReader.loadCapabilities;
 

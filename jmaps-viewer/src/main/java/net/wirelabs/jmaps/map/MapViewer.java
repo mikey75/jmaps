@@ -16,9 +16,8 @@ import net.wirelabs.jmaps.map.painters.Painter;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
+import java.awt.geom.*;
+import java.awt.image.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;

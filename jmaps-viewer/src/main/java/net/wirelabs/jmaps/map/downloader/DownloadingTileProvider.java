@@ -3,18 +3,17 @@ package net.wirelabs.jmaps.map.downloader;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.MapViewer;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
+import okhttp3.*;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Created 5/23/23 by Michał Szwaczko (mikey@wirelabs.net)

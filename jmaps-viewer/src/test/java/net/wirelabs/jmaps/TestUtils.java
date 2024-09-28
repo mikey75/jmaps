@@ -3,7 +3,7 @@ package net.wirelabs.jmaps;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.util.Random;
 
 /**

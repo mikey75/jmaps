@@ -1,7 +1,6 @@
 package net.wirelabs.jmaps.map;
 
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import java.awt.event.*;
 
 public class RecenterMapListener implements ComponentListener {
 

@@ -2,10 +2,7 @@ package net.wirelabs.jmaps;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import okhttp3.mockwebserver.Dispatcher;
-import okhttp3.mockwebserver.MockResponse;
-import okhttp3.mockwebserver.MockWebServer;
-import okhttp3.mockwebserver.RecordedRequest;
+import okhttp3.mockwebserver.*;
 import okio.Buffer;
 
 import java.io.File;
