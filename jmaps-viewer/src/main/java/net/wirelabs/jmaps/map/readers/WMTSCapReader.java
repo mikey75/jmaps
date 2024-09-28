@@ -7,12 +7,12 @@ import net.opengis.wmts.x10.CapabilitiesDocument;
 import net.wirelabs.jmaps.map.exceptions.CriticalMapException;
 import org.apache.xmlbeans.XmlException;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
+import java.nio.file.*;
 
 import static net.wirelabs.jmaps.map.Defaults.DEFAULT_WMTS_DESCRIPTOR_CACHE;
 
@@ -23,13 +23,13 @@ import static net.wirelabs.jmaps.map.Defaults.DEFAULT_WMTS_DESCRIPTOR_CACHE;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WMTSCapReader {
 
-    private static String descriptorCacheDir = DEFAULT_WMTS_DESCRIPTOR_CACHE;
+    private static Path descriptorCacheDir = DEFAULT_WMTS_DESCRIPTOR_CACHE;
 
     public static CapabilitiesDocument.Capabilities loadCapabilities(String getCapabilitiesUrl) {
 
         try {
             URI uri = URI.create(getCapabilitiesUrl);
-            File cachedFile = Paths.get(descriptorCacheDir, uri.getHost(), uri.getPath(), "capabilities.xml").toFile();
+            File cachedFile = Paths.get(descriptorCacheDir.toString(), uri.getHost(), uri.getPath(), "capabilities.xml").toFile();
 
             if (!cachedFile.exists()) {
                 log.info("Loading WMTS capabilities from {}", getCapabilitiesUrl);
@@ -76,7 +76,7 @@ public class WMTSCapReader {
         return c.getCapabilities();
     }
 
-    public static void setCacheDir(String cacheDir) {
+    public static void setCacheDir(Path cacheDir) {
         descriptorCacheDir = cacheDir;
     }
 }

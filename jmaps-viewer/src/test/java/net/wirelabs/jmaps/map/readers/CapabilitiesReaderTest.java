@@ -11,16 +11,17 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class CapabilitiesReaderTest {
 
-    private static final String TEST_CACHE_ROOT = "target/testcache/wmts-cache";
+    private static final Path TEST_CACHE_ROOT = Path.of("target/testcache/wmts-cache");
 
     private static final File VALID_CAPABILITIES_FILE = new File("src/test/resources/wmts/capabilities.xml");
-    private static final File EXPECTED_VALID_CACHED_FILE = new File(TEST_CACHE_ROOT,"localhost/valid1/capabilities.xml");
+    private static final File EXPECTED_VALID_CACHED_FILE = new File(TEST_CACHE_ROOT.toString(),"localhost/valid1/capabilities.xml");
 
     private MockHttpServer server;
 
@@ -57,7 +58,7 @@ class CapabilitiesReaderTest {
     }
 
     @Test
-    void shouldNotLoadAndCacheNonXMLFileFromNetwork() throws Exception {
+    void shouldNotLoadAndCacheNonXMLFileFromNetwork()  {
 
         String testUrl = "http://localhost:" + server.getPort()+ "/invalid";
 

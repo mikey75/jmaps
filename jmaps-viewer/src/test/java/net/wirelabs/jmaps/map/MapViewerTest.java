@@ -9,11 +9,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
+import java.awt.geom.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +25,6 @@ class MapViewerTest  {
     private static final Coordinate LUBLIN_PL = new Coordinate(22.565628, 51.247717);
     private static final String NEW_USER_AGENT = "Test-agent 1.0";
     private MapViewer mapviewer;
-    private Point2D expectedTopLeftCornerPoint;
     private MockHttpServer server;
 
     @BeforeEach
@@ -66,7 +65,7 @@ class MapViewerTest  {
         assertThat(mapviewer.getCurrentMap().getBaseLayer().getName()).isEqualTo("Open Street Map");
 
         server = new MockHttpServer();
-        WMTSCapReader.setCacheDir("target");
+        WMTSCapReader.setCacheDir(Paths.get("target"));
 
         // fixup urls in mapDefinition to connect to test http server port
         File newFile = fixupUrls(EXAMPLE_MAPFILE_DOUBLE_LAYER);
@@ -94,7 +93,7 @@ class MapViewerTest  {
 
         // map without home set
         mapviewer.setCurrentMap(EXAMPLE_MAPFILE);
-        expectedTopLeftCornerPoint = new Point2D.Double(mapviewer.getMapSizeInPixels(mapviewer.getZoom()).width / 2.0, mapviewer.getMapSizeInPixels(mapviewer.getZoom()).height / 2.0);
+        Point2D expectedTopLeftCornerPoint = new Point2D.Double(mapviewer.getMapSizeInPixels(mapviewer.getZoom()).width / 2.0, mapviewer.getMapSizeInPixels(mapviewer.getZoom()).height / 2.0);
         assertTopLeftPointCorrect(false, expectedTopLeftCornerPoint);
 
         // map with home set
