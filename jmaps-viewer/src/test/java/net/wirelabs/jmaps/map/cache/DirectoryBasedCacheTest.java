@@ -2,6 +2,7 @@ package net.wirelabs.jmaps.map.cache;
 
 import net.wirelabs.jmaps.TestUtils;
 import net.wirelabs.jmaps.map.Defaults;
+import net.wirelabs.jmaps.map.utils.ImageUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.ThreadUtils;
 import org.awaitility.Awaitility;
@@ -18,7 +19,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 
-import static net.wirelabs.jmaps.TestUtils.compareImages;
+
+import static net.wirelabs.jmaps.TestUtils.cacheCheckExistenceAndExpiration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
@@ -43,9 +45,10 @@ class DirectoryBasedCacheTest {
     private static final String GENERIC_URL = "https://paka.pl/10/10/10.png";
 
     @BeforeEach
-    void init() throws IOException {
+    void beforeEach() throws IOException {
         // delete test cache dir
         FileUtils.deleteDirectory(TEST_CACHE_DIR.toFile());
+        assertThat(TEST_CACHE_DIR.toFile()).doesNotExist();
         TEST_IMAGE = ImageIO.read(TEST_IMAGE_FILE);
         TEST_IMAGE_OTHER = ImageIO.read(TEST_IMAGE_OTHER_FILE);
     }
@@ -91,6 +94,31 @@ class DirectoryBasedCacheTest {
         retrieveFromCacheAndCheckContent(cache, XYZ_URL_WITH_QUERY, TEST_IMAGE);
         retrieveFromCacheAndCheckContent(cache, WMTS_URL, TEST_IMAGE);
         retrieveFromCacheAndCheckContent(cache, LONG_URL, TEST_IMAGE);
+
+    }
+
+    @Test
+    void shouldCheckIfTileValidWhenCacheNonZeroAndNotCheckWhenZero() throws InterruptedException {
+        // cache with default timeout
+        DirectoryBasedCache cache = new DirectoryBasedCache(TEST_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
+        // put some tile in - check if it is there and not expired
+        cache.put(GENERIC_URL, TEST_IMAGE);
+        cacheCheckExistenceAndExpiration(cache, GENERIC_URL, true, false);
+
+        // now disable cache validity check
+        cache.setCacheTimeout(Duration.ZERO);
+        // it should always be valid (expired = false)
+        assertThat(cache.keyExpired(GENERIC_URL)).isFalse();
+
+        // now enable validity check with 2 seconds time
+        cache.setCacheTimeout(Duration.ofSeconds(2));
+        // after a second it should be stil there and valid (expired=false)
+        ThreadUtils.sleep(Duration.ofSeconds(1));
+        cacheCheckExistenceAndExpiration(cache, GENERIC_URL, true, false);
+
+        // but now 3 sec  will pass. it should expire
+        ThreadUtils.sleep(Duration.ofSeconds(2));
+        cacheCheckExistenceAndExpiration(cache, GENERIC_URL, true, true);
 
     }
 
@@ -150,7 +178,7 @@ class DirectoryBasedCacheTest {
 
     protected void retrieveFromCacheAndCheckContent(Cache<String,BufferedImage> cache, String url, BufferedImage img2) {
         assertThat(cache.get(url)).isNotNull();
-        assertThat(compareImages(cache.get(url), img2)).isTrue();
+        assertThat(ImageUtils.imagesEqual(cache.get(url), img2)).isTrue();
     }
 }
 

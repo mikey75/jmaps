@@ -72,20 +72,18 @@ public class DirectoryBasedCache extends BaseCache implements Cache<String, Buff
 
     public boolean keyExpired(String key) {
 
-        long now = System.currentTimeMillis();
-        long expirationTime = now - getCacheTimeout().toMillis();
-        long lastWrittenOn;
+        if (isCacheTimeoutEnabled()) {
+            long expirationTimeStamp = System.currentTimeMillis() - getCacheTimeout().toMillis();
 
-        // if expiration time = current time -> no expiration set (cache timeout = 0) - so key never expires
-        if (now == expirationTime) return false;
-
-        try {
-            File file = getLocalFile(key);
-            lastWrittenOn = Files.getLastModifiedTime(file.toPath()).toMillis();
-        } catch (IOException e) {
-            return false;
+            try {
+                File file = getLocalFile(key);
+                long fileTimeStamp = Files.getLastModifiedTime(file.toPath()).toMillis();
+                return (fileTimeStamp < expirationTimeStamp);
+            } catch (IOException e) {
+                return false;
+            }
         }
-        return (lastWrittenOn < expirationTime);
+        return false; // if cache timeout is not enabled - keys never expire, are always valid
 
     }
 
