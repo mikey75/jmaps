@@ -3,6 +3,7 @@
     <name>OpenStreetMap</name>
     <layer>
         <name>Open Street Map</name>
+        <maxZoom>18</maxZoom>
         <type>XYZ</type>
         <url>http://tile.openstreetmap.org/{z}/{x}/{y}.png</url>
     </layer>

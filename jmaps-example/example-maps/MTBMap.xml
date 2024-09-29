@@ -3,6 +3,7 @@
     <name>MTB.cz</name>
     <layer>
         <name>Mtb map</name>
+        <maxZoom>18</maxZoom>
         <type>XYZ</type>
         <url>http://tile.mtbmap.cz/mtbmap_tiles/{z}/{x}/{y}.png</url>
     </layer>
