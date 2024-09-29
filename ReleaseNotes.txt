@@ -1,3 +1,6 @@
+1.2
+    - Added Derby based database secondary cache
+
 1.1
     - Example app migrated to xmlbeans instead of jaxb
     - Formalize map files format (use xsd schema), add validation of mapfiles against the schema

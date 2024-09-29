@@ -22,8 +22,10 @@ public class Defaults {
     // default cache dir for storing WMTS service descriptors (capabilities.xml etc)
     public static final Path DEFAULT_WMTS_DESCRIPTOR_CACHE = Paths.get(DEFAULT_CACHE_DIR.toString(), "wmts-cache");
 
-    // default cache dir $HOME/.jmaps-cache/tile-cache
+    // default cache dir for directory based cache -> $HOME/.jmaps-cache/tile-cache
     public static final Path DEFAULT_TILECACHE_DIR = Paths.get(DEFAULT_CACHE_DIR.toString(), "tile-cache");
+    // default cache dir for derby DB based cache -> $HOME/.jmaps-cache/tile-cache-db
+    public static final Path DEFAULT_TILE_CACHE_DB = Paths.get(DEFAULT_CACHE_DIR.toString(), "tile-cache-db");
 
     // default user-agent
     public static final String DEFAULT_USER_AGENT = "JMaps Tiler v.1.0";

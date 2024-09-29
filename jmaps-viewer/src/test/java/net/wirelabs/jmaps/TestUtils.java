@@ -2,9 +2,13 @@ package net.wirelabs.jmaps;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import net.wirelabs.jmaps.map.cache.Cache;
+import net.wirelabs.jmaps.map.utils.ImageUtils;
 
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 import java.util.Random;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 /**
  * Created 10/28/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -46,17 +50,18 @@ public class TestUtils {
         return resultString.toString();
     }
 
-    public static boolean compareImages(BufferedImage img1, BufferedImage img2) {
-        if (img1.getWidth() == img2.getWidth() && img1.getHeight() == img2.getHeight()) {
-            for (int x = 0; x < img1.getWidth(); x++) {
-                for (int y = 0; y < img1.getHeight(); y++) {
-                    if (img1.getRGB(x, y) != img2.getRGB(x, y))
-                        return false;
-                }
-            }
+    public static void cacheCheckExistenceAndExpiration(Cache<String, BufferedImage> cache, String key, boolean exists, boolean expired) {
+        if (exists) {
+            assertThat(cache.get(key)).isNotNull();
         } else {
-            return false;
+            assertThat(cache.get(key)).isNull();
         }
-        return true;
+        assertThat(cache.keyExpired(key)).isEqualTo(expired);
+    }
+
+    public static void cacheAssertSameData(Cache<String,BufferedImage> cache, String key, BufferedImage img) {
+        BufferedImage image = cache.get(key);
+        assertThat(image).isNotNull();
+        assertThat(ImageUtils.imagesEqual(image, img)).isTrue();
     }
 }
