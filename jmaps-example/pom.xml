@@ -101,6 +101,8 @@
                             <target>
                                 <property name="destDir" value="${basedir}/target/maps" />
                                 <property name="srcDir" value="${basedir}/example-maps" />
+                                <property name="targetCompilationDir" value = "${basedir}/target"/>
+
                                 <mkdir dir="${destDir}" />
 
                                 <copy file="${srcDir}/bad.xml" tofile="${destDir}/bad.xml" />
@@ -114,6 +116,8 @@
                                 <copy file="${srcDir}/VEHyb.xml" tofile="${destDir}/VEHyb.xml" />
                                 <copy file="${srcDir}/VEMap.xml" tofile="${destDir}/VEMap.xml" />
                                 <copy file="${srcDir}/VESat.xml" tofile="${destDir}/VESat.xml" />
+
+                                <copy file="${targetCompilationDir}/jmaps-example-${version}-jar-with-dependencies.jar" toFile="${targetCompilationDir}/jmaps-example.jar" />
                             </target>
                         </configuration>
                         <goals>
