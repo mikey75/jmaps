@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -29,31 +29,45 @@ public class DirectoryBasedCache extends BaseCache implements Cache<String, Buff
 
     @Override
     public BufferedImage get(String key) {
+        return getImage(key);
+    }
 
+    @Override
+    public void put(String key, BufferedImage b) {
+        putImage(key, b);
+    }
+
+    private BufferedImage getImage(String key) {
         try {
-            File f = getLocalFile(key);
-            return ImageIO.read(Files.newInputStream(f.toPath()));
+            Path filePath = getLocalFile(key).toPath();
+            // if file does not exists - return immediately
+            if (!filePath.toFile().exists()) {
+                return null;
+            } else {
+                return ImageIO.read(Files.newInputStream(filePath));
+            }
         } catch (IOException e) {
+            // exception on file read - this might be emergency - file exists but cannot be read, warn
+            log.warn("File cache get failed for {}", key);
             return null;
         }
     }
 
 
-    @Override
-    public void put(String key, BufferedImage b) {
+    private void putImage(String key, BufferedImage b) {
         try {
-            File file = getLocalFile(key);
-            if (!file.exists()) {
-                Files.createDirectories(file.toPath());
+            Path filePath = getLocalFile(key).toPath();
+            // create file only if it does not exist so that if the entry expires,
+            // file is not recreated  (saves time) and only image is written to this existing file
+            if (!filePath.toFile().exists()) {
+                Files.createDirectories(filePath);
             }
-            writeImageToFile(b, file);
-        } catch (IOException ex) {
-            log.error("File cache put failed for {}", key, ex);
-        }
-    }
+            ImageIO.write(b, "png", filePath.toFile());
 
-    void writeImageToFile(BufferedImage image, File file) throws IOException {
-        ImageIO.write(image, "png", file);
+        } catch (IOException ex) {
+            // exception on file put might be a filesystem issue emergency - warn
+            log.warn("File cache put failed for {}", key);
+        }
     }
 
     public boolean keyExpired(String key) {

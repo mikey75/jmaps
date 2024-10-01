@@ -29,11 +29,12 @@ import static org.mockito.Mockito.*;
 
 class DownloadingTileProviderTest {
 
-    private final DirectoryBasedCache secondaryCache = new DirectoryBasedCache(CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
-    private MockHttpServer testTileServer;
-    private static final Path CACHE_DIR = new File("target/testcache").toPath();
-    private static final File TEST_TILE_FILE = MockHttpServer.TEST_TILE_FILE;
-    private static final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
+    private final Path TEST_CACHE_DIR = new File("target/testcache").toPath();
+    private final DirectoryBasedCache secondaryCache = new DirectoryBasedCache(TEST_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
+    private final File TEST_TILE_FILE = MockHttpServer.TEST_TILE_FILE;
+    private final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
+
+    private  MockHttpServer testTileServer;
 
     private String tileUrl;
     private String failTileUrl;
@@ -44,13 +45,12 @@ class DownloadingTileProviderTest {
 
     @BeforeEach
     void before() throws IOException {
-        //mapViewer = new MapViewer();
         testTileServer = new MockHttpServer();
         primaryCache = mapViewer.getPrimaryTileCache();
         mapViewer.setSecondaryTileCache(secondaryCache);
         tileUrl = "http://localhost:" + testTileServer.getPort() + "/tile.png";
         failTileUrl = "http://localhost:" +testTileServer.getPort() +"/nonexisting";
-        FileUtils.deleteDirectory(CACHE_DIR.toFile());
+        FileUtils.deleteDirectory(TEST_CACHE_DIR.toFile());
     }
 
     @AfterEach
@@ -81,8 +81,6 @@ class DownloadingTileProviderTest {
 
     }
 
-
-
     @Test
     void shouldNotDownloadTileIfItIsInPrimaryCache() throws IOException {
 
@@ -103,7 +101,6 @@ class DownloadingTileProviderTest {
         assertTileInPrimaryCache(tileUrl);
 
     }
-
 
     @Test
     void shouldNotDownloadTileIfItIsInTheSecondaryCache() throws IOException {
