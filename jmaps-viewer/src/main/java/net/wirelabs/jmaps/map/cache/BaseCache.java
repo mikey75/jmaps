@@ -21,7 +21,7 @@ public abstract class BaseCache {
     protected BaseCache(Path baseDir, Duration cacheTimeout) {
         this.baseDir = baseDir;
         this.cacheTimeout = cacheTimeout;
-        log.info("Secondary Tile Cache: {}", getClass().getSimpleName());
+        log.info("Secondary Tile Cache: {}, location: {}", getClass().getSimpleName(), getBaseDir());
 
         if (!cacheTimeout.isZero()) {
             log.info("Cache expiration checking enabled! Tiles will be re-downloaded every: {}", cacheTimeout);
