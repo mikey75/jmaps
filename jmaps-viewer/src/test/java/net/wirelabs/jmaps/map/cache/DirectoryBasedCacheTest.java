@@ -35,22 +35,21 @@ class DirectoryBasedCacheTest {
     private static final File TEST_IMAGE_FILE = new File("src/test/resources/tiles/tile.png");
     private static final File TEST_IMAGE_OTHER_FILE = new File("src/test/resources/tiles/tile-other.png");
 
-    private static BufferedImage TEST_IMAGE;
-    private static BufferedImage TEST_IMAGE_OTHER;
-
     private static final String XYZ_URL_WITHOUT_QUERY = "http://tile.openstreetmap.org/2/4/5.jpg";
     private static final String XYZ_URL_WITH_QUERY = "http://tile.openstreetmap.org/2/4/5.jpg?apiKey=120931092";
     private static final String WMTS_URL = "http://localhost/wmts?Service=WMTS&Request=GetTile&Layer=X&TileMatrixSet=Z&TileMatrix=Z:1&TileRow=1&TileCol=1";
     private static final String LONG_URL = "https://dupa/z?=" + TestUtils.getRandomString(300);
     private static final String GENERIC_URL = "https://paka.pl/10/10/10.png";
 
+    private static BufferedImage testImage;
+    private static BufferedImage testImageOther;
+
     @BeforeEach
     void beforeEach() throws IOException {
         // delete test cache dir
         FileUtils.deleteDirectory(TEST_CACHE_DIR.toFile());
-        assertThat(TEST_CACHE_DIR.toFile()).doesNotExist();
-        TEST_IMAGE = ImageIO.read(TEST_IMAGE_FILE);
-        TEST_IMAGE_OTHER = ImageIO.read(TEST_IMAGE_OTHER_FILE);
+        testImage = ImageIO.read(TEST_IMAGE_FILE);
+        testImageOther = ImageIO.read(TEST_IMAGE_OTHER_FILE);
     }
 
     @Test
@@ -74,7 +73,7 @@ class DirectoryBasedCacheTest {
         try (MockedStatic<ImageIO> imageio = Mockito.mockStatic(ImageIO.class)) {
             imageio.when(() -> ImageIO.write(any(BufferedImage.class), any(), any(File.class))).thenThrow(IOException.class);
             // put in cache, this should fail now
-            cache.put(XYZ_URL_WITH_QUERY, TEST_IMAGE);
+            cache.put(XYZ_URL_WITH_QUERY, testImage);
         }
         // assert file not in cache
         assertThat(cache.get(XYZ_URL_WITH_QUERY)).isNull();
@@ -85,15 +84,15 @@ class DirectoryBasedCacheTest {
     void testCachePutWithDifferentUrlSchemas() {
 
         DirectoryBasedCache cache = new DirectoryBasedCache(TEST_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
-        cache.put(XYZ_URL_WITHOUT_QUERY, TEST_IMAGE);
-        cache.put(XYZ_URL_WITH_QUERY, TEST_IMAGE);
-        cache.put(WMTS_URL, TEST_IMAGE);
-        cache.put(LONG_URL, TEST_IMAGE);
+        cache.put(XYZ_URL_WITHOUT_QUERY, testImage);
+        cache.put(XYZ_URL_WITH_QUERY, testImage);
+        cache.put(WMTS_URL, testImage);
+        cache.put(LONG_URL, testImage);
 
-        retrieveFromCacheAndCheckContent(cache, XYZ_URL_WITHOUT_QUERY, TEST_IMAGE);
-        retrieveFromCacheAndCheckContent(cache, XYZ_URL_WITH_QUERY, TEST_IMAGE);
-        retrieveFromCacheAndCheckContent(cache, WMTS_URL, TEST_IMAGE);
-        retrieveFromCacheAndCheckContent(cache, LONG_URL, TEST_IMAGE);
+        retrieveFromCacheAndCheckContent(cache, XYZ_URL_WITHOUT_QUERY, testImage);
+        retrieveFromCacheAndCheckContent(cache, XYZ_URL_WITH_QUERY, testImage);
+        retrieveFromCacheAndCheckContent(cache, WMTS_URL, testImage);
+        retrieveFromCacheAndCheckContent(cache, LONG_URL, testImage);
 
     }
 
@@ -102,7 +101,7 @@ class DirectoryBasedCacheTest {
         // cache with default timeout
         DirectoryBasedCache cache = new DirectoryBasedCache(TEST_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
         // put some tile in - check if it is there and not expired
-        cache.put(GENERIC_URL, TEST_IMAGE);
+        cache.put(GENERIC_URL, testImage);
         cacheCheckExistenceAndExpiration(cache, GENERIC_URL, true, false);
 
         // now disable cache validity check
@@ -127,8 +126,8 @@ class DirectoryBasedCacheTest {
     void testGetNonExisting() {
         // if getting file that does not exist in cache, get should return null
         DirectoryBasedCache cache = new DirectoryBasedCache(TEST_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
-        String NON_EXISTING_URL = "nonexisting";
-        assertThat(cache.get(NON_EXISTING_URL)).isNull();
+        String nonExistingUrl = "nonexisting";
+        assertThat(cache.get(nonExistingUrl)).isNull();
     }
 
     @Test
@@ -136,7 +135,7 @@ class DirectoryBasedCacheTest {
         // if cache timeout is zero, expiration check should never be called
         DirectoryBasedCache cache = spy(new DirectoryBasedCache(TEST_CACHE_DIR, Duration.ZERO));
 
-        cache.put(GENERIC_URL, TEST_IMAGE);
+        cache.put(GENERIC_URL, testImage);
         cache.get(GENERIC_URL);
 
         verify(cache, never()).keyExpired(GENERIC_URL);
@@ -146,7 +145,7 @@ class DirectoryBasedCacheTest {
     void shouldCheckCacheEntryValidity() {
         DirectoryBasedCache cache = new DirectoryBasedCache(TEST_CACHE_DIR, SHORT_TIMEOUT_FOR_VALIDITY_TESTS);
         // should be valid right after putting in
-        cache.put(GENERIC_URL, TEST_IMAGE);
+        cache.put(GENERIC_URL, testImage);
         assertThat(cache.keyExpired(GENERIC_URL)).isFalse();
         // should not be valid after validity time has passed
         Awaitility.await().atMost(Duration.ofMillis(SHORT_TIMEOUT_FOR_VALIDITY_TESTS.toMillis() + 100)).
@@ -169,11 +168,11 @@ class DirectoryBasedCacheTest {
     void shouldUpdateTileAtLocationIfDataChanged() {
 
         DirectoryBasedCache cache = new DirectoryBasedCache(TEST_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
-        cache.put(GENERIC_URL, TEST_IMAGE);
-        retrieveFromCacheAndCheckContent(cache, GENERIC_URL, TEST_IMAGE);
+        cache.put(GENERIC_URL, testImage);
+        retrieveFromCacheAndCheckContent(cache, GENERIC_URL, testImage);
 
-        cache.put(GENERIC_URL, TEST_IMAGE_OTHER);
-        retrieveFromCacheAndCheckContent(cache, GENERIC_URL, TEST_IMAGE_OTHER);
+        cache.put(GENERIC_URL, testImageOther);
+        retrieveFromCacheAndCheckContent(cache, GENERIC_URL, testImageOther);
     }
 
     protected void retrieveFromCacheAndCheckContent(Cache<String,BufferedImage> cache, String url, BufferedImage img2) {

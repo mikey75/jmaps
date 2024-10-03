@@ -11,14 +11,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MapCreatorTest {
 
-    File testMapsDir = new File("src/test/resources/map-creator/");
-    File CORRECT_SINGLELAYER = new File(testMapsDir, "correct-singlelayer.xml");
-    File CORRECT_MULTILATER = new File(testMapsDir, "correct-multilayer.xml");
+    private final File testMapsDir = new File("src/test/resources/map-creator/");
+    private final File CORRECT_SINGLELAYER = new File(testMapsDir, "correct-singlelayer.xml");
+    private final File CORRECT_MULTILATER = new File(testMapsDir, "correct-multilayer.xml");
 
-    File TWO_LAYERS_NAME_COLLISION = new File(testMapsDir, "multilayer-samelayer.xml");
-    File UNKNOWN_LAYER_TYPE = new File(testMapsDir, "layer-unsupported.xml");
-    File TWO_LAYERS_DIFFERENT_TILESIZE = new File(testMapsDir, "multilayer-different-tilesize.xml");
-    File TWO_LAYERS_DIFFERENT_CRS = new File(testMapsDir,"multilayer-different-crs.xml");
+    private final File TWO_LAYERS_NAME_COLLISION = new File(testMapsDir, "multilayer-samelayer.xml");
+    private final File UNKNOWN_LAYER_TYPE = new File(testMapsDir, "layer-unsupported.xml");
+    private final File TWO_LAYERS_DIFFERENT_TILESIZE = new File(testMapsDir, "multilayer-different-tilesize.xml");
+    private final File TWO_LAYERS_DIFFERENT_CRS = new File(testMapsDir,"multilayer-different-crs.xml");
 
     @Test
     void testCorrectMaps()  {

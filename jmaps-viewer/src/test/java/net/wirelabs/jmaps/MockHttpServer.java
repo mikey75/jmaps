@@ -63,12 +63,9 @@ public class MockHttpServer {
                 case "/tile.png":
                     response = serve(TEST_TILE_FILE);
                     return response;
-                case "/nonexisting":
+                default:
                     return new MockResponse().setResponseCode(404);
-
             }
-
-            return new MockResponse().setResponseCode(404);
         }
     };
 
