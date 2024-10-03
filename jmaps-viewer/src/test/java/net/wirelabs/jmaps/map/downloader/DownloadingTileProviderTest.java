@@ -29,11 +29,11 @@ import static org.mockito.Mockito.*;
 
 class DownloadingTileProviderTest {
 
-    private final Path TEST_CACHE_DIR = new File("target/testcache").toPath();
-    private final DirectoryBasedCache secondaryCache = new DirectoryBasedCache(TEST_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
-    private final File TEST_TILE_FILE = MockHttpServer.TEST_TILE_FILE;
-    private final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
+    private static final Path TEST_CACHE_DIR = new File("target/testcache").toPath();
+    private static final File TEST_TILE_FILE = MockHttpServer.TEST_TILE_FILE;
+    private static final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
 
+    private final DirectoryBasedCache secondaryCache = new DirectoryBasedCache(TEST_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
     private  MockHttpServer testTileServer;
 
     private String tileUrl;

@@ -58,13 +58,13 @@ class GeoUtilsTest {
 
         // now suppose a triangle fit in that square
         // A =0,0 , B=4.0, C = 2.4
-        Coordinate A = new Coordinate(0,0);
-        Coordinate B = new Coordinate(4,0);
-        Coordinate C = new Coordinate(2,4);
+        Coordinate coordinate_A = new Coordinate(0,0);
+        Coordinate coordinate_B = new Coordinate(4,0);
+        Coordinate coordinate_C = new Coordinate(2,4);
 
         // the center should also be (2,2) since the method calculates the center of the square
         // which contain the given coords
-        calculatedCenter = GeoUtils.calculateCenterOfCoordinateSet(List.of(A,B,C));
+        calculatedCenter = GeoUtils.calculateCenterOfCoordinateSet(List.of(coordinate_A,coordinate_B,coordinate_C));
         assertThat(calculatedCenter.getLongitude()).isEqualTo(2.0);
         assertThat(calculatedCenter.getLatitude()).isEqualTo(2.0);
 

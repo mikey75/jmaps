@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
-public class NewModelCapsTest {
+class NewModelCapsTest {
     private File testFile1 = new File("src/test/resources/wmts/capabilities.xml");
     private File testFile2 = new File("src/test/resources/wmts/capabilities-2.xml");
 

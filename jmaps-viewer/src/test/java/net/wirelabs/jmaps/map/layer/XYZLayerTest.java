@@ -39,7 +39,6 @@ class XYZLayerTest {
     void shouldConvertToPixelAndBack(Coordinate coord) {
 
         Layer xyz = new XYZLayer(xyzLayerDefinition);
-        //Coordinate lublin = new Coordinate(22.4900397, 51.2326363);
 
         Point2D pixel = xyz.latLonToPixel(coord, 3);
         Coordinate pixelConvertedBackToLatLon = xyz.pixelToLatLon(pixel, 3);
@@ -96,7 +95,7 @@ class XYZLayerTest {
         assertThat(xyz.getTileSize()).isEqualTo(256);
         assertThat(xyz.getMaxZoom()).isEqualTo(18);
         assertThat(xyz.getMinZoom()).isZero();
-        assertThat(xyz.isSwapAxis()).isFalse(); //boolean swapAxis = false;
+        assertThat(xyz.isSwapAxis()).isFalse();
         assertThat(xyz.getOpacity()).isEqualTo(1.0f);
         assertThat(xyz.getZoomOffset()).isZero();
     }

@@ -22,7 +22,6 @@
 	             Includes and imports.                            
           ********************************************************************* -->
 	<import namespace="http://www.opengis.net/ows/1.1" schemaLocation="http://schemas.opengis.net/ows/1.1.0/owsAll.xsd"/>
-	<!--<import namespace="http://www.w3.org/1999/xlink" schemaLocation="http://schemas.opengis.net/xlink/1.0.0/xlinks.xsd"/>-->
 	<!-- *********************************************************************
 	          The top-level Capabilities element.                            
           ********************************************************************* -->

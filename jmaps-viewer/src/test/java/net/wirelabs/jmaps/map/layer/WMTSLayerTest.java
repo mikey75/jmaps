@@ -48,7 +48,7 @@ class WMTSLayerTest {
         assertThat(wmts.getTileSize()).isEqualTo(512);
         assertThat(wmts.getMaxZoom()).isEqualTo(15);
         assertThat(wmts.getMinZoom()).isZero();
-        assertThat(wmts.isSwapAxis()).isFalse(); //boolean swapAxis = false;
+        assertThat(wmts.isSwapAxis()).isFalse();
         assertThat(wmts.getOpacity()).isEqualTo(1.0f);
         assertThat(wmts.getZoomOffset()).isZero();
 
