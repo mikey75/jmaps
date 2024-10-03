@@ -23,7 +23,6 @@
 		includes and imports
 	============================================================== -->
 	<include schemaLocation="wmtsPayload_response.xsd"/>
-	<!--<import namespace="http://www.opengis.net/ows/1.1" schemaLocation="http://schemas.opengis.net/ows/1.1.0/owsAll.xsd"/>-->
 	<import namespace="http://www.opengis.net/gml" schemaLocation="http://schemas.opengis.net/gml/3.1.1/base/gml.xsd"/>
 	<!-- =============================================================
 		elements and types

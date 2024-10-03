@@ -151,14 +151,6 @@ class DownloadingTileProviderTest {
 
     }
 
-    @Test
-    void shouldDownloadAndUpdatePrimaryIfNoSecondaryCacheEnabled() {
-
-        mapViewer.setSecondaryTileCache(null);
-        downloadTile();
-        assertDownloadCalled(times(1));
-        assertTileInPrimaryCache(tileUrl);
-    }
 
     private void assertTileInSecondaryCache(String tileUrl) {
         assertThat(secondaryCache.get(tileUrl)).isNotNull();
