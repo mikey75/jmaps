@@ -53,4 +53,12 @@ public abstract class BaseCache {
     protected boolean isCacheTimeoutEnabled() {
         return !cacheTimeout.isZero();
     }
+
+    protected boolean keyExpired(long timestamp) {
+        // key expires when cache timeout is enabled, and the
+        // now() is greater than file/entity timestamp plus cache timeout
+        boolean timeExpired = timestamp != 0 && System.currentTimeMillis() > (timestamp + getCacheTimeout().toMillis());
+            return isCacheTimeoutEnabled() && timeExpired;
+
+    }
 }
