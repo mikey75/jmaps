@@ -1,3 +1,7 @@
+![Maven Central](https://img.shields.io/maven-central/v/net.wirelabs/jmaps)
+![CI](https://github.com/mikey75/jmaps/actions/workflows/maven-build.yml/badge.svg)
+
+
 # Java Swing component to display and interact with online maps.
 
 - Supports OpenStreetMap style slippy maps
