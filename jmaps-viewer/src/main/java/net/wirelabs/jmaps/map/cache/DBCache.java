@@ -5,7 +5,7 @@ import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.utils.ImageUtils;
 
 import javax.sql.rowset.serial.SerialBlob;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.sql.*;
@@ -36,25 +36,17 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
 
     @Override
     public BufferedImage get(String key) {
-            return getImage(key);
+        return getImage(key);
     }
 
     @Override
     public void put(String key, BufferedImage value) {
-            putImage(key, value);
+        putImage(key, value);
     }
 
     @Override
     public boolean keyExpired(String key) {
-
-        if (isCacheTimeoutEnabled()) {
-                long timestamp = getTimestampFromDB(key);
-                // if gettimestamp returns 0, the key does not exist, so no expiration set, return immediately
-                if (timestamp == 0) return false;
-                long expirationTimeStamp = System.currentTimeMillis() - getCacheTimeout().toMillis();
-                return (timestamp < expirationTimeStamp);
-        }
-        return false;
+            return keyExpired(getTimestampFromDB(key));
     }
 
     Connection getConnection() throws SQLException {
@@ -124,7 +116,7 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
         }
     }
 
-    private long getTimestampFromDB(String key)  {
+    private long getTimestampFromDB(String key) {
 
         try {
             String query = String.format(GET_TIMESTAMP_TEMPLATE_SQL, key);
@@ -132,10 +124,11 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
                 if (rs.next()) { // only one result is always expected from the query so no need to loop
                     return rs.getLong(1);
                 }
+                return 0;
             }
 
         } catch (SQLException e) {
-           log.warn("Getting timestampe from db entry failed! {}", e.getMessage());
+            log.warn("Getting timestamp from db entry failed! {}", e.getMessage());
         }
         return 0;
     }
