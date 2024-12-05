@@ -1,5 +1,6 @@
 ![Maven Central](https://img.shields.io/maven-central/v/net.wirelabs/jmaps)
 ![CI](https://github.com/mikey75/jmaps/actions/workflows/maven-build.yml/badge.svg)
+![Last commit](https://img.shields.io/github/last-commit/mikey75/jmaps)
 
 
 # Java Swing component to display and interact with online maps.
