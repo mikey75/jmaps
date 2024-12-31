@@ -7,13 +7,13 @@ import net.opengis.wmts.x10.CapabilitiesDocument;
 import net.opengis.wmts.x10.TileMatrixSetDocument;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
 import net.wirelabs.jmaps.model.map.LayerDocument;
-import okhttp3.HttpUrl;
 
 import java.awt.*;
 import java.awt.geom.*;
 import java.util.Optional;
 
 import static net.wirelabs.jmaps.map.readers.WMTSCapReader.loadCapabilities;
+import static net.wirelabs.jmaps.map.utils.HttpUtils.queryParam;
 
 
 /**
@@ -125,20 +125,22 @@ public class WMTSLayer extends Layer {
     // todo: add style and format (recognize from capabilities)
     @Override
     public String createTileUrl(int x, int y, int zoom) {
-        return HttpUrl.parse(url).newBuilder().
-                addQueryParameter("Service", "WMTS")
-                .addQueryParameter("Request", "GetTile")
-                .addQueryParameter("Layer", layerName)
-                .addQueryParameter("Version", "1.0.0")
-                .addQueryParameter("format", "image/png")
-                .addQueryParameter("style", "default")
-                .addQueryParameter("TileMatrixSet", tmsName)
-                .addQueryParameter("TileMatrix", tms.getTileMatrixList().get(zoom).getIdentifier().getStringValue())
-                .addQueryParameter("TileRow", String.valueOf(y))
-                .addQueryParameter("TileCol", String.valueOf(x))
-                .toString();
+
+        return url +
+                queryParam(true, "Service", "WMTS") +
+                queryParam("Request", "GetTile") +
+                queryParam("Layer", layerName) +
+                queryParam("Version", "1.0.0") +
+                queryParam("format", "image/png") +
+                queryParam("style", "default") +
+                queryParam("TileMatrixSet", tmsName) +
+                queryParam("TileMatrix", tms.getTileMatrixList().get(zoom).getIdentifier().getStringValue()) +
+                queryParam("TileRow", String.valueOf(y)) +
+                queryParam("TileCol", String.valueOf(x));
+
 
     }
+
 
     @Override
     public Point2D getTopLeftCornerInMeters() {

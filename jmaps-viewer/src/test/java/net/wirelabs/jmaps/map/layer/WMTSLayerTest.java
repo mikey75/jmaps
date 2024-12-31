@@ -2,13 +2,13 @@ package net.wirelabs.jmaps.map.layer;
 
 import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.model.map.LayerDocument;
-import okhttp3.HttpUrl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static net.wirelabs.jmaps.map.utils.HttpUtils.queryParam;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class WMTSLayerTest {
@@ -31,7 +31,7 @@ class WMTSLayerTest {
     }
 
     @AfterEach
-    void after() throws IOException {
+    void after() {
         server.stop();
     }
 
@@ -54,22 +54,23 @@ class WMTSLayerTest {
 
 
         assertThat(wmts.createTileUrl(10, 11, 15)).isEqualTo(
-                HttpUrl.parse(testUrl).newBuilder()
-                        .addQueryParameter("Service", "WMTS")
-                        .addQueryParameter("Request", "GetTile")
-                        .addQueryParameter("Layer", "G2_MOBILE_500")
-                        .addQueryParameter("Version", "1.0.0")
-                        .addQueryParameter("format", "image/png")
-                        .addQueryParameter("style", "default")
-                        .addQueryParameter("TileMatrixSet", "EPSG:2180")
-                        .addQueryParameter("TileMatrix", "EPSG:2180:15")
-                        .addQueryParameter("TileRow", "11")
-                        .addQueryParameter("TileCol", "10")
-                        .toString()
+                testUrl +
 
-        );
+                        queryParam(true, "Service", "WMTS") +
+                        queryParam("Request", "GetTile") +
+                        queryParam("Layer", "G2_MOBILE_500") +
+                        queryParam("Version", "1.0.0") +
+                        queryParam("format", "image/png") +
+                        queryParam("style", "default") +
+                        queryParam("TileMatrixSet", "EPSG:2180") +
+                        queryParam("TileMatrix", "EPSG:2180:15") +
+                        queryParam("TileRow", "11") +
+                        queryParam("TileCol", "10"));
+
+
 
     }
+
 
     @Test
     void shouldProperlyInitializeCustomWMTSLayer() {
@@ -92,18 +93,19 @@ class WMTSLayerTest {
         assertThat(wmts.getCrs()).isEqualTo("EPSG:3187");
 
         assertThat(wmts.createTileUrl(10, 11, 15)).isEqualTo(
-                HttpUrl.parse(testUrl).newBuilder()
-                        .addQueryParameter("Service","WMTS")
-                        .addQueryParameter("Request","GetTile")
-                        .addQueryParameter("Layer","G2_MOBILE_500")
-                        .addQueryParameter("Version","1.0.0")
-                        .addQueryParameter("format","image/png")
-                        .addQueryParameter("style","default")
-                        .addQueryParameter("TileMatrixSet","EPSG:2180")
-                        .addQueryParameter("TileMatrix","EPSG:2180:15")
-                        .addQueryParameter("TileRow","11")
-                        .addQueryParameter("TileCol","10")
-                        .toString());
+                testUrl +
+
+                        queryParam(true,"Service","WMTS") +
+                        queryParam("Request","GetTile") +
+                        queryParam("Layer","G2_MOBILE_500") +
+                        queryParam("Version","1.0.0") +
+                        queryParam("format","image/png") +
+                        queryParam("style","default") +
+                        queryParam("TileMatrixSet","EPSG:2180") +
+                        queryParam("TileMatrix","EPSG:2180:15") +
+                        queryParam("TileRow","11") +
+                        queryParam("TileCol","10"));
+
 
     }
 

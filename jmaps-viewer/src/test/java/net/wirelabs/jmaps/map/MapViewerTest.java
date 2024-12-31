@@ -4,7 +4,6 @@ import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.map.readers.WMTSCapReader;
 import org.apache.commons.io.FileUtils;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -79,7 +78,7 @@ class MapViewerTest  {
         assertThat(mapviewer.getCurrentMap().getEnabledLayers().get(1).getName()).isEqualTo("cieniowanie");
     }
 
-    @NotNull
+
     private File fixupUrls(File file) throws IOException {
         String lines = FileUtils.readFileToString(file, StandardCharsets.UTF_8);
         String replaced = lines.replaceAll("\\$\\{testport}", String.valueOf(server.getPort()));

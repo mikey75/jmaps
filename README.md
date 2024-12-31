@@ -39,3 +39,10 @@ You can enable/disable given layer from the view.
 ![sample4](images/4.png "Sample 4")
 - Virtual Earth Maps (example of quad tiles) 
 ![sample5](images/5.png "Sample 5")
+
+# Running example app locally
+Your JAVA_HOME should point to java 17:
+```
+cd jmaps-viewer && mvn clean install && cd ..
+cd jmaps-example && mvn clean package && cd ..
+cd jmaps-example && java -jar target/jmaps-example.jar
