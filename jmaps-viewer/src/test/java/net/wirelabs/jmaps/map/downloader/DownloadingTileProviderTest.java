@@ -1,9 +1,9 @@
 package net.wirelabs.jmaps.map.downloader;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
-import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
+import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
 import org.apache.commons.io.FileUtils;
 import org.awaitility.Awaitility;
@@ -54,7 +54,7 @@ class DownloadingTileProviderTest {
     }
 
     @AfterEach
-    void after() throws IOException {
+    void after() {
         testTileServer.stop();
     }
 

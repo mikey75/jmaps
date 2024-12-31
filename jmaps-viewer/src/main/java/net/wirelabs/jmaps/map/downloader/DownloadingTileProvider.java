@@ -3,12 +3,16 @@ package net.wirelabs.jmaps.map.downloader;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.MapViewer;
-import okhttp3.*;
 
 import javax.imageio.ImageIO;
 import java.awt.image.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -23,7 +27,7 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class DownloadingTileProvider implements TileProvider {
 
-    private final OkHttpClient httpClient = new OkHttpClient();
+    private final HttpClient httpClient; 
     private final List<String> tilesLoading = new CopyOnWriteArrayList<>();
 
     private final MapViewer mapViewer;
@@ -33,6 +37,11 @@ public class DownloadingTileProvider implements TileProvider {
     public DownloadingTileProvider(MapViewer mapViewer) {
 
         this.mapViewer = mapViewer;
+        httpClient = HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .connectTimeout(Duration.ofSeconds(20))
+                .build();
     }
 
     private ExecutorService getExecutorService() {
@@ -46,19 +55,19 @@ public class DownloadingTileProvider implements TileProvider {
     void download(String tileUrl) {
         log.debug("Getting from: {}", tileUrl);
 
-        Request r = new Request.Builder()
-                .url(tileUrl)
+        HttpRequest r = HttpRequest.newBuilder() //Request.nBuilder()
+                .uri(URI.create(tileUrl))
                 .header("User-Agent", mapViewer.getUserAgent())
-                .get().build();
+                .build();
 
         try {
 
-            Response response = httpClient.newCall(r).execute();
+            HttpResponse<InputStream> response = httpClient.send(r, HttpResponse.BodyHandlers.ofInputStream());
 
-            if (response.isSuccessful()) {
+            if (response.statusCode() == 200) {
                 readAndCacheImage(tileUrl, response);
             }
-            response.close();
+
         } catch (Exception e) {
             log.debug("Could not download {} - {} : {}", tileUrl, e.getClass().getSimpleName() ,e.getMessage());
         } catch (OutOfMemoryError e) {
@@ -71,9 +80,9 @@ public class DownloadingTileProvider implements TileProvider {
 
     }
 
-    private void readAndCacheImage(String tileUrl, Response response) throws IOException {
-        try (ResponseBody body = response.body()) {
-            InputStream inputStream = body.byteStream();
+    private void readAndCacheImage(String tileUrl, HttpResponse<InputStream> response) throws IOException {
+
+            InputStream inputStream = response.body();
             Optional<BufferedImage> image = Optional.ofNullable(ImageIO.read(inputStream));
             if (image.isPresent()) {
                 mapViewer.getPrimaryTileCache().put(tileUrl, image.get());
@@ -84,7 +93,6 @@ public class DownloadingTileProvider implements TileProvider {
                 // emit LOADED event here to ditch the mapviewer reference dependency
                 mapViewer.repaint();
             }
-        }
     }
 
     public BufferedImage getTile(String url) {
