@@ -12,6 +12,8 @@
 - Supports multiple layer maps with transparency/zoom offsets
 - Comes with example application and example map definitions.
 - Supports user overlays - you can plot anything on the map (waypoints, GPS tracks etc)
+- Supports caching (file or in-memory database) of map tiles with configurable timeout
+  
 # Usage: 
 
 Currently latest deployed to maven central is version 1.1
