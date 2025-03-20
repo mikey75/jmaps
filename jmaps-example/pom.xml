@@ -3,7 +3,7 @@
     <parent>
         <artifactId>jmaps</artifactId>
         <groupId>net.wirelabs</groupId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +13,7 @@
         <dependency>
             <groupId>net.wirelabs</groupId>
             <artifactId>jmaps-viewer</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2</version>
         </dependency>
         <!--Mig Layout -->
         <dependency>
@@ -101,7 +101,7 @@
                             <target>
                                 <property name="destDir" value="${basedir}/target/maps" />
                                 <property name="srcDir" value="${basedir}/example-maps" />
-                                <property name="targetCompilationDir" value = "${basedir}/target"/>
+                                <property name="targetCompilationDir" value="${basedir}/target" />
 
                                 <mkdir dir="${destDir}" />
 
