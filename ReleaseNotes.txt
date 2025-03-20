@@ -1,7 +1,11 @@
 1.2
     - Added Derby based database secondary cache
+    - Removed okhttp and moved to java 17
+    - new example app starter scripts
+    - various small fixes and refactors
 
 1.1
+
     - Example app migrated to xmlbeans instead of jaxb
     - Formalize map files format (use xsd schema), add validation of mapfiles against the schema
     - Logback version up, beacause of upstream vulnerabilities suggested by dependabot
@@ -9,5 +13,7 @@
     - Some minor lint warning fixes
     - Move maven publishing to separate profile - fixes gpg request during normal dev build
     - Recenter/refit map on component/window resize
+
 1.0
+
     - Initial release
