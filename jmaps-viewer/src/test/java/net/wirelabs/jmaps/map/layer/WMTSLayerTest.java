@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static net.wirelabs.jmaps.map.utils.HttpUtils.queryParam;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class WMTSLayerTest {
@@ -54,21 +53,16 @@ class WMTSLayerTest {
 
 
         assertThat(wmts.createTileUrl(10, 11, 15)).isEqualTo(
-                testUrl +
-
-                        queryParam(true, "Service", "WMTS") +
-                        queryParam("Request", "GetTile") +
-                        queryParam("Layer", "G2_MOBILE_500") +
-                        queryParam("Version", "1.0.0") +
-                        queryParam("format", "image/png") +
-                        queryParam("style", "default") +
-                        queryParam("TileMatrixSet", "EPSG:2180") +
-                        queryParam("TileMatrix", "EPSG:2180:15") +
-                        queryParam("TileRow", "11") +
-                        queryParam("TileCol", "10"));
-
-
-
+                testUrl + "?Service=WMTS" +
+                        "&Request=GetTile" +
+                        "&Layer=G2_MOBILE_500" +
+                        "&Version=1.0.0" +
+                        "&format=image%2Fpng" +
+                        "&style=default" +
+                        "&TileMatrixSet=EPSG%3A2180" +
+                        "&TileMatrix=EPSG%3A2180%3A15" +
+                        "&TileRow=11" +
+                        "&TileCol=10");
     }
 
 
@@ -93,18 +87,17 @@ class WMTSLayerTest {
         assertThat(wmts.getCrs()).isEqualTo("EPSG:3187");
 
         assertThat(wmts.createTileUrl(10, 11, 15)).isEqualTo(
-                testUrl +
-
-                        queryParam(true,"Service","WMTS") +
-                        queryParam("Request","GetTile") +
-                        queryParam("Layer","G2_MOBILE_500") +
-                        queryParam("Version","1.0.0") +
-                        queryParam("format","image/png") +
-                        queryParam("style","default") +
-                        queryParam("TileMatrixSet","EPSG:2180") +
-                        queryParam("TileMatrix","EPSG:2180:15") +
-                        queryParam("TileRow","11") +
-                        queryParam("TileCol","10"));
+                testUrl + "?Service=WMTS" +
+                        "&Request=GetTile" +
+                        "&Layer=G2_MOBILE_500" +
+                        "&Version=1.0.0" +
+                        "&format=image%2Fpng" +
+                        "&style=default" +
+                        "&TileMatrixSet=EPSG%3A2180" +
+                        "&TileMatrix=EPSG%3A2180%3A15" +
+                        "&TileRow=11" +
+                        "&TileCol=10"
+        );
 
 
     }

@@ -6,6 +6,7 @@ import net.opengis.ows.x11.DatasetDescriptionSummaryBaseType;
 import net.opengis.wmts.x10.CapabilitiesDocument;
 import net.opengis.wmts.x10.TileMatrixSetDocument;
 import net.wirelabs.jmaps.map.geo.GeoUtils;
+import net.wirelabs.jmaps.map.utils.UrlBuilder;
 import net.wirelabs.jmaps.model.map.LayerDocument;
 
 import java.awt.*;
@@ -13,7 +14,6 @@ import java.awt.geom.*;
 import java.util.Optional;
 
 import static net.wirelabs.jmaps.map.readers.WMTSCapReader.loadCapabilities;
-import static net.wirelabs.jmaps.map.utils.HttpUtils.queryParam;
 
 
 /**
@@ -125,19 +125,18 @@ public class WMTSLayer extends Layer {
     // todo: add style and format (recognize from capabilities)
     @Override
     public String createTileUrl(int x, int y, int zoom) {
-
-        return url +
-                queryParam(true, "Service", "WMTS") +
-                queryParam("Request", "GetTile") +
-                queryParam("Layer", layerName) +
-                queryParam("Version", "1.0.0") +
-                queryParam("format", "image/png") +
-                queryParam("style", "default") +
-                queryParam("TileMatrixSet", tmsName) +
-                queryParam("TileMatrix", tms.getTileMatrixList().get(zoom).getIdentifier().getStringValue()) +
-                queryParam("TileRow", String.valueOf(y)) +
-                queryParam("TileCol", String.valueOf(x));
-
+        return new UrlBuilder().parse(url)
+                .addParam("Service", "WMTS")
+                .addParam("Request", "GetTile")
+                .addParam("Layer", layerName)
+                .addParam("Version", "1.0.0")
+                .addParam("format", "image/png")
+                .addParam("style", "default")
+                .addParam("TileMatrixSet", tmsName)
+                .addParam("TileMatrix", tms.getTileMatrixList().get(zoom).getIdentifier().getStringValue())
+                .addParam("TileRow", String.valueOf(y))
+                .addParam("TileCol", String.valueOf(x))
+                .build();
 
     }
 
