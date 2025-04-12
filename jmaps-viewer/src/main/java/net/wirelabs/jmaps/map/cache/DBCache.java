@@ -16,7 +16,7 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
 
     private static final String CONNECTION_TEMPLATE = "jdbc:derby:%s;create=true";
 
-    private static final String CREATE_TABLE_SQL = "CREATE TABLE TILECACHE (tileUrl VARCHAR(1024) PRIMARY KEY,tileImg BLOB(512 K),timeStamp BIGINT)";
+    private static final String CREATE_TABLE_SQL = "CREATE TABLE TILECACHE (tileUrl VARCHAR(1024) PRIMARY KEY,tileImg BLOB(1024 K),timeStamp BIGINT)";
     private static final String GET_TEMPLATE_SQL = "select TILEIMG from TILECACHE where TILEURL='%s'";
     private static final String PUT_TEMPLATE_SQL = "INSERT INTO TILECACHE VALUES('%s', ?, ?)";
     private static final String UPDATE_TEMPLATE_SQL = "UPDATE TILECACHE set TILEIMG=?,TIMESTAMP=? WHERE TILEURL='%s'";
@@ -106,7 +106,7 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
             try (Connection connection = getConnection(); Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
                 if (rs.next()) { // only one result is always expected from the query so no need to loop
                     Blob b = rs.getBlob(1);
-                    byte[] is = b.getBytes(1, 512 * 1024);
+                    byte[] is = b.getBytes(1, (int) b.length());
                     return ImageUtils.imageFromBytes(is);
                 }
             }
