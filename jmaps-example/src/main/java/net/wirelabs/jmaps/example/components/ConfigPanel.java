@@ -3,6 +3,8 @@ package net.wirelabs.jmaps.example.components;
 import lombok.extern.slf4j.Slf4j;
 import net.miginfocom.swing.MigLayout;
 import net.wirelabs.jmaps.map.MapViewer;
+import net.wirelabs.jmaps.map.cache.DBCache;
+import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 
 import javax.swing.*;
@@ -10,7 +12,10 @@ import javax.swing.filechooser.*;
 import javax.swing.plaf.basic.*;
 import java.awt.*;
 import java.io.File;
+import java.nio.file.Path;
+import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created 6/4/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -23,12 +28,16 @@ public class ConfigPanel extends TitledPanel {
     private final JButton btnAddLayer = new JButton("Load custom map");
     private final JButton btnLoadGPX = new JButton("Load gpx track");
     private final JCheckBox devMode = new JCheckBox("Tile debugger");
-    private final JLabel label = new JLabel("Example map definitions");
+    private final JLabel lblMapDefinitions = new JLabel("Example map definitions");
+    private final JLabel lblCache = new JLabel("Cache to use");
     private final JComboBox<ExampleMap> exampleMapCombo = new JComboBox<>(ExampleMap.values());
+    private final JComboBox<String> cacheCombo = new JComboBox<>(new String[]{"Database", "Files"});
 
     private final MapViewer mapViewer;
     private final transient RoutePainter routePainter;
-
+    private final String tempDir = System.getProperty("java.io.tmpdir");
+    private final transient DBCache dbCache = new DBCache(Path.of(tempDir, "testdbcache"), Duration.ofDays(30));
+    private final transient DirectoryBasedCache fileCache = new DirectoryBasedCache(Path.of(tempDir, "testfilecache"), Duration.ofDays(30));
     private JFileChooser fileChooser;
 
     /**
@@ -41,17 +50,20 @@ public class ConfigPanel extends TitledPanel {
         this.mapViewer = mapPanel.getMapViewer();
         this.routePainter = mapPanel.getRoutePainter();
 
-        add(label, "cell 0 1, growx");
+        add(lblMapDefinitions, "cell 0 1, growx");
         add(exampleMapCombo, "cell 0 2, growx");
         add(btnAddLayer, "cell 0 3, growx");
         add(btnLoadGPX, "cell 0 4, growx");
-        add(devMode, "flowx,cell 0 5");
+        add(lblCache, "cell 0 5, growx");
+        add(cacheCombo, "cell 0 6, growx");
+        add(devMode, "flowx,cell 0 7");
 
         devMode.setSelected(mapViewer.isDeveloperMode());
 
         setTooltips();
         setComboBoxRenderer();
         addListeners();
+        cacheCombo.setSelectedIndex(0);
     }
 
     private void setTooltips() {
@@ -65,6 +77,23 @@ public class ConfigPanel extends TitledPanel {
         setLoadGPXListener();
         setDevModeListener();
         setComboChangeListener();
+        changeCacheListener();
+    }
+
+    private void changeCacheListener() {
+        cacheCombo.addActionListener(e -> {
+            String selectedItem = (String) Objects.requireNonNull(cacheCombo.getSelectedItem());
+
+            if (selectedItem.equals("Database") && (!(mapViewer.getSecondaryTileCache() instanceof DBCache))) {
+                mapViewer.setSecondaryTileCache(dbCache);
+                log.info("Cache changed to {}", dbCache);
+            }
+
+            if (selectedItem.equals("Files") && (!(mapViewer.getSecondaryTileCache() instanceof DirectoryBasedCache))) {
+                mapViewer.setSecondaryTileCache(fileCache);
+                log.info("Cache changed to {}", fileCache);
+            }
+        });
     }
 
     private void setComboBoxRenderer() {
