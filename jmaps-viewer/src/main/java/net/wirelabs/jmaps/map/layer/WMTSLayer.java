@@ -28,7 +28,7 @@ public class WMTSLayer extends Layer {
     private static final String DEFAULT_GET_CAPABILITIES_PATH = "?service=WMTS&request=GetCapabilities";
     private final CapabilitiesDocument.Capabilities capabilities = loadCapabilities(getCapabilitiesUrl());
     private TileMatrixSetDocument.TileMatrixSet tms;
-
+    private final UrlBuilder urlBuilder = new UrlBuilder();
 
     protected String tmsName;
     protected String layerName;
@@ -125,7 +125,7 @@ public class WMTSLayer extends Layer {
     // todo: add style and format (recognize from capabilities)
     @Override
     public String createTileUrl(int x, int y, int zoom) {
-        return new UrlBuilder().parse(url)
+        return urlBuilder.parse(url)
                 .addParam("Service", "WMTS")
                 .addParam("Request", "GetTile")
                 .addParam("Layer", layerName)

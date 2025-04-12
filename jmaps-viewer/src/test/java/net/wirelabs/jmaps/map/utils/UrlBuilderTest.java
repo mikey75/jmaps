@@ -9,13 +9,14 @@ class UrlBuilderTest {
 
     @Test
     void testUrlBuild() {
+        UrlBuilder urlBuilder = new UrlBuilder();
         String url = "http://www.geoportal.gov.pl";
         String layerName = "topo";
         String tmsName = "EPSG:3128";
         int x = 100;
         int y = 200;
 
-        String c = new UrlBuilder().parse(url)
+        String c = urlBuilder.parse(url)
                 .addParam("Service", "WMTS")
                 .addParam("Request", "GetTile")
                 .addParam("Layer", layerName)
