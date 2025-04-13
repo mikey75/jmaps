@@ -36,7 +36,7 @@ class DirectoryBasedCacheTest {
     private static final File TEST_IMAGE_OTHER_FILE = new File("src/test/resources/tiles/tile-other.png");
 
     private static final String XYZ_URL_WITHOUT_QUERY = "http://tile.openstreetmap.org/2/4/5.jpg";
-    private static final String XYZ_URL_WITH_QUERY = "http://tile.openstreetmap.org/2/4/5.jpg?apiKey=120931092";
+    private static final String XYZ_URL_WITH_QUERY = "http://tile.openstreetmap.org/3/5/6.jpg?apiKey=120931092";
     private static final String WMTS_URL = "http://localhost/wmts?Service=WMTS&Request=GetTile&Layer=X&TileMatrixSet=Z&TileMatrix=Z:1&TileRow=1&TileCol=1";
     private static final String LONG_URL = "https://dupa/z?=" + TestUtils.getRandomString(300);
     private static final String GENERIC_URL = "https://paka.pl/10/10/10.png";
