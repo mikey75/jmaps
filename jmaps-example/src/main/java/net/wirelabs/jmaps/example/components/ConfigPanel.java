@@ -31,7 +31,7 @@ public class ConfigPanel extends TitledPanel {
     private final JLabel lblMapDefinitions = new JLabel("Example map definitions");
     private final JLabel lblCache = new JLabel("Cache to use");
     private final JComboBox<ExampleMap> exampleMapCombo = new JComboBox<>(ExampleMap.values());
-    private final JComboBox<String> cacheCombo = new JComboBox<>(new String[]{"Database", "Files"});
+    private final JComboBox<String> cacheCombo = new JComboBox<>(new String[]{"Files","Database"});
 
     private final MapViewer mapViewer;
     private final transient RoutePainter routePainter;
@@ -63,7 +63,7 @@ public class ConfigPanel extends TitledPanel {
         setTooltips();
         setComboBoxRenderer();
         addListeners();
-        cacheCombo.setSelectedIndex(0);
+        cacheCombo.setSelectedIndex(0); // use files
     }
 
     private void setTooltips() {
