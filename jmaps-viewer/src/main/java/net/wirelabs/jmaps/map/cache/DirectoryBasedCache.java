@@ -2,12 +2,11 @@ package net.wirelabs.jmaps.map.cache;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.map.utils.UrlUtils;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.awt.image.*;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -39,7 +38,7 @@ public class DirectoryBasedCache extends BaseCache implements Cache<String, Buff
 
     private BufferedImage getImage(String key) {
         try {
-            Path filePath = getLocalFile(key).toPath();
+            Path filePath = getLocalFile(key);
             // if file does not exists - return immediately
             if (!filePath.toFile().exists()) {
                 return null;
@@ -56,7 +55,7 @@ public class DirectoryBasedCache extends BaseCache implements Cache<String, Buff
 
     private void putImage(String key, BufferedImage b) {
         try {
-            Path filePath = getLocalFile(key).toPath();
+            Path filePath = getLocalFile(key);
             // create file only if it does not exist so that if the entry expires,
             // file is not recreated  (saves time) and only image is written to this existing file
             if (!filePath.toFile().exists()) {
@@ -75,57 +74,18 @@ public class DirectoryBasedCache extends BaseCache implements Cache<String, Buff
     }
 
     private long getTimestampFromFile(String key) {
-        File file = getLocalFile(key);
         try {
-            return Files.getLastModifiedTime(file.toPath()).toMillis();
+            return Files.getLastModifiedTime(getLocalFile(key)).toMillis();
         } catch (IOException e) {
             return 0;
         }
     }
-
-    private File getLocalFile(String remoteUri) {
-        URI uri = URI.create(remoteUri);
-        StringBuilder sb = new StringBuilder();
-
-        String host = uri.getHost();
-        String query = uri.getQuery();
-        String path = uri.getPath();
-
-        if (host != null) {
-            sb.append(host);
-        }
-        if (path != null) {
-            sb.append(path);
-        }
-        if (query != null) {
-            sb.append('?');
-            sb.append(query);
-        }
-
-        String name;
-
-        final int maxLen = 250;
-
-        if (sb.length() < maxLen) {
-            name = sb.toString();
-        } else {
-            name = sb.substring(0, maxLen);
-        }
-        name = normalizeUrl(name);
-
-        return new File(getBaseDir().toFile(), name);
+    /**
+     * This is basically a method to convert tile url to a file cache key
+     * being the path for the place to store the file
+     */
+    private Path getLocalFile(String remoteUri) {
+        return Path.of(getBaseDir().toString(),UrlUtils.urlToStringPath(remoteUri));
     }
-
-    private String normalizeUrl(String name) {
-
-        char replacementChar = '$';
-        char[] charsNormalized = new char[]{'&', '?', '*', ':', '<', '>', '"'};
-
-        for (char nchar : charsNormalized) {
-            name = name.replace(nchar, replacementChar);
-        }
-        return name;
-    }
-
 
 }
