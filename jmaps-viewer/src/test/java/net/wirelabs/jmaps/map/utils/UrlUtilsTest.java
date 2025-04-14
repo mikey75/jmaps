@@ -3,11 +3,14 @@ package net.wirelabs.jmaps.map.utils;
 import net.wirelabs.jmaps.TestUtils;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UrlUtilsTest {
     @Test
-    void shouldParseWmtsUrl() {
+    void shouldParseWmtsUrl() throws IOException {
         String WMTS_URL1 = "https://mapy.geoportal.gov.pl/wss/service/WMTS/guest/wmts/BDOT10k" +
                 "?Service=WMTS" +
                 "&Request=GetTile" +
@@ -37,7 +40,7 @@ class UrlUtilsTest {
     }
 
     @Test
-    void shouldParseUrlEncodedWmtsUrl() {
+    void shouldParseUrlEncodedWmtsUrl() throws IOException {
 
 
         String WMTS_URL2 = "http://geoportal.cuzk.cz/WMTS_ZM/WMTService.aspx" +
@@ -70,13 +73,13 @@ class UrlUtilsTest {
     }
 
     @Test
-    void shouldParseOrdinaryXYZurl() {
+    void shouldParseOrdinaryXYZurl() throws IOException {
         String result = UrlUtils.urlToStringPath("http://tile.openstreetmap.org/12/2298/1365.png");
         assertThat(result).isEqualTo("tile_openstreetmap_org/12/2298/1365_png");
     }
 
     @Test
-    void shouldParseXYZUrlWithParams() {
+    void shouldParseXYZUrlWithParams() throws IOException {
         String result = UrlUtils.urlToStringPath("https://api.mapy.cz/v1/maptiles/outdoor/256/15/18427/10935?apikey=xxxx");
         assertThat(result).isEqualTo("api_mapy_cz/v1/maptiles/outdoor/256/15/18427/10935/xxxx");
     }
@@ -84,15 +87,11 @@ class UrlUtilsTest {
     @Test
     void shouldParseTooLongUrl() {
         String url = "http://tile.openstreetmap.org/12/2298/" + TestUtils.getRandomString(300);
-        String result = UrlUtils.urlToStringPath(url);
-
-        // check if url was too long and was truncated
-        assertThat(url.length()).isGreaterThan(250);
-        assertThat(result).hasSize(250);
+        assertThrows(IOException.class, () -> UrlUtils.urlToStringPath(url));
     }
 
     @Test
-    void shouldParseQuadUrl() {
+    void shouldParseQuadUrl() throws IOException {
         String result = UrlUtils.urlToStringPath("http://r1.ortho.tiles.virtualearth.net/tiles/r1203020221.png?g=1");
         assertThat(result).isEqualTo("r1_ortho_tiles_virtualearth_net/tiles/r1203020221_png/1");
     }
