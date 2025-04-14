@@ -47,7 +47,7 @@ public class DirectoryBasedCache extends BaseCache implements Cache<String, Buff
             }
         } catch (IOException e) {
             // exception on file read - this might be emergency - file exists but cannot be read, warn
-            log.warn("File cache get failed for {}", key);
+            log.warn("File cache get failed for {}-{}", key, e.getMessage());
             return null;
         }
     }
@@ -65,7 +65,7 @@ public class DirectoryBasedCache extends BaseCache implements Cache<String, Buff
 
         } catch (IOException ex) {
             // exception on file put might be a filesystem issue emergency - warn
-            log.warn("File cache put failed for {}", key);
+            log.warn("File cache put failed for {}-{}", key, ex.getMessage());
         }
     }
 
@@ -84,7 +84,7 @@ public class DirectoryBasedCache extends BaseCache implements Cache<String, Buff
      * This is basically a method to convert tile url to a file cache key
      * being the path for the place to store the file
      */
-    private Path getLocalFile(String remoteUri) {
+    private Path getLocalFile(String remoteUri) throws IOException {
         return Path.of(getBaseDir().toString(),UrlUtils.urlToStringPath(remoteUri));
     }
 

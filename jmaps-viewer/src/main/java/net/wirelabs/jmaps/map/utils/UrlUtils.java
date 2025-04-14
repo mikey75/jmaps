@@ -3,12 +3,13 @@ package net.wirelabs.jmaps.map.utils;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.io.IOException;
 import java.net.URI;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UrlUtils {
 
-    public static String urlToStringPath(String url) {
+    public static String urlToStringPath(String url) throws IOException {
 
         URI uri = URI.create(url);
         StringBuilder sb = new StringBuilder();
@@ -43,7 +44,7 @@ public class UrlUtils {
         if (sb.length() < maxLen) {
             name = sb.toString();
         } else {
-            name = sb.substring(0, maxLen); // perhaps we should throw exception that we cannot cache this file
+            throw new IOException("Cache key too long!");
         }
         name = normalizeUrl(name);
 

@@ -2,6 +2,7 @@ package net.wirelabs.jmaps.map.cache;
 
 import net.wirelabs.jmaps.TestUtils;
 import net.wirelabs.jmaps.map.Defaults;
+import net.wirelabs.jmaps.map.utils.BaseTest;
 import net.wirelabs.jmaps.map.utils.ImageUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.ThreadUtils;
@@ -19,7 +20,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 
-
 import static net.wirelabs.jmaps.TestUtils.cacheCheckExistenceAndExpiration;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
 /**
  * Created 5/28/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
-class DirectoryBasedCacheTest {
+class DirectoryBasedCacheTest extends BaseTest {
 
     private static final Path TEST_CACHE_DIR = Paths.get("target/testcache/tile-cache");
     private static final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
@@ -87,13 +87,20 @@ class DirectoryBasedCacheTest {
         cache.put(XYZ_URL_WITHOUT_QUERY, testImage);
         cache.put(XYZ_URL_WITH_QUERY, testImage);
         cache.put(WMTS_URL, testImage);
-        cache.put(LONG_URL, testImage);
 
         retrieveFromCacheAndCheckContent(cache, XYZ_URL_WITHOUT_QUERY, testImage);
         retrieveFromCacheAndCheckContent(cache, XYZ_URL_WITH_QUERY, testImage);
         retrieveFromCacheAndCheckContent(cache, WMTS_URL, testImage);
-        retrieveFromCacheAndCheckContent(cache, LONG_URL, testImage);
-
+    }
+    @Test
+    void testCacheGetPutWithTooLongKey() {
+        DirectoryBasedCache cache = new DirectoryBasedCache(TEST_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
+        // check too long cache key
+        cache.put(LONG_URL, testImage);
+        verifyLogged("File cache put failed for " + LONG_URL + "-" + "Cache key too long!");
+        BufferedImage img = cache.get(LONG_URL);
+        assertThat(img).isNull();
+        verifyLogged("File cache get failed for " + LONG_URL + "-" + "Cache key too long!");
     }
 
     @Test
