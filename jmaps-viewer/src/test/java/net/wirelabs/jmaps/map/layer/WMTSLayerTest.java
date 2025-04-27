@@ -57,10 +57,10 @@ class WMTSLayerTest {
                         "&Request=GetTile" +
                         "&Layer=G2_MOBILE_500" +
                         "&Version=1.0.0" +
-                        "&format=image%2Fpng" +
+                        "&format=image/png" +
                         "&style=default" +
-                        "&TileMatrixSet=EPSG%3A2180" +
-                        "&TileMatrix=EPSG%3A2180%3A15" +
+                        "&TileMatrixSet=EPSG:2180" +
+                        "&TileMatrix=EPSG:2180:15" +
                         "&TileRow=11" +
                         "&TileCol=10");
     }
@@ -91,10 +91,10 @@ class WMTSLayerTest {
                         "&Request=GetTile" +
                         "&Layer=G2_MOBILE_500" +
                         "&Version=1.0.0" +
-                        "&format=image%2Fpng" +
+                        "&format=image/png" +
                         "&style=default" +
-                        "&TileMatrixSet=EPSG%3A2180" +
-                        "&TileMatrix=EPSG%3A2180%3A15" +
+                        "&TileMatrixSet=EPSG:2180" +
+                        "&TileMatrix=EPSG:2180:15" +
                         "&TileRow=11" +
                         "&TileCol=10"
         );
