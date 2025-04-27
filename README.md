@@ -16,12 +16,12 @@
   
 # Usage: 
 
-Currently latest deployed to maven central is version 1.2
+Currently latest deployed to maven central is version 1.3
 
           <dependency>
             <groupId>net.wirelabs</groupId>
             <artifactId>jmaps-viewer</artifactId>
-            <version>1.2</version>
+            <version>1.3</version>
           </dependency>
 
 # Samples:
