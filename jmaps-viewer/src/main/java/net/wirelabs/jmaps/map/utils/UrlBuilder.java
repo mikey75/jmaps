@@ -1,5 +1,7 @@
 package net.wirelabs.jmaps.map.utils;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 /**
  * URL Builder - build string urls
  * (not URL encoded - that is the work of entity using the url like httpclient and such)
@@ -32,12 +34,12 @@ public class UrlBuilder {
     public UrlBuilder addQueryParam(String param, String value) {
         if (paramCount == 0) {
             // first
-            finalUrl.append("?").append(param)
-                    .append("=").append(value);
+            finalUrl.append("?").append(URLEncoder.encode(param, StandardCharsets.UTF_8))
+                    .append("=").append(URLEncoder.encode(value, StandardCharsets.UTF_8));
         } else {
             // following first
-            finalUrl.append("&").append(param)
-                    .append("=").append(value);
+            finalUrl.append("&").append(URLEncoder.encode(param, StandardCharsets.UTF_8))
+                    .append("=").append(URLEncoder.encode(value, StandardCharsets.UTF_8));
         }
         paramCount++;
         return this;

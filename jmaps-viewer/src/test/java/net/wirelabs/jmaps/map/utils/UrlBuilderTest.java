@@ -28,7 +28,7 @@ class UrlBuilderTest {
                 .addQueryParam("TileCol", String.valueOf(x))
                 .build();
 
-        assertThat(c).isEqualTo("http://www.geoportal.gov.pl?Service=WMTS&Request=GetTile&Layer=topo&Version=1.0.0&format=image/png&style=default&TileMatrixSet=EPSG:3128&TileRow=200&TileCol=100");
+        assertThat(c).isEqualTo("http://www.geoportal.gov.pl?Service=WMTS&Request=GetTile&Layer=topo&Version=1.0.0&format=image%2Fpng&style=default&TileMatrixSet=EPSG%3A3128&TileRow=200&TileCol=100");
     }
 
 }
