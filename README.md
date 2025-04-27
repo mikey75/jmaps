@@ -19,12 +19,16 @@
 Currently latest deployed to maven central is version 1.3.<br>
 For changes always look at ReleaseNotes.txt 
 
+
           <dependency>
             <groupId>net.wirelabs</groupId>
             <artifactId>jmaps-viewer</artifactId>
             <version>1.3</version>
           </dependency>
-
+# !!! Warning !!!
+Version 1.3 introduced a tiny error, that makes using map sources that have space in query params unusable.<br>
+Details are in [Issue #49.](https://github.com/mikey75/jmaps/issues/49) Fix is already commited, but will be available with next maven release. Until then do 
+not use map sources with spaces or other not url parsable chars in the query params. This regards mostly some WMTS maps.
 # Samples:
 jMaps comes with sample demo application. 
 It is also an example of using the jMaps component in your own application.<br>
