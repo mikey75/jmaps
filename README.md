@@ -16,7 +16,8 @@
   
 # Usage: 
 
-Currently latest deployed to maven central is version 1.3
+Currently latest deployed to maven central is version 1.3.<br>
+For changes always look at ReleaseNotes.txt 
 
           <dependency>
             <groupId>net.wirelabs</groupId>
@@ -26,7 +27,7 @@ Currently latest deployed to maven central is version 1.3
 
 # Samples:
 jMaps comes with sample demo application. 
-It is also an example of using the jMaps component in your own application.
+It is also an example of using the jMaps component in your own application.<br>
 Here's a few pictures telling thousand words ;)
 - WMTS Map of Czech Republic
 ![sample1](images/1.png "Sample 1")
