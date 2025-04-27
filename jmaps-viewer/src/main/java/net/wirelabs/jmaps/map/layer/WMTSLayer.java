@@ -126,16 +126,16 @@ public class WMTSLayer extends Layer {
     @Override
     public String createTileUrl(int x, int y, int zoom) {
         return urlBuilder.parse(url)
-                .addParam("Service", "WMTS")
-                .addParam("Request", "GetTile")
-                .addParam("Layer", layerName)
-                .addParam("Version", "1.0.0")
-                .addParam("format", "image/png")
-                .addParam("style", "default")
-                .addParam("TileMatrixSet", tmsName)
-                .addParam("TileMatrix", tms.getTileMatrixList().get(zoom).getIdentifier().getStringValue())
-                .addParam("TileRow", String.valueOf(y))
-                .addParam("TileCol", String.valueOf(x))
+                .addQueryParam("Service", "WMTS")
+                .addQueryParam("Request", "GetTile")
+                .addQueryParam("Layer", layerName)
+                .addQueryParam("Version", "1.0.0")
+                .addQueryParam("format", "image/png")
+                .addQueryParam("style", "default")
+                .addQueryParam("TileMatrixSet", tmsName)
+                .addQueryParam("TileMatrix", tms.getTileMatrixList().get(zoom).getIdentifier().getStringValue())
+                .addQueryParam("TileRow", String.valueOf(y))
+                .addQueryParam("TileCol", String.valueOf(x))
                 .build();
 
     }
