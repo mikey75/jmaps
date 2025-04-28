@@ -12,19 +12,19 @@
 - Supports multiple layer maps with transparency/zoom offsets
 - Comes with example application and example map definitions.
 - Supports user overlays - you can plot anything on the map (waypoints, GPS tracks etc)
-- Supports caching (file or in-memory database) of map tiles with configurable timeout
+- Supports caching (file or in-memory database) of map tiles with configurable timeout<br>
+
+For changes always look at ReleaseNotes.txt 
   
 # Usage: 
-
-Currently latest deployed to maven central is version 1.4.0<br>
-For changes always look at ReleaseNotes.txt 
-
-
           <dependency>
             <groupId>net.wirelabs</groupId>
             <artifactId>jmaps-viewer</artifactId>
-            <version>1.4.0</version>
+            <version>$version/version>
           </dependency>
+          
+Latest version can be checked here on the top bar maven status icon.
+
 # !!! Warning !!!
 Version 1.3 introduced a tiny error, that makes using map sources that have space in query params unusable.<br>
 Details are in [Issue #49.](https://github.com/mikey75/jmaps/issues/49) Fix is already in 1.4.0 version. 
