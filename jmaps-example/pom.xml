@@ -9,6 +9,12 @@
 
     <artifactId>jmaps-example</artifactId>
 
+    <properties>
+        <mapsDestinationDir>${project.basedir}/target/maps</mapsDestinationDir>
+        <mapsSourceDir>${project.basedir}/example-maps</mapsSourceDir>
+        <targetCompilationDir>${project.basedir}/target</targetCompilationDir>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>net.wirelabs</groupId>
@@ -99,25 +105,19 @@
                         <phase>package</phase>
                         <configuration>
                             <target>
-                                <property name="destDir" value="${basedir}/target/maps" />
-                                <property name="srcDir" value="${basedir}/example-maps" />
-                                <property name="targetCompilationDir" value="${basedir}/target" />
-
-                                <mkdir dir="${destDir}" />
-
-                                <copy file="${srcDir}/bad.xml" tofile="${destDir}/bad.xml" />
-                                <copy file="${srcDir}/CyclOSM.xml" tofile="${destDir}/CyclOSM.xml" />
-                                <copy file="${srcDir}/CzechTopoWMTS.xml" tofile="${destDir}/CzechTopoWMTS.xml" />
-                                <copy file="${srcDir}/GeoportalBDOT.xml" tofile="${destDir}/GeoportalBDOT.xml" />
-                                <copy file="${srcDir}/GeoportalLayered.xml" tofile="${destDir}/GeoportalLayered.xml" />
-                                <copy file="${srcDir}/GeoportalTopoRaster.xml" tofile="${destDir}/GeoportalTopoRaster.xml" />
-                                <copy file="${srcDir}/MTBMap.xml" tofile="${destDir}/MTBMap.xml" />
-                                <copy file="${srcDir}/OpenStreetMap.xml" tofile="${destDir}/OpenStreetMap.xml" />
-                                <copy file="${srcDir}/VEHyb.xml" tofile="${destDir}/VEHyb.xml" />
-                                <copy file="${srcDir}/VEMap.xml" tofile="${destDir}/VEMap.xml" />
-                                <copy file="${srcDir}/VESat.xml" tofile="${destDir}/VESat.xml" />
-
-                                <copy file="${targetCompilationDir}/jmaps-example-${version}-jar-with-dependencies.jar" toFile="${targetCompilationDir}/jmaps-example.jar" />
+                                <mkdir dir="${mapsDestinationDir}" />
+                                <copy file="${mapsSourceDir}/bad.xml" tofile="${mapsDestinationDir}/bad.xml" />
+                                <copy file="${mapsSourceDir}/CyclOSM.xml" tofile="${mapsDestinationDir}/CyclOSM.xml" />
+                                <copy file="${mapsSourceDir}/CzechTopoWMTS.xml" tofile="${mapsDestinationDir}/CzechTopoWMTS.xml" />
+                                <copy file="${mapsSourceDir}/GeoportalBDOT.xml" tofile="${mapsDestinationDir}/GeoportalBDOT.xml" />
+                                <copy file="${mapsSourceDir}/GeoportalLayered.xml" tofile="${mapsDestinationDir}/GeoportalLayered.xml" />
+                                <copy file="${mapsSourceDir}/GeoportalTopoRaster.xml" tofile="${mapsDestinationDir}/GeoportalTopoRaster.xml" />
+                                <copy file="${mapsSourceDir}/MTBMap.xml" tofile="${mapsDestinationDir}/MTBMap.xml" />
+                                <copy file="${mapsSourceDir}/OpenStreetMap.xml" tofile="${mapsDestinationDir}/OpenStreetMap.xml" />
+                                <copy file="${mapsSourceDir}/VEHyb.xml" tofile="${mapsDestinationDir}/VEHyb.xml" />
+                                <copy file="${mapsSourceDir}/VEMap.xml" tofile="${mapsDestinationDir}/VEMap.xml" />
+                                <copy file="${mapsSourceDir}/VESat.xml" tofile="${mapsDestinationDir}/VESat.xml" />
+                                <copy file="${targetCompilationDir}/jmaps-example-${project.version}-jar-with-dependencies.jar" toFile="${targetCompilationDir}/jmaps-example.jar" />
                             </target>
                         </configuration>
                         <goals>
