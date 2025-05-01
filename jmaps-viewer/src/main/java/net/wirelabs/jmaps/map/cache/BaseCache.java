@@ -17,7 +17,7 @@ public abstract class BaseCache {
     private Duration cacheTimeout;
 
     protected BaseCache() {
-        this(Defaults.DEFAULT_TILECACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
+        this(Defaults.DEFAULT_TILE_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
     }
 
     protected BaseCache(Path baseDir, Duration cacheTimeout) {

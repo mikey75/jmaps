@@ -69,8 +69,8 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
 
     private boolean cacheTableExists(Connection dbConnection) throws SQLException {
         if (dbConnection != null) {
-            DatabaseMetaData dbmd = dbConnection.getMetaData();
-            try (ResultSet rs = dbmd.getTables(null, null, "TILECACHE", null)) {
+            DatabaseMetaData metaData = dbConnection.getMetaData();
+            try (ResultSet rs = metaData.getTables(null, null, "TILECACHE", null)) {
                 return rs.next();
             }
         }
@@ -83,7 +83,7 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
             Blob blob = new SerialBlob(imgbytes);
             String sqlCmd;
 
-            // always write entry - TileProvider decides if it's a reload or new tile
+            // always write entry - TileProvider decides if it's a re-load or new tile
             if (!entryExists(key)) {
                 sqlCmd = String.format(PUT_TEMPLATE_SQL, key);
             } else {

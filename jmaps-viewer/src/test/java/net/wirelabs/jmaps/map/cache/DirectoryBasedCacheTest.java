@@ -56,7 +56,7 @@ class DirectoryBasedCacheTest extends BaseTest {
     void testDefaultCacheSettings() {
         DirectoryBasedCache cache = new DirectoryBasedCache();
         assertThat(cache.getCacheTimeout()).isEqualTo(Defaults.DEFAULT_CACHE_TIMEOUT);
-        assertThat(cache.getBaseDir()).isEqualTo(Defaults.DEFAULT_TILECACHE_DIR);
+        assertThat(cache.getBaseDir()).isEqualTo(Defaults.DEFAULT_TILE_CACHE_DIR);
     }
 
     @Test

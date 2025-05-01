@@ -39,7 +39,7 @@ public class UrlUtils {
 
         String name;
 
-        final int maxLen = 250; // should perhaps be 255, that is the max filename length on windows/linux/mac
+        final int maxLen = 250; // should perhaps be 255, that is the max filename length on Windows/Linux/Mac
 
         if (sb.length() < maxLen) {
             name = sb.toString();

@@ -28,15 +28,15 @@ public class ProjectionEngine {
     }
 
     // Projects geographical coordinates into coordinates in this crs units
-    public Coordinate project(Coordinate coord) {
-        projectionSource.setValue(coord.getLongitude(), coord.getLatitude(), coord.getAltitude());
+    public Coordinate project(Coordinate coordinate) {
+        projectionSource.setValue(coordinate.getLongitude(), coordinate.getLatitude(), coordinate.getAltitude());
         crs.getProjection().project(projectionSource, projectionResult);
         return new Coordinate(projectionResult.x, projectionResult.y, projectionResult.z);
     }
 
     // Given a projected coordinate returns the corresponding LatLng .
-    public Coordinate unproject(Coordinate coord) {
-        projectionSource.setValue(coord.getLongitude(), coord.getLatitude(), coord.getAltitude());
+    public Coordinate unproject(Coordinate coordinate) {
+        projectionSource.setValue(coordinate.getLongitude(), coordinate.getLatitude(), coordinate.getAltitude());
         crs.getProjection().inverseProject(projectionSource, projectionResult);
         return new Coordinate(projectionResult.x, projectionResult.y, projectionResult.z);
 

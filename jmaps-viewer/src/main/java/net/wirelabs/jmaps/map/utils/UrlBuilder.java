@@ -48,7 +48,7 @@ public class UrlBuilder {
      * returns String value of the generated URL
      */
     public String build() {
-        // reset paramcount at the end
+        // reset param count at the end
         paramCount = 0;
         return finalUrl.toString();
     }

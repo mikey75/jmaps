@@ -10,7 +10,7 @@ import java.awt.*;
 /**
  * Created 10/29/23 by Michał Szwaczko (mikey@wirelabs.net)
  * <p>
- * Example map panel that uses mapviewer.
+ * Example map panel that uses mapViewer.
  * Loads example map (OSM based) from map.xml file
  * Sets home position to Lublin, PL
  */

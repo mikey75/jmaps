@@ -23,7 +23,7 @@ public class Defaults {
     public static final Path DEFAULT_WMTS_DESCRIPTOR_CACHE = Paths.get(DEFAULT_CACHE_DIR.toString(), "wmts-cache");
 
     // default cache dir for directory based cache -> $HOME/.jmaps-cache/tile-cache
-    public static final Path DEFAULT_TILECACHE_DIR = Paths.get(DEFAULT_CACHE_DIR.toString(), "tile-cache");
+    public static final Path DEFAULT_TILE_CACHE_DIR = Paths.get(DEFAULT_CACHE_DIR.toString(), "tile-cache");
     // default cache dir for derby DB based cache -> $HOME/.jmaps-cache/tile-cache-db
     public static final Path DEFAULT_TILE_CACHE_DB = Paths.get(DEFAULT_CACHE_DIR.toString(), "tile-cache-db");
 
@@ -32,7 +32,7 @@ public class Defaults {
 
     // defaults for tile downloader and tile image cache
     public static final int DEFAULT_TILER_THREADS = 16;
-    public static final int DEFAULT_IMGCACHE_SIZE = 8000;
+    public static final int DEFAULT_IMG_CACHE_SIZE = 8000;
 
     // default fill color when preparing render canvas tile
     public static final Color EMPTY_FILL_COLOR = new Color(0, 0, 0, 0);

@@ -10,6 +10,7 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
+import java.util.Objects;
 
 
 @Slf4j
@@ -22,11 +23,11 @@ public class MapFileValidator {
 
         SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-        String fileUrl = getClass().getClassLoader().getResource("schemas/mapDefinition.xsd").getFile();
-        Source schemaFile = new StreamSource(fileUrl);
         try {
+            String fileUrl = Objects.requireNonNull(getClass().getClassLoader().getResource("schemas/mapDefinition.xsd")).getFile();
+            Source schemaFile = new StreamSource(fileUrl);
             validator = factory.newSchema(schemaFile).newValidator();
-        } catch (SAXException e) {
+        } catch (SAXException | NullPointerException e) {
             log.error("Map validator failed to start, cause: {}", e.getMessage());
         }
     }
@@ -36,7 +37,7 @@ public class MapFileValidator {
             validator.validate(new StreamSource(mapDefinitionFile));
             return true;
         } catch (SAXException e) {
-            log.error("XML of mapfile {} is not conformant with map file schema", mapDefinitionFile.getName());
+            log.error("XML of map file {} does not conform with map file schema", mapDefinitionFile.getName());
             log.error("The cause of non-conformity is: {}", e.getMessage());
             return false;
         } catch (IOException e) {

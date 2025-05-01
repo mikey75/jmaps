@@ -5,7 +5,7 @@ import net.wirelabs.jmaps.model.map.LayerDocument;
 import java.awt.*;
 
 /**
- * XYZ layer, also called basic layer, slippy map,  tile layer etc
+ * XYZ layer, also called basic layer, slippy map,  tile layer etc.
  * Most web maps use this scheme
  * <a href="https://en.wikipedia.org/wiki/Tiled_web_map">Wikipedia article</a>
  * <p>

@@ -66,30 +66,30 @@ public abstract class Layer  {
      */
     public Point2D latLonToPixel(Coordinate latLon, int zoom) {
         // project WGS84 to crs
-        Coordinate coord = getProjectionEngine().project(latLon);
+        Coordinate coordinate = getProjectionEngine().project(latLon);
         Point2D tlc = getTopLeftCornerInMeters();
 
-        double longitude = (coord.getLongitude() - tlc.getX()) / getMetersPerPixelAtZoom(zoom);
-        double lattitude = (tlc.getY() - coord.getLatitude()) / getMetersPerPixelAtZoom(zoom);
+        double longitude = (coordinate.getLongitude() - tlc.getX()) / getMetersPerPixelAtZoom(zoom);
+        double latitude = (tlc.getY() - coordinate.getLatitude()) / getMetersPerPixelAtZoom(zoom);
 
-        return new Point2D.Double(longitude, lattitude);
+        return new Point2D.Double(longitude, latitude);
     }
 
 
     /**
      * Convert pixel to lat/lon in layer's current CRS
      * @param pixel current pixel
-     * @param zoom zoomlevel
+     * @param zoom zoom level
      * @return lat/lon coordinate
      */
     public Coordinate pixelToLatLon(Point2D pixel, int zoom) {
         Point2D tlc = getTopLeftCornerInMeters();
         // convert pixel to crs units
-        Coordinate coord = new Coordinate(
+        Coordinate coordinate = new Coordinate(
                 tlc.getX() + (pixel.getX() * getMetersPerPixelAtZoom(zoom)),
                 tlc.getY() - (pixel.getY() * getMetersPerPixelAtZoom(zoom)));
         // project back to WGS84
-        return getProjectionEngine().unproject(coord);
+        return getProjectionEngine().unproject(coordinate);
     }
 
     /**
@@ -119,7 +119,7 @@ public abstract class Layer  {
      * Creates download url from parameters for given layer type
      * @param x tile x
      * @param y tile y
-     * @param zoom zoomlevel
+     * @param zoom zoom level
      * @return string containing complete url ready to use
      */
     public abstract String createTileUrl(int x, int y, int zoom);
