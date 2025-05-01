@@ -7,7 +7,7 @@ import java.awt.*;
 /**
  * Created 12/20/22 by Michał Szwaczko (mikey@wirelabs.net)
  * <p>
- * Prints current map attribution string, i.e copyright and author info
+ * Prints current map attribution string, i.e. copyright and author info
  * This is required by some (if not all) online map sources
  */
 public class MapAttributionPainter extends TextPrinter  {

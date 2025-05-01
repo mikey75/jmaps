@@ -15,7 +15,7 @@ import static net.wirelabs.jmaps.map.readers.MapReader.loadMapDefinitionFile;
 /**
  * Created 11/8/23 by Michał Szwaczko (mikey@wirelabs.net)
  * <p>
- * Create mapviewer-usable map object
+ * Create mapViewer-usable map object
  * from map xml definition file
  */
 @Getter
@@ -59,14 +59,14 @@ public class MapCreator {
 
     // check if added layer matches current map layers
     private boolean layerMatchesExistingLayers(MapObject map, Layer layerAdded) {
-        // layer should have unique name, matching tilesize and crs
+        // layer should have unique name, matching tileSize and crs
         for (Layer existingLayer : map.getLayers()) {
             if (layerAdded.getName().equals(existingLayer.getName())) {
                 log.warn("Layer mismatch: layer named {} already exists", layerAdded.getName());
                 return false;
             }
             if (layerAdded.getTileSize() != existingLayer.getTileSize()) {
-                log.warn("Layer mismatch: {} [tilesize]", layerAdded.getName());
+                log.warn("Layer mismatch: {} [tileSize]", layerAdded.getName());
                 return false;
             }
             if (!layerAdded.getProjectionEngine().getCrs().equals(existingLayer.getProjectionEngine().getCrs())) {

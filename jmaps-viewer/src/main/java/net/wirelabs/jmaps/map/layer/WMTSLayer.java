@@ -20,7 +20,7 @@ import static net.wirelabs.jmaps.map.readers.WMTSCapReader.loadCapabilities;
  * Created 5/20/23 by Michał Szwaczko (mikey@wirelabs.net)
  * This class represents most common wmts layer
  * If you want to connect to more sophisticated wmts services
- * with custom urls etc you should extend this class into your own
+ * with custom urls etc. you should extend this class into your own
  */
 @Slf4j
 public class WMTSLayer extends Layer {
@@ -144,12 +144,12 @@ public class WMTSLayer extends Layer {
     @Override
     public Point2D getTopLeftCornerInMeters() {
 
-        double x = (double) tms.getTileMatrixList().get(0).getTopLeftCorner().get(0);
-        double y = (double) tms.getTileMatrixList().get(0).getTopLeftCorner().get(1);
+        double horizontal = (double) tms.getTileMatrixList().get(0).getTopLeftCorner().get(0);
+        double vertical = (double) tms.getTileMatrixList().get(0).getTopLeftCorner().get(1);
         if (swapAxis) {
-            return new Point2D.Double(y, x);
+            return new Point2D.Double(vertical, horizontal);
         } else {
-            return new Point2D.Double(x, y);
+            return new Point2D.Double(horizontal, vertical);
         }
     }
 

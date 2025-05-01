@@ -12,7 +12,7 @@ import java.io.IOException;
 
 /**
  * Map reader - handles reading map definition xml
- * and wmts capabilities xml
+ * and WMTS Capabilities xml
  * <p>
  * Created 6/5/23 by Michał Szwaczko (mikey@wirelabs.net)
  */

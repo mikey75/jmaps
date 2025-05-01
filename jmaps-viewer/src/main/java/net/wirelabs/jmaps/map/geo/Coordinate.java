@@ -5,7 +5,7 @@ import lombok.Getter;
 /**
  * Created 5/22/23 by Michał Szwaczko (mikey@wirelabs.net)
  * <p>
- * Class represents map coordinate used throughout the jmaps library
+ * Class represents map coordinate used throughout the jMaps library
  * <p>
  * It can be a geographic position - in lon/lat/elevation
  * or projected position (in crs units)

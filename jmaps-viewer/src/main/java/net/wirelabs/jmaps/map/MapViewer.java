@@ -70,7 +70,7 @@ public class MapViewer extends JPanel {
         mapCreator = new MapCreator();
 
         primaryTileCache = new ConcurrentLinkedHashMap.Builder<String, BufferedImage>()
-                .maximumWeightedCapacity(Defaults.DEFAULT_IMGCACHE_SIZE)
+                .maximumWeightedCapacity(Defaults.DEFAULT_IMG_CACHE_SIZE)
                 .build();
 
         setLayout(new MigLayout("", "[90%][]", "[]"));
@@ -110,10 +110,10 @@ public class MapViewer extends JPanel {
     }
 
     public Dimension getMapSizeInPixels(int zoom) {
-        Layer baselayer = currentMap.getBaseLayer();
+        Layer baseLayer = currentMap.getBaseLayer();
         return new Dimension (
-                baselayer.getSizeInTiles(zoom).width * baselayer.getTileSize(),
-                baselayer.getSizeInTiles(zoom).height * baselayer.getTileSize());
+                baseLayer.getSizeInTiles(zoom).width * baseLayer.getTileSize(),
+                baseLayer.getSizeInTiles(zoom).height * baseLayer.getTileSize());
 
     }
     /**
@@ -135,7 +135,7 @@ public class MapViewer extends JPanel {
     }
 
      void centerMapOrBestFit() {
-        // if any overlay has drawn something (i.e getObjects is not empty) -> fit best to those objects
+        // if any overlay has drawn something (i.e. getObjects is not empty) -> fit best to those objects
         List<Coordinate> allObjects = userOverlays.stream()
                 .flatMap(listContainer -> listContainer.getObjects().stream())
                 .collect(Collectors.toList());
@@ -182,7 +182,7 @@ public class MapViewer extends JPanel {
         Layer baseLayer = currentMap.getBaseLayer();
 
         List<Coordinate> pixelCoords = coords.stream()
-                .map(coord -> new Coordinate(baseLayer.latLonToPixel(coord, zoom).getX(), baseLayer.latLonToPixel(coord, zoom).getY()))
+                .map(coordinate -> new Coordinate(baseLayer.latLonToPixel(coordinate, zoom).getX(), baseLayer.latLonToPixel(coordinate, zoom).getY()))
                 .collect(Collectors.toList());
 
         Rectangle2D r2 = GeoUtils.calculateEnclosingRectangle(pixelCoords);

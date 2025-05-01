@@ -39,7 +39,7 @@ public class DirectoryBasedCache extends BaseCache implements Cache<String, Buff
     private BufferedImage getImage(String key) {
         try {
             Path filePath = getLocalFile(key);
-            // if file does not exists - return immediately
+            // if file does not exist - return immediately
             if (!filePath.toFile().exists()) {
                 return null;
             } else {

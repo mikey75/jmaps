@@ -72,7 +72,7 @@ public class DownloadingTileProvider implements TileProvider {
             log.debug("Could not download {} - {} : {}", tileUrl, e.getClass().getSimpleName() ,e.getMessage());
         } catch (OutOfMemoryError e) {
             log.error("DANG! Local memory cache run out of memory");
-            log.error("Prunning memory cache...");
+            log.error("Pruning memory cache...");
             mapViewer.getPrimaryTileCache().clear();
         }
         // tile is not loading anymore
@@ -90,7 +90,7 @@ public class DownloadingTileProvider implements TileProvider {
                     mapViewer.getSecondaryTileCache().put(tileUrl, image.get());
                 }
                 tilesLoading.remove(tileUrl);
-                // emit LOADED event here to ditch the mapviewer reference dependency
+                // emit LOADED event here to ditch the mapViewer reference dependency
                 mapViewer.repaint();
             }
     }

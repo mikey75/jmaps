@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public class GPXParser {
 
     /**
-     * Parses gpx file in geoposition format
+     * Parses gpx file in GeoPosition format
      *
      * @param file input file
      * @return list of waypoints in GeoPosition format
@@ -49,7 +49,7 @@ public class GPXParser {
      * Parses gpx file (note: all tracks and all segments are merged into one set of waypoints)
      *
      * @param file input file
-     * @return list of waypoints in GPX's own Wpt format
+     * @return list of waypoints in GPX own Wpt format
      */
     public List<WptType> parseGpxFile(File file) {
         try {

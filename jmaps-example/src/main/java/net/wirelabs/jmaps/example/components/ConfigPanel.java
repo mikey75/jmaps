@@ -146,8 +146,8 @@ public class ConfigPanel extends TitledPanel {
     private void setAddMapListener() {
         btnAddLayer.addActionListener(e ->
                 invokeFileChooser("Map definition files", "xml", () -> {
-                    File mapxml = fileChooser.getSelectedFile();// user selects a file
-                    mapViewer.setCurrentMap(mapxml);
+                    File mapXml = fileChooser.getSelectedFile();// user selects a file
+                    mapViewer.setCurrentMap(mapXml);
                 }));
     }
 

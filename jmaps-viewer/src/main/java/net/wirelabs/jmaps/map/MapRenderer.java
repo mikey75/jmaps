@@ -77,8 +77,8 @@ public class MapRenderer {
     }
 
     private boolean isTileLegal(int tileX, int tileY, int zoom) {
-        Dimension mapsize = mapViewer.getCurrentMap().getBaseLayer().getSizeInTiles(zoom);
-        return tileX >= 0 && tileY >= 0 && tileX < mapsize.width && tileY < mapsize.height;
+        Dimension mapSize = mapViewer.getCurrentMap().getBaseLayer().getSizeInTiles(zoom);
+        return tileX >= 0 && tileY >= 0 && tileX < mapSize.width && tileY < mapSize.height;
     }
 
     private void createOutputCanvas(int tileSize) {
