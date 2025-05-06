@@ -1,4 +1,5 @@
 1.4
+    - upgrade of some dependencies/libs
     - dropped derby in favour of sqlite
     - fix for 1.3 urlbuilder refactor bug [issue #49]
 1.3
