@@ -3,10 +3,9 @@ package net.wirelabs.jmaps.map.cache;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.utils.ImageUtils;
-
-import javax.sql.rowset.serial.SerialBlob;
 import java.awt.image.*;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.*;
 import java.time.Duration;
@@ -14,9 +13,9 @@ import java.time.Duration;
 @Slf4j
 public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
 
-    private static final String CONNECTION_TEMPLATE = "jdbc:derby:%s;create=true";
+    private static final String CONNECTION_TEMPLATE = "jdbc:sqlite:%s/cache.db";
 
-    private static final String CREATE_TABLE_SQL = "CREATE TABLE TILECACHE (tileUrl VARCHAR(1024) PRIMARY KEY,tileImg BLOB(1024 K),timeStamp BIGINT)";
+    private static final String CREATE_TABLE_SQL = "CREATE TABLE TILECACHE (tileUrl VARCHAR(1024) PRIMARY KEY,tileImg BLOB,timeStamp BIGINT)";
     private static final String GET_TEMPLATE_SQL = "select TILEIMG from TILECACHE where TILEURL='%s'";
     private static final String PUT_TEMPLATE_SQL = "INSERT INTO TILECACHE VALUES('%s', ?, ?)";
     private static final String UPDATE_TEMPLATE_SQL = "UPDATE TILECACHE set TILEIMG=?,TIMESTAMP=? WHERE TILEURL='%s'";
@@ -55,6 +54,9 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
 
     private void createDatabaseIfNotExists() {
         try {
+            if (!getBaseDir().toFile().exists()) {
+                Files.createDirectory(getBaseDir());
+            }
             try (Connection dbConnection = getConnection(); Statement smt = dbConnection.createStatement()) {
                 // create cache table
                 if (!cacheTableExists(dbConnection)) {
@@ -62,7 +64,7 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
                 }
                 log.info("Connected and initialized: {}", dbConnection.getMetaData().getURL());
             }
-        } catch (SQLException e) {
+        } catch (SQLException | IOException e) {
             log.info("Could not create connection!");
         }
     }
@@ -80,7 +82,6 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
     private void putImage(String key, BufferedImage value) {
         try {
             byte[] imgbytes = ImageUtils.imageToBytes(value);
-            Blob blob = new SerialBlob(imgbytes);
             String sqlCmd;
 
             // always write entry - TileProvider decides if it's a re-load or new tile
@@ -91,7 +92,7 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
             }
 
             try (Connection connection = getConnection(); PreparedStatement ps = connection.prepareStatement(sqlCmd)) {
-                ps.setBlob(1, blob);
+                ps.setBytes(1, imgbytes);
                 ps.setLong(2, System.currentTimeMillis());
                 ps.execute();
             }
@@ -105,8 +106,7 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
         try {
             try (Connection connection = getConnection(); Statement stmt = connection.createStatement(); ResultSet rs = stmt.executeQuery(query)) {
                 if (rs.next()) { // only one result is always expected from the query so no need to loop
-                    Blob b = rs.getBlob(1);
-                    byte[] is = b.getBytes(1, (int) b.length());
+                    byte[] is = rs.getBytes(1);
                     return ImageUtils.imageFromBytes(is);
                 }
             }
