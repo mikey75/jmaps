@@ -1,4 +1,5 @@
 ![Maven Central](https://img.shields.io/maven-central/v/net.wirelabs/jmaps)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![CI](https://github.com/mikey75/jmaps/actions/workflows/maven-build.yml/badge.svg)
 ![Last commit](https://img.shields.io/github/last-commit/mikey75/jmaps)
 
