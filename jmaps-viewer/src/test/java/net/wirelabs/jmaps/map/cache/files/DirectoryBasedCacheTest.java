@@ -1,7 +1,9 @@
-package net.wirelabs.jmaps.map.cache;
+package net.wirelabs.jmaps.map.cache.files;
 
 import net.wirelabs.jmaps.TestUtils;
 import net.wirelabs.jmaps.map.Defaults;
+import net.wirelabs.jmaps.map.cache.Cache;
+import net.wirelabs.jmaps.map.cache.files.DirectoryBasedCache;
 import net.wirelabs.jmaps.map.utils.BaseTest;
 import net.wirelabs.jmaps.map.utils.ImageUtils;
 import org.apache.commons.io.FileUtils;
