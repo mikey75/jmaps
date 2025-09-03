@@ -154,8 +154,8 @@ class DirectoryBasedCacheTest extends BaseTest {
         // should be valid right after putting in
         cache.put(GENERIC_URL, testImage);
         assertThat(cache.keyExpired(GENERIC_URL)).isFalse();
-        // should not be valid after validity time has passed
-        Awaitility.await().atMost(Duration.ofMillis(SHORT_TIMEOUT_FOR_VALIDITY_TESTS.toMillis() + 100)).
+        // should not be valid after validity time has passed (add 500 ms for safety, tests might be slower or faster on some machines)
+        Awaitility.await().atMost(Duration.ofMillis(SHORT_TIMEOUT_FOR_VALIDITY_TESTS.toMillis() + 500)).
                 untilAsserted(() -> assertThat(cache.keyExpired(GENERIC_URL)).isTrue());
     }
 

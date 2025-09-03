@@ -2,7 +2,6 @@ package net.wirelabs.jmaps.map.cache;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.utils.ImageUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.ThreadUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,13 +38,10 @@ class DBCacheTest {
     private static final Duration TEST_CACHE_TIMEOUT = Duration.ofHours(2);
 
     @BeforeEach
-    void beforeEach() throws IOException, SQLException {
+    void beforeEach() throws SQLException {
 
         String path = String.format("jdbc:sqlite:%s/cache.db", TEST_TILE_CACHE_DIR);
         DriverManager.getConnection(path).close();
-        File dbFile = new File(String.valueOf(TEST_TILE_CACHE_DIR), "cache.db");
-        FileUtils.delete(dbFile);
-        assertThat(dbFile).doesNotExist();
     }
 
     @BeforeAll

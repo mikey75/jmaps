@@ -55,6 +55,7 @@ public class UrlUtils {
         // replace & and ? with / and all dots for _
         name = name.replaceAll("[?|&]", "/");
         name = name.replace(".","_");
+        name = name.replace(":","_");
         return name;
     }
 }

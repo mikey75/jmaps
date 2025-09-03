@@ -30,10 +30,10 @@ class UrlUtilsTest {
                 "/GetTile" +
                 "/BDOT10k" +
                 "/1_0_0" +
-                "/image:png" +
+                "/image_png" +
                 "/default" +
-                "/EPSG:2180" +
-                "/EPSG:2180:9" +
+                "/EPSG_2180" +
+                "/EPSG_2180_9" +
                 "/337" +
                 "/476");
 
@@ -63,9 +63,9 @@ class UrlUtilsTest {
                 "/GetTile" +
                 "/zm" +
                 "/1_0_0" +
-                "/image:png" +
+                "/image_png" +
                 "/default" +
-                "/wgs84:pseudomercator:epsg:3857" +
+                "/wgs84_pseudomercator_epsg_3857" +
                 "/9" +
                 "/258" +
                 "/510");
