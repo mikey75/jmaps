@@ -1,3 +1,8 @@
+1.4.2-SNAPSHOT (work in progress)
+
+    - fix DirectoryBasedCache file creation for tiles with urls containing ":" - [issue #54]
+    - fix some tests failing on windows (mostly because of difference in handling files)
+
 1.4.1
 
     - upgrade of some dependencies/libs
