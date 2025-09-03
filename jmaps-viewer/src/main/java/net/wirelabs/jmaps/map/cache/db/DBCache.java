@@ -1,7 +1,9 @@
-package net.wirelabs.jmaps.map.cache;
+package net.wirelabs.jmaps.map.cache.db;
 
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.Defaults;
+import net.wirelabs.jmaps.map.cache.BaseCache;
+import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.utils.ImageUtils;
 import java.awt.image.*;
 import java.io.IOException;
@@ -48,7 +50,7 @@ public class DBCache extends BaseCache implements Cache<String, BufferedImage> {
             return keyExpired(getTimestampFromDB(key));
     }
 
-    Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(String.format(CONNECTION_TEMPLATE, getBaseDir()));
     }
 

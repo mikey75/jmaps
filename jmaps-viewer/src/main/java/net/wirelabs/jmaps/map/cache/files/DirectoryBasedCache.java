@@ -1,7 +1,9 @@
-package net.wirelabs.jmaps.map.cache;
+package net.wirelabs.jmaps.map.cache.files;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.map.cache.BaseCache;
+import net.wirelabs.jmaps.map.cache.Cache;
 import net.wirelabs.jmaps.map.utils.UrlUtils;
 
 import javax.imageio.ImageIO;

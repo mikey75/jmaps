@@ -1,6 +1,7 @@
-package net.wirelabs.jmaps.map.cache;
+package net.wirelabs.jmaps.map.cache.db;
 
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.map.cache.db.DBCache;
 import net.wirelabs.jmaps.map.utils.ImageUtils;
 import org.apache.commons.io.ThreadUtils;
 import org.junit.jupiter.api.BeforeAll;

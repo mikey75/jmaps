@@ -3,8 +3,10 @@ package net.wirelabs.jmaps.example.components;
 import lombok.extern.slf4j.Slf4j;
 import net.miginfocom.swing.MigLayout;
 import net.wirelabs.jmaps.map.MapViewer;
-import net.wirelabs.jmaps.map.cache.DBCache;
-import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
+import net.wirelabs.jmaps.map.cache.BaseCache;
+import net.wirelabs.jmaps.map.cache.db.DBCache;
+import net.wirelabs.jmaps.map.cache.files.DirectoryBasedCache;
+import net.wirelabs.jmaps.map.cache.redis.RedisCache;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 
 import javax.swing.*;
@@ -31,13 +33,15 @@ public class ConfigPanel extends TitledPanel {
     private final JLabel lblMapDefinitions = new JLabel("Example map definitions");
     private final JLabel lblCache = new JLabel("Cache to use");
     private final JComboBox<ExampleMap> exampleMapCombo = new JComboBox<>(ExampleMap.values());
-    private final JComboBox<String> cacheCombo = new JComboBox<>(new String[]{"Files","Database"});
+    private final JComboBox<String> cacheCombo = new JComboBox<>(new String[]{"Files","Database","Redis"});
 
     private final MapViewer mapViewer;
     private final transient RoutePainter routePainter;
     private final String tempDir = System.getProperty("java.io.tmpdir");
     private final transient DBCache dbCache = new DBCache(Path.of(tempDir, "testdbcache"), Duration.ofDays(30));
     private final transient DirectoryBasedCache fileCache = new DirectoryBasedCache(Path.of(tempDir, "testfilecache"), Duration.ofDays(30));
+    private final transient RedisCache redisCache = new RedisCache("localhost",6379, Duration.ofDays(30), 100); // for example app - setup redis on localhost:6379
+
     private JFileChooser fileChooser;
 
     /**
@@ -86,14 +90,23 @@ public class ConfigPanel extends TitledPanel {
 
             if (selectedItem.equals("Database") && (!(mapViewer.getSecondaryTileCache() instanceof DBCache))) {
                 mapViewer.setSecondaryTileCache(dbCache);
-                log.info("Cache changed to {}", dbCache);
+                logCacheChange(dbCache);
             }
 
             if (selectedItem.equals("Files") && (!(mapViewer.getSecondaryTileCache() instanceof DirectoryBasedCache))) {
                 mapViewer.setSecondaryTileCache(fileCache);
-                log.info("Cache changed to {}", fileCache);
+                logCacheChange(fileCache);
+            }
+
+            if (selectedItem.equals("Redis") && (!(mapViewer.getSecondaryTileCache() instanceof RedisCache))) {
+                mapViewer.setSecondaryTileCache(redisCache);
+                logCacheChange(redisCache);
             }
         });
+    }
+
+    private void logCacheChange(BaseCache cache) {
+        log.info("Cache changed to {}", cache);
     }
 
     private void setComboBoxRenderer() {

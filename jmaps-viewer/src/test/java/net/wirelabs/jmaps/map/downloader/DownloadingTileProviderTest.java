@@ -4,7 +4,7 @@ import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.MockHttpServer;
-import net.wirelabs.jmaps.map.cache.DirectoryBasedCache;
+import net.wirelabs.jmaps.map.cache.files.DirectoryBasedCache;
 import org.apache.commons.io.FileUtils;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;

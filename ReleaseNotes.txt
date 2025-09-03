@@ -1,7 +1,9 @@
-1.4.2-SNAPSHOT (work in progress)
+1.4.2
 
+    - refactored packaging of caches. might break usage in apps using the cache, fixable easily.
+    - add configurable Redis-based secondary tile cache
     - fix DirectoryBasedCache file creation for tiles with urls containing ":" - [issue #54]
-    - fix some tests failing on windows (mostly because of difference in handling files)
+    - fix some tests failing on Windows (mostly because of difference in handling files)
 
 1.4.1
 
