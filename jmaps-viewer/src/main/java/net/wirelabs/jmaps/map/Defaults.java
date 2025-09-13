@@ -15,6 +15,12 @@ import java.time.Duration;
 public class Defaults {
 
     public static final Duration DEFAULT_CACHE_TIMEOUT = Duration.ofDays(30);
+
+    // defaults for redis cache
+    public static final int DEFAULT_REDIS_POOLSIZE = 100;
+    public static final String DEFAULT_REDIS_HOST = "localhost";
+    public static int DEFAULT_REDIS_PORT = 6379;
+
     // default cache dir base
     private static final String HOME = System.getProperty("user.home");
     private static final Path DEFAULT_CACHE_DIR = Paths.get(HOME, ".jmaps-cache");
