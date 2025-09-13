@@ -1,6 +1,7 @@
 package net.wirelabs.jmaps.map.cache.redis;
 
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.cache.BaseCache;
 import net.wirelabs.jmaps.map.cache.Cache;
 
@@ -15,8 +16,13 @@ public class RedisCache extends BaseCache implements Cache<String, BufferedImage
 
     private final RedisClient client;
 
+    // default constructor for cache with default redis connection
+    public RedisCache() {
+        this(Defaults.DEFAULT_REDIS_HOST, Defaults.DEFAULT_REDIS_PORT, Defaults.DEFAULT_CACHE_TIMEOUT, Defaults.DEFAULT_REDIS_POOLSIZE);
+    }
+
     public RedisCache(String host, int port, Duration expirationTime, int connectionPoolSize) {
-        super(Path.of("localhost@" + port), expirationTime);
+        super(Path.of(host + "@" + port), expirationTime);
         this.client = new RedisClient(host, port, expirationTime, connectionPoolSize);
     }
 
