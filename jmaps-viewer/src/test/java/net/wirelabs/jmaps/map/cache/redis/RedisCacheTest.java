@@ -1,65 +1,73 @@
 package net.wirelabs.jmaps.map.cache.redis;
 
 import com.redis.testcontainers.RedisContainer;
-import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.map.cache.redis.RedisClient;
 import net.wirelabs.jmaps.map.utils.ImageUtils;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.utility.DockerImageName;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.image.*;
-import java.io.File;
-import java.io.IOException;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@Slf4j
 class RedisCacheTest {
+
 
     private static RedisContainer container;
     private static RedisCache redisCache;
     // default low-time expiration (won't interfere with normal get/put but useful for testing expiration
-    private static final Duration expiration = Duration.ofSeconds(2);
+    private static final Duration EXPIRATION = Duration.ofSeconds(2);
+    private static final String TEST_IMAGE_KEY = "tile";
 
     @BeforeAll
-    static void before() {
+    static void beforeAll() {
         container = new RedisContainer(DockerImageName.parse("redis:latest"));
         container.start();
-        Awaitility.waitAtMost(Duration.ofSeconds(5)).untilAsserted(() -> assertThat(container.isRunning()).isTrue());
-        redisCache = new RedisCache("localhost", container.getRedisPort(), expiration, 100);
+        Awaitility.await().atMost(Duration.ofSeconds(5)).until(container::isRunning);
+        redisCache = new RedisCache("localhost", container.getRedisPort(), EXPIRATION, 100);
+    }
+
+    @AfterAll
+    static void afterAll() {
+        if (container != null) container.stop();
     }
 
     @Test
-    void putimage() throws IOException {
-        // put image with short ttl, get it - it should be available momentarily
-        // then wait some time and get it again, should be null
+    void shouldTestCachePutWithTimeoutScenarios() throws IOException {
         BufferedImage img = ImageIO.read(new File("src/test/resources/tiles/tile.png"));
-        redisCache.put("dupa", img);
+        redisCache.put(TEST_IMAGE_KEY, img);
 
-        // timeout (2s) not reached - get should be successful
-        Awaitility.waitAtMost(Duration.ofMillis(500)).pollDelay(Duration.ofMillis(250)).untilAsserted(() -> {
-            BufferedImage g = redisCache.get("dupa");
-            assertThat(g).isNotNull();
-            assertThat(ImageUtils.imagesEqual(g, img)).isTrue();
-        });
+        // expiration time not reached - image is fetched from cache
+        Awaitility.waitAtMost(Duration.ofSeconds(1)).untilAsserted(() -> assertThat(doesCachedImageExist(img)).isTrue());
 
-        // timeout expired - get should return null
-        Awaitility.waitAtMost(Duration.ofSeconds(3)).pollDelay(Duration.ofMillis(200)).untilAsserted(() -> {
-            BufferedImage image = redisCache.get("dupa");
-            assertThat(image).isNull();
-        });
+        // expiration time will be reached so image is not fetched from cache
+        Awaitility.waitAtMost(Duration.ofSeconds(3)).untilAsserted(() -> assertThat(doesCachedImageExist(img)).isFalse());
+
+        // now put the same key again and check if it is timeout is renewed
+        redisCache.put(TEST_IMAGE_KEY, img);
+        Awaitility.waitAtMost(Duration.ofSeconds(1)).untilAsserted(() -> assertThat(doesCachedImageExist(img)).isTrue());
 
     }
 
     @Test
-    void getImage()  {
+    void shouldNotGetNonexistentImage() {
         // get nonexistent entry
-        assertThat(redisCache.get("kaka")).isNull();
+        assertThat(redisCache.get("nonexistent")).isNull();
+    }
 
+    @Test
+    void shouldThrowWhenPuttingNullValue() {
+        assertThatThrownBy(() -> redisCache.put(TEST_IMAGE_KEY, null)).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private boolean doesCachedImageExist(BufferedImage img) {
+        BufferedImage retrieved = redisCache.get(TEST_IMAGE_KEY);
+        return retrieved != null && ImageUtils.imagesEqual(retrieved, img);
     }
 }
