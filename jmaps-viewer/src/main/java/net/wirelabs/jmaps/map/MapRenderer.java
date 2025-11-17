@@ -2,6 +2,7 @@ package net.wirelabs.jmaps.map;
 
 
 import net.wirelabs.jmaps.map.downloader.TileProvider;
+import net.wirelabs.jmaps.map.downloader.UrlSet;
 import net.wirelabs.jmaps.map.layer.Layer;
 import net.wirelabs.jmaps.map.painters.*;
 
@@ -99,8 +100,8 @@ public class MapRenderer {
 
         for (Layer layer : mapViewer.getCurrentMap().getEnabledLayers()) {
 
-            String tileUrl = layer.createTileUrl(tileX, tileY, zoom + layer.getZoomOffset());
-            Optional<BufferedImage> b = Optional.ofNullable(tileProvider.getTile(tileUrl));
+            UrlSet tileUrl = layer.createTileUrl(tileX, tileY, zoom + layer.getZoomOffset());
+            Optional<BufferedImage> b = Optional.ofNullable(tileProvider.getTile(tileUrl.url()));
             if (b.isPresent()) {
                 // if layer's opacity is < 1.0 - apply layer's opacity alpha, otherwise set alpha 1.0f
                 AlphaComposite alpha = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, Math.min(layer.getOpacity(), 1.0f));

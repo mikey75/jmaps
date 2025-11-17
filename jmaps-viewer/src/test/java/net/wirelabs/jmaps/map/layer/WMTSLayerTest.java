@@ -52,7 +52,7 @@ class WMTSLayerTest {
         assertThat(wmts.getZoomOffset()).isZero();
 
 
-        assertThat(wmts.createTileUrl(10, 11, 15)).isEqualTo(
+        assertThat(wmts.createTileUrl(10, 11, 15).url()).isEqualTo(
                 testUrl + "?Service=WMTS" +
                         "&Request=GetTile" +
                         "&Layer=G2_MOBILE_500" +
@@ -86,7 +86,7 @@ class WMTSLayerTest {
         assertThat(wmts.isSwapAxis()).isTrue();
         assertThat(wmts.getCrs()).isEqualTo("EPSG:3187");
 
-        assertThat(wmts.createTileUrl(10, 11, 15)).isEqualTo(
+        assertThat(wmts.createTileUrl(10, 11, 15).url()).isEqualTo(
                 testUrl + "?Service=WMTS" +
                         "&Request=GetTile" +
                         "&Layer=G2_MOBILE_500" +

@@ -1,5 +1,6 @@
 package net.wirelabs.jmaps.map.layer;
 
+import net.wirelabs.jmaps.map.downloader.UrlSet;
 import net.wirelabs.jmaps.model.map.LayerDocument;
 
 public class QuadLayer extends XYZLayer {
@@ -13,12 +14,13 @@ public class QuadLayer extends XYZLayer {
 
 
     @Override
-    public String createTileUrl(int x, int y, int zoom) {
+    public UrlSet createTileUrl(int x, int y, int zoom) {
 
         final String quadKey = tileToQuadKey(x, y,  zoom);
 
-        return url.replace("{quad}", quadKey)
+        String origUrl =  url.replace("{quad}", quadKey)
                 .replace("{quadchar}", String.valueOf(quadKey.charAt(quadKey.length() - 1)));
+        return getHostPrefixAlternator().resolvePrefixedUrl(origUrl);
 
     }
 

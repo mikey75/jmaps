@@ -1,5 +1,6 @@
 package net.wirelabs.jmaps.map.layer;
 
+import net.wirelabs.jmaps.map.downloader.UrlSet;
 import net.wirelabs.jmaps.model.map.LayerDocument;
 
 import java.awt.*;
@@ -34,12 +35,13 @@ public class XYZLayer extends Layer {
     }
 
     @Override
-    public String createTileUrl(int x, int y, int zoom) {
-        return url
+    public UrlSet createTileUrl(int x, int y, int zoom) {
+        String origUrl = url
                 .replace("{z}", String.valueOf(zoom))
                 .replace("{x}", String.valueOf(x))
                 .replace("{y}", String.valueOf(y));
 
+        return getHostPrefixAlternator().resolvePrefixedUrl(origUrl);
     }
 
 

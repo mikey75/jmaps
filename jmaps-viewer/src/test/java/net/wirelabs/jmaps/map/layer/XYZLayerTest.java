@@ -1,5 +1,6 @@
 package net.wirelabs.jmaps.map.layer;
 
+import net.wirelabs.jmaps.map.downloader.UrlSet;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 import net.wirelabs.jmaps.model.map.LayerDocument;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,7 @@ class XYZLayerTest {
     @Test
     void shouldCreateCorrectUrl() {
         Layer xyz = new XYZLayer(xyzLayerDefinition);
-        assertThat(xyz.createTileUrl(4,5,12)).isEqualTo("http://localhost/12/4/5.png");
+        assertThat(xyz.createTileUrl(4,5,12).url()).isEqualTo("http://localhost/12/4/5.png");
     }
 
 
@@ -126,6 +127,20 @@ class XYZLayerTest {
         assertThat(xyz.isSwapAxis()).isTrue();
         assertThat(xyz.getOpacity()).isEqualTo(0.8f);
         assertThat(xyz.getZoomOffset()).isEqualTo(1);
+
+    }
+
+    @Test
+    void testAlternatingHosts() {
+        xyzLayerDefinition.setUrl("https://[a|b|c].tiles.openstreetmap.org/{z}/{x}/{y}.png");
+
+        Layer xyz = new XYZLayer(xyzLayerDefinition);
+        UrlSet s = xyz.createTileUrl(1,2,3);
+        assertThat(s.originalUrl()).isEqualTo("https://tiles.openstreetmap.org/3/1/2.png");
+        assertThat(s.url()).matches("(" +
+                "https://a\\.tiles\\.openstreetmap\\.org/3/1/2\\.png|" +
+                "https://b\\.tiles\\.openstreetmap\\.org/3/1/2\\.png|" +
+                "https://c\\.tiles\\.openstreetmap\\.org/3/1/2\\.png)");
 
     }
 
