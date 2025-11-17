@@ -40,7 +40,7 @@ public class ConfigPanel extends TitledPanel {
     private final String tempDir = System.getProperty("java.io.tmpdir");
     private final transient DBCache dbCache = new DBCache(Path.of(tempDir, "testdbcache"), Duration.ofDays(30));
     private final transient DirectoryBasedCache fileCache = new DirectoryBasedCache(Path.of(tempDir, "testfilecache"), Duration.ofDays(30));
-    private final transient RedisCache redisCache = new RedisCache("localhost",6379, Duration.ofDays(30), 100); // for example app - setup redis on localhost:6379
+    private transient RedisCache redisCache;
 
     private JFileChooser fileChooser;
 
@@ -53,6 +53,14 @@ public class ConfigPanel extends TitledPanel {
 
         this.mapViewer = mapPanel.getMapViewer();
         this.routePainter = mapPanel.getRoutePainter();
+
+        try {
+            this.redisCache = new RedisCache("localhost", 6379, Duration.ofDays(30), 100); // for example app - setup redis on localhost:6379
+        } catch (IllegalStateException e) {
+            log.error(e.getMessage());
+            log.error("Redis unavailable - removing from cache options");
+            cacheCombo.removeItemAt(2);
+        }
 
         add(lblMapDefinitions, "cell 0 1, growx");
         add(exampleMapCombo, "cell 0 2, growx");

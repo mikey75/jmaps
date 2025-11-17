@@ -6,6 +6,7 @@ import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
 import javax.imageio.ImageIO;
@@ -27,10 +28,9 @@ class RedisCacheTest {
 
     @BeforeAll
     static void beforeAll() {
-        container = new RedisContainer(DockerImageName.parse("redis:latest"));
+        container = new RedisContainer(DockerImageName.parse("redis:latest")).waitingFor(Wait.forListeningPort());
         container.start();
-        Awaitility.await().atMost(Duration.ofSeconds(5)).until(container::isRunning);
-        redisCache = new RedisCache("localhost", container.getRedisPort(), EXPIRATION, 100);
+        redisCache = new RedisCache(container.getHost(), container.getMappedPort(6379), EXPIRATION, 100);
     }
 
     @AfterAll
