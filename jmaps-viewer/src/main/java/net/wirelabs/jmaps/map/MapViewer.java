@@ -21,7 +21,6 @@ import java.awt.image.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 public class MapViewer extends JPanel {
@@ -36,12 +35,8 @@ public class MapViewer extends JPanel {
     @Getter
     private final Point topLeftCornerPoint = new Point();
     private final MapInfoPanel mapInfoPanel;
-    @Getter
-    private final transient ConcurrentLinkedHashMap<String, BufferedImage> primaryTileCache;
     @Getter @Setter
     private transient Cache<String, BufferedImage> secondaryTileCache;
-    @Getter @Setter
-    private String userAgent = Defaults.DEFAULT_USER_AGENT;
     @Getter @Setter
     private int tilerThreads = Defaults.DEFAULT_TILER_THREADS;
     // zoom level
@@ -68,10 +63,6 @@ public class MapViewer extends JPanel {
         mouseHandler = new MouseHandler(this);
         mapInfoPanel = new MapInfoPanel(this);
         mapCreator = new MapCreator();
-
-        primaryTileCache = new ConcurrentLinkedHashMap.Builder<String, BufferedImage>()
-                .maximumWeightedCapacity(Defaults.DEFAULT_IMG_CACHE_SIZE)
-                .build();
 
         setLayout(new MigLayout("", "[90%][]", "[]"));
         add(mapInfoPanel, "cell 1 1, grow");
@@ -138,7 +129,7 @@ public class MapViewer extends JPanel {
         // if any overlay has drawn something (i.e. getObjects is not empty) -> fit best to those objects
         List<Coordinate> allObjects = userOverlays.stream()
                 .flatMap(listContainer -> listContainer.getObjects().stream())
-                .collect(Collectors.toList());
+                .toList();
 
         if (!allObjects.isEmpty()) {
             setBestFit(allObjects);
@@ -183,17 +174,13 @@ public class MapViewer extends JPanel {
 
         List<Coordinate> pixelCoords = coords.stream()
                 .map(coordinate -> new Coordinate(baseLayer.latLonToPixel(coordinate, zoom).getX(), baseLayer.latLonToPixel(coordinate, zoom).getY()))
-                .collect(Collectors.toList());
+                .toList();
 
         Rectangle2D r2 = GeoUtils.calculateEnclosingRectangle(pixelCoords);
         // translate world pixel into canvas pixel
         r2.setRect(r2.getX() - topLeftCornerPoint.x, r2.getY() - topLeftCornerPoint.y, r2.getWidth(), r2.getHeight());
         return r2;
 
-    }
-
-    public void setImageCacheSize(long size) {
-        primaryTileCache.setCapacity(size);
     }
 
     public void setZoom(int zoom) {

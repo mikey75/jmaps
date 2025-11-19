@@ -28,7 +28,6 @@ public class MapPanel extends TitledPanel {
         mapViewer.setShowCoordinates(true);
         mapViewer.setZoom(12);
         mapViewer.setHome(LUBLIN_PL);
-        mapViewer.setImageCacheSize(32000);
         mapViewer.addUserOverlay(routePainter);
         add(mapViewer, "cell 0 0,grow");
 

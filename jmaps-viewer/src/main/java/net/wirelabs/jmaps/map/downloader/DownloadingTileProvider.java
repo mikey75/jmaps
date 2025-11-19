@@ -1,7 +1,10 @@
 package net.wirelabs.jmaps.map.downloader;
 
 
+import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
 
 import javax.imageio.ImageIO;
@@ -33,6 +36,11 @@ public class DownloadingTileProvider implements TileProvider {
     private final MapViewer mapViewer;
     private ExecutorService executorService;
 
+    // local in-memory cache should be local to provider
+    @Getter
+    private final ConcurrentLinkedHashMap<String, BufferedImage> primaryTileCache = new ConcurrentLinkedHashMap.Builder<String, BufferedImage>()
+            .maximumWeightedCapacity(Defaults.DEFAULT_IMG_CACHE_SIZE)
+                .build();
 
     public DownloadingTileProvider(MapViewer mapViewer) {
 
@@ -57,7 +65,7 @@ public class DownloadingTileProvider implements TileProvider {
 
         HttpRequest r = HttpRequest.newBuilder() //Request.nBuilder()
                 .uri(URI.create(tileUrl))
-                .header("User-Agent", mapViewer.getUserAgent())
+                .header("User-Agent", Defaults.DEFAULT_USER_AGENT)
                 .build();
 
         try {
@@ -73,7 +81,7 @@ public class DownloadingTileProvider implements TileProvider {
         } catch (OutOfMemoryError e) {
             log.error("DANG! Local memory cache run out of memory");
             log.error("Pruning memory cache...");
-            mapViewer.getPrimaryTileCache().clear();
+            primaryTileCache.clear();
         }
         // tile is not loading anymore
         tilesLoading.remove(tileUrl);
@@ -85,12 +93,11 @@ public class DownloadingTileProvider implements TileProvider {
             InputStream inputStream = response.body();
             Optional<BufferedImage> image = Optional.ofNullable(ImageIO.read(inputStream));
             if (image.isPresent()) {
-                mapViewer.getPrimaryTileCache().put(tileUrl, image.get());
+                primaryTileCache.put(tileUrl, image.get());
                 if (secondaryCacheEnabled()) {
                     mapViewer.getSecondaryTileCache().put(tileUrl, image.get());
                 }
                 tilesLoading.remove(tileUrl);
-                // emit LOADED event here to ditch the mapViewer reference dependency
                 mapViewer.repaint();
             }
     }
@@ -98,7 +105,7 @@ public class DownloadingTileProvider implements TileProvider {
     public BufferedImage getTile(String url) {
 
         // check local memory cache
-        Optional<BufferedImage> img = Optional.ofNullable(mapViewer.getPrimaryTileCache().get(url));
+        Optional<BufferedImage> img = Optional.ofNullable(primaryTileCache.get(url));
         if (img.isPresent()) {
             return img.get();
         }
@@ -107,7 +114,7 @@ public class DownloadingTileProvider implements TileProvider {
         if (secondaryCacheEnabled()) {
                 Optional<BufferedImage> image = Optional.ofNullable(mapViewer.getSecondaryTileCache().get(url));
                 if (image.isPresent() && !mapViewer.getSecondaryTileCache().keyExpired(url)) {
-                    mapViewer.getPrimaryTileCache().put(url, image.get());
+                    primaryTileCache.put(url, image.get());
                     return image.get();
                 }
 

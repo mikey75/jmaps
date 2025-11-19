@@ -41,12 +41,12 @@ class DownloadingTileProviderTest {
 
     private final MapViewer mapViewer = new MapViewer();
     private final DownloadingTileProvider tileProvider = spy(new DownloadingTileProvider(mapViewer));
-    private ConcurrentLinkedHashMap<String, BufferedImage> primaryCache;
+    private ConcurrentLinkedHashMap<String, BufferedImage> primaryTileCache;
 
     @BeforeEach
     void before() throws IOException {
         testTileServer = new MockHttpServer();
-        primaryCache = mapViewer.getPrimaryTileCache();
+        primaryTileCache = tileProvider.getPrimaryTileCache();
         mapViewer.setSecondaryTileCache(secondaryCache);
         tileUrl = "http://localhost:" + testTileServer.getPort() + "/tile.png";
         failTileUrl = "http://localhost:" +testTileServer.getPort() +"/nonexisting";
@@ -76,7 +76,7 @@ class DownloadingTileProviderTest {
         // assert dowload attempted
         assertDownloadCalled(times(1));
         // assert tile not in caches
-        assertThat(primaryCache.get(tileUrl)).isNull();
+        assertThat(primaryTileCache.get(tileUrl)).isNull();
         assertThat(secondaryCache.get(tileUrl)).isNull();
 
     }
@@ -84,7 +84,7 @@ class DownloadingTileProviderTest {
     @Test
     void shouldNotDownloadTileIfItIsInPrimaryCache() throws IOException {
 
-        primaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
+        primaryTileCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
 
         assertThat(tileProvider.getTile(tileUrl)).isNotNull();
         assertDownloadCalled(never());
@@ -157,7 +157,7 @@ class DownloadingTileProviderTest {
     }
 
     private void assertTileInPrimaryCache(String tileUrl) {
-        assertThat(primaryCache.get(tileUrl)).isNotNull();
+        assertThat(primaryTileCache.get(tileUrl)).isNotNull();
     }
 
     private void assertDownloadCalled(VerificationMode mode) {
