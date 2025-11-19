@@ -1,3 +1,13 @@
+1.4.3
+
+    - removed settable user agent name - it's always JMaps Tiler (that's what contacts map sites, no use to change that)
+    - removed settable local in-memory cache size - set reasonable default of 32000 tiles, I never reached that limit even using the mapviewer for a full day. LRU cache evicts tiles above limit lazily anyway, so there's no use setting this up.
+    - moved local in-memory cache to downloader - this should be local to downloader, not mapviewer.
+    - updated tests, and fixed some accidentally spotted lint errors
+    - simplify redis cache and client code a little
+    - refactored cache redis tests
+    - fixed redis unavailable hanging the example app
+
 1.4.2
 
     - refactored packaging of caches. might break usage in apps using the cache, fixable easily.
