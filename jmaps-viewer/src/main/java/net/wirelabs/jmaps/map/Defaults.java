@@ -19,7 +19,7 @@ public class Defaults {
     // defaults for redis cache
     public static final int DEFAULT_REDIS_POOLSIZE = 100;
     public static final String DEFAULT_REDIS_HOST = "localhost";
-    public static int DEFAULT_REDIS_PORT = 6379;
+    public static final int DEFAULT_REDIS_PORT = 6379;
 
     // default cache dir base
     private static final String HOME = System.getProperty("user.home");
@@ -38,7 +38,7 @@ public class Defaults {
 
     // defaults for tile downloader and tile image cache
     public static final int DEFAULT_TILER_THREADS = 16;
-    public static final int DEFAULT_IMG_CACHE_SIZE = 8000;
+    public static final int DEFAULT_IMG_CACHE_SIZE = 32000;
 
     // default fill color when preparing render canvas tile
     public static final Color EMPTY_FILL_COLOR = new Color(0, 0, 0, 0);

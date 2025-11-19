@@ -22,7 +22,6 @@ class MapViewerTest  {
     private static final File EXAMPLE_MAPFILE_DOUBLE_LAYER = new File("src/test/resources/maps/GeoportalLayered.xml");
 
     private static final Coordinate LUBLIN_PL = new Coordinate(22.565628, 51.247717);
-    private static final String NEW_USER_AGENT = "Test-agent 1.0";
     private MapViewer mapviewer;
     private MockHttpServer server;
 
@@ -36,7 +35,6 @@ class MapViewerTest  {
 
 
         assertThat(mapviewer.getTilerThreads()).isEqualTo(Defaults.DEFAULT_TILER_THREADS);
-        assertThat(mapviewer.getUserAgent()).isEqualTo(Defaults.DEFAULT_USER_AGENT);
 
         assertThat(mapviewer.isDeveloperMode()).isFalse();
         assertThat(mapviewer.isShowAttribution()).isTrue();
@@ -51,11 +49,9 @@ class MapViewerTest  {
     void testCustomMapviewerInitialization() throws IOException {
 
         mapviewer.setTilerThreads(10);
-        mapviewer.setUserAgent(NEW_USER_AGENT);
         mapviewer.setShowAttribution(true);
         mapviewer.setShowCoordinates(true);
         mapviewer.setZoom(10);
-        assertThat(mapviewer.getUserAgent()).isEqualTo(NEW_USER_AGENT);
         assertThat(mapviewer.getTilerThreads()).isEqualTo(10);
 
         mapviewer.setCurrentMap(EXAMPLE_MAPFILE);
