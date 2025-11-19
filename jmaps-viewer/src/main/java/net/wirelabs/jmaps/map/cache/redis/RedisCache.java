@@ -40,7 +40,7 @@ public class RedisCache extends BaseCache implements Cache<String, BufferedImage
     public void put(String key, BufferedImage value) {
 
         try {
-            client.putImage(key, value, "png");
+            client.putImage(key, value);
         } catch (IOException e) {
             log.error("Redis cache put failed for {}-{}", key, e.getMessage());
         }
