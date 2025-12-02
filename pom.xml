@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>net.wirelabs</groupId>
     <artifactId>jmaps</artifactId>
-    <version>1.4.3</version>
+    <version>1.4.4-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -27,7 +27,7 @@
         <developerConnection>scm:git:git@github.com:mikey75/jmaps.git</developerConnection>
         <connection>scm:git:git@github.com:mikey75/jmaps.git</connection>
         <url>git@github.com:mikey75/jmaps.git</url>
-        <tag>jmaps-1.4.3</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <name>jMmaps</name>
