@@ -1,11 +1,12 @@
 package net.wirelabs.jmaps.map.downloader;
 
 
-import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
+import com.github.benmanes.caffeine.cache.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
+import net.wirelabs.jmaps.map.cache.memory.InMemoryLRUCache;
 
 import javax.imageio.ImageIO;
 import java.awt.image.*;
@@ -38,9 +39,7 @@ public class DownloadingTileProvider implements TileProvider {
 
     // local in-memory cache should be local to provider
     @Getter
-    private final ConcurrentLinkedHashMap<String, BufferedImage> primaryTileCache = new ConcurrentLinkedHashMap.Builder<String, BufferedImage>()
-            .maximumWeightedCapacity(Defaults.DEFAULT_IMG_CACHE_SIZE)
-                .build();
+    private final InMemoryLRUCache primaryTileCache = new InMemoryLRUCache();
 
     public DownloadingTileProvider(MapViewer mapViewer) {
 

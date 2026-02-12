@@ -1,10 +1,11 @@
 package net.wirelabs.jmaps.map.downloader;
 
-import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
+
 import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.cache.files.DirectoryBasedCache;
+import net.wirelabs.jmaps.map.cache.memory.InMemoryLRUCache;
 import org.apache.commons.io.FileUtils;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -41,7 +42,7 @@ class DownloadingTileProviderTest {
 
     private final MapViewer mapViewer = new MapViewer();
     private final DownloadingTileProvider tileProvider = spy(new DownloadingTileProvider(mapViewer));
-    private ConcurrentLinkedHashMap<String, BufferedImage> primaryTileCache;
+    private InMemoryLRUCache primaryTileCache;
 
     @BeforeEach
     void before() throws IOException {
