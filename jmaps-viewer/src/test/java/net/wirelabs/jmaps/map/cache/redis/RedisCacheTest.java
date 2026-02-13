@@ -1,11 +1,11 @@
 package net.wirelabs.jmaps.map.cache.redis;
 
-import com.redis.testcontainers.RedisContainer;
 import net.wirelabs.jmaps.map.utils.ImageUtils;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
 
@@ -20,15 +20,16 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class RedisCacheTest {
 
 
-    private static RedisContainer container;
+    private static GenericContainer<?> container;
     private static RedisCache redisCache;
     // default low-time expiration (won't interfere with normal get/put but useful for testing expiration
     private static final Duration EXPIRATION = Duration.ofSeconds(2);
     private static final String TEST_IMAGE_KEY = "tile";
 
     @BeforeAll
+    @SuppressWarnings("resource")
     static void beforeAll() {
-        container = new RedisContainer(DockerImageName.parse("redis:latest")).waitingFor(Wait.forListeningPort());
+        container = new GenericContainer<>(DockerImageName.parse("redis:latest")).waitingFor(Wait.forListeningPort()).withExposedPorts(6379);
         container.start();
         redisCache = new RedisCache(container.getHost(), container.getMappedPort(6379), EXPIRATION, 100);
     }
