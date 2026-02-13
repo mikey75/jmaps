@@ -1,3 +1,8 @@
+1.4.4
+
+    - migrated primary tile cache from google's LRU hashMap to Caffeine LFU pool.
+    - [tests] ditch old testcontainers-redis from com.redis, use generic org.testcontainers
+
 1.4.3
 
     - removed settable user agent name - it's always JMaps Tiler (that's what contacts map sites, no use to change that)
