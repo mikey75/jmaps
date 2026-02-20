@@ -1,5 +1,5 @@
 1.4.4
-
+    - [example app] fixed non-loading gpx files (conflicting schema generated names)
     - [example app] updated Czech geoportal WMTS map source
     - migrated primary tile cache from google's LRU hashMap to Caffeine LFU pool.
     - [tests] ditch old testcontainers-redis from com.redis, use generic org.testcontainers

@@ -171,7 +171,7 @@
                     <sourceSchemas>mapDefinition.xsd,wmts.xsd</sourceSchemas>
                     <repackage>net.wirelabs.jmaps.viewer</repackage>
                     <buildSchemas>true</buildSchemas>
-                    <name>xml</name>
+                    <name>maps</name>
                 </configuration>
 
 
