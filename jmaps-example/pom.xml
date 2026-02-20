@@ -85,7 +85,7 @@
                     <sourceSchemas>gpx.xsd</sourceSchemas>
                     <repackage>net.wirelabs.jmaps.example</repackage>
                     <buildSchemas>true</buildSchemas>
-                    <name>xml</name>
+                    <name>gpx</name>
                 </configuration>
                 <dependencies>
                     <dependency>
