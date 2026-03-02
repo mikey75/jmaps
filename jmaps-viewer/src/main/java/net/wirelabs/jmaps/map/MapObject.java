@@ -25,7 +25,7 @@ public class MapObject {
 
     public List<Layer> getEnabledLayers() {
         return layers.stream()
-                .filter(Layer::isEnabled)
+                .filter(l -> !l.isDisabled())
                 .collect(Collectors.toList());
     }
 

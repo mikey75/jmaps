@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<map xmlns="http://www.wirelabs.net/jmaps/model/map">
+    <name>Map1</name>
+    <!-- explicit enable -->
+    <layer>
+        <name>layer1</name>
+        <type>XYZ</type>
+        <url>url</url>
+        <disabled>false</disabled>
+        <swapAxis>true</swapAxis>
+    </layer>
+
+    <!-- explicit disablement -->
+    <layer>
+        <name>layer2</name>
+        <type>XYZ</type>
+        <url>url</url>
+        <disabled>true</disabled>
+    </layer>
+
+    <!-- default - should be enabled anyway with <disabled>false</disabled> or not -->
+    <layer>
+        <name>default</name>
+        <type>XYZ</type>
+        <url>url</url>
+    </layer>
+
+    <copyright>jmaps</copyright>
+</map>

@@ -26,8 +26,7 @@ public abstract class Layer  {
     protected float opacity;
     protected int zoomOffset;
     protected boolean swapAxis;
-
-    protected boolean enabled = true;
+    protected boolean disabled;
 
     private final ProjectionEngine projectionEngine = new ProjectionEngine();
 
@@ -42,8 +41,8 @@ public abstract class Layer  {
         this.minZoom = (layerDefinition.getMinZoom() == 0) ? LayerDefaults.MIN_ZOOM : layerDefinition.getMinZoom();
         this.opacity = (layerDefinition.getOpacity() == 0) ? LayerDefaults.OPACITY : layerDefinition.getOpacity();
         this.zoomOffset = (layerDefinition.getZoomOffset() == 0) ? LayerDefaults.ZOOM_OFFSET : layerDefinition.getZoomOffset();
-        this.swapAxis = (!layerDefinition.getSwapAxis()) ? LayerDefaults.SWAP_AXIS : layerDefinition.getSwapAxis();
-
+        this.swapAxis = (layerDefinition.isSetSwapAxis()) ?  layerDefinition.getSwapAxis() : LayerDefaults.SWAP_AXIS;
+        this.disabled = (layerDefinition.isSetDisabled())  ? layerDefinition.getDisabled() : LayerDefaults.DISABLED;
         setProjection(crs);
     }
 
