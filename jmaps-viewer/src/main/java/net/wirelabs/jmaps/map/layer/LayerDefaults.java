@@ -14,4 +14,5 @@ public class LayerDefaults {
     public static final float OPACITY = 1.0f;
     public static final int ZOOM_OFFSET = 0;
     public static final String CRS =  "EPSG:3857";
+    public static final boolean DISABLED = false;
 }

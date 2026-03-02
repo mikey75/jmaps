@@ -23,9 +23,9 @@ public class MapInfoPanel extends JPanel {
 
         for (Layer layer: mapViewer.getCurrentMap().getLayers()) {
             JCheckBox layerCheckbox = new JCheckBox(layer.getName());
-            layerCheckbox.setSelected(layer.isEnabled());
+            layerCheckbox.setSelected(!layer.isDisabled());
             layerCheckbox.addActionListener( e -> {
-                layer.setEnabled(layerCheckbox.isSelected());
+                layer.setDisabled(!layerCheckbox.isSelected());
                 mapViewer.repaint();
             });
             add(layerCheckbox);

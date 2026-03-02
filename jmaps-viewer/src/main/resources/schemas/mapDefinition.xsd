@@ -29,6 +29,7 @@
                 <xsd:element type="xsd:float" name="opacity" minOccurs="0"/>
                 <xsd:element type="xsd:string" name="tileMatrixSet" minOccurs="0"/>
                 <xsd:element type="xsd:string" name="wmtsLayer" minOccurs="0"/>
+                <xsd:element type="xsd:boolean" name="disabled" minOccurs="0"/>
             </xsd:all>
         </xsd:complexType>
     </xsd:element>

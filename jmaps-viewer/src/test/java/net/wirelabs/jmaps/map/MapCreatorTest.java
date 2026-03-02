@@ -19,6 +19,7 @@ class MapCreatorTest {
     private static final File UNKNOWN_LAYER_TYPE = new File(testMapsDir, "layer-unsupported.xml");
     private static final File TWO_LAYERS_DIFFERENT_TILESIZE = new File(testMapsDir, "multilayer-different-tilesize.xml");
     private static final File TWO_LAYERS_DIFFERENT_CRS = new File(testMapsDir,"multilayer-different-crs.xml");
+    private static final File MULTILAYER_ONE_DISABLED = new File(testMapsDir,"multilayer-disabled.xml");
 
     @Test
     void testCorrectMaps()  {
@@ -61,10 +62,61 @@ class MapCreatorTest {
 
     }
 
+    @Test
+    void testMultilayerMapWithVisibilityOptions() {
+        MapCreator mc = new MapCreator();
+        MapObject map = mc.createMap(MULTILAYER_ONE_DISABLED);
+
+        assertMapObject(map, true, 3, "Map1");
+        // layer2 should be disabled by xml def - check it
+        assertThat(map.getLayers().stream()
+                .filter(l -> l.getName().equals("layer2"))
+                .findFirst()
+                .orElseThrow()
+                .isDisabled()).isTrue();
+        // layer1 should be enabled - with xml def
+        assertThat(map.getLayers().stream()
+                .filter(l -> l.getName().equals("layer1"))
+                .findFirst()
+                .orElseThrow()
+                .isDisabled()).isFalse();
+        // and default - visible by default with or without xml def
+        assertThat(map.getLayers().stream()
+                .filter(l -> l.getName().equals("default"))
+                .findFirst()
+                .orElseThrow()
+                .isDisabled()).isFalse();
+    }
+
+    @Test
+    void testSwapAxisDefinition() {
+        MapCreator mc = new MapCreator();
+        MapObject map = mc.createMap(MULTILAYER_ONE_DISABLED);
+
+        assertMapObject(map, true, 3, "Map1");
+        // layer1 should have swapAxis enabled, other not
+        assertThat(map.getLayers().stream()
+                .filter(l -> l.getName().equals("layer1"))
+                .findFirst()
+                .orElseThrow()
+                .isSwapAxis()).isTrue();
+        assertThat(map.getLayers().stream()
+                .filter(l -> l.getName().equals("layer2"))
+                .findFirst()
+                .orElseThrow()
+                .isSwapAxis()).isFalse();
+        assertThat(map.getLayers().stream()
+                .filter(l -> l.getName().equals("default"))
+                .findFirst()
+                .orElseThrow()
+                .isSwapAxis()).isFalse();
+
+    }
 
     private void assertMapObject(MapObject map, boolean layersPresent, int layerCount, String mapName) {
         assertThat(map.layersPresent()).isEqualTo(layersPresent);
         assertThat(map.getLayers()).hasSize(layerCount);
         assertThat(map.getMapName()).isEqualTo(mapName);
+        assertThat(map.getMapCopyrightAttribution()).isEqualTo("jmaps");
     }
 }
