@@ -1,7 +1,5 @@
 package net.wirelabs.jmaps.map.downloader;
 
-
-import com.github.benmanes.caffeine.cache.*;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.Defaults;
@@ -41,6 +39,11 @@ public class DownloadingTileProvider implements TileProvider {
     @Getter
     private final InMemoryLRUCache primaryTileCache = new InMemoryLRUCache();
 
+    public DownloadingTileProvider(MapViewer mapViewer, HttpClient httpClient) {
+        this.mapViewer = mapViewer;
+        this.httpClient = httpClient;
+    }
+
     public DownloadingTileProvider(MapViewer mapViewer) {
 
         this.mapViewer = mapViewer;
@@ -73,10 +76,15 @@ public class DownloadingTileProvider implements TileProvider {
 
             if (response.statusCode() == 200) {
                 readAndCacheImage(tileUrl, response);
+            } else {
+                log.debug("Could not download {} - Http response {}", tileUrl, response.statusCode());
             }
 
         } catch (Exception e) {
             log.debug("Could not download {} - {} : {}", tileUrl, e.getClass().getSimpleName() ,e.getMessage());
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
         } catch (OutOfMemoryError e) {
             log.error("DANG! Local memory cache run out of memory");
             log.error("Pruning memory cache...");

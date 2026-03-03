@@ -1,11 +1,11 @@
 package net.wirelabs.jmaps.map.downloader;
 
-
+import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
-import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.cache.files.DirectoryBasedCache;
 import net.wirelabs.jmaps.map.cache.memory.InMemoryLRUCache;
+import net.wirelabs.jmaps.map.utils.BaseTest;
 import org.apache.commons.io.FileUtils;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.http.HttpClient;
 import java.nio.file.Path;
 import java.time.Duration;
 
@@ -28,7 +29,7 @@ import static org.mockito.Mockito.*;
  * Created 11/10/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
 
-class DownloadingTileProviderTest {
+class DownloadingTileProviderTest extends BaseTest {
 
     private static final Path TEST_CACHE_DIR = new File("target/testcache").toPath();
     private static final File TEST_TILE_FILE = MockHttpServer.TEST_TILE_FILE;
@@ -42,6 +43,8 @@ class DownloadingTileProviderTest {
 
     private final MapViewer mapViewer = new MapViewer();
     private final DownloadingTileProvider tileProvider = spy(new DownloadingTileProvider(mapViewer));
+    private final HttpClient mockHttpClient = generateMockHttpClient();
+    private final DownloadingTileProvider tileProviderWithHttpClientMock = new DownloadingTileProvider(mapViewer, mockHttpClient);
     private InMemoryLRUCache primaryTileCache;
 
     @BeforeEach
@@ -79,6 +82,7 @@ class DownloadingTileProviderTest {
         // assert tile not in caches
         assertThat(primaryTileCache.get(tileUrl)).isNull();
         assertThat(secondaryCache.get(tileUrl)).isNull();
+        verifyLogged("Could not download " + failTileUrl + " - Http response 404");
 
     }
 
@@ -152,6 +156,26 @@ class DownloadingTileProviderTest {
 
     }
 
+    @Test
+    void shouldTestHttpClientExceptions() throws IOException, InterruptedException {
+
+        doThrow(new IOException("kaka")).when(mockHttpClient).send(any(),any());
+        tileProviderWithHttpClientMock.download(tileUrl);
+        verifyLogged("Could not download " + tileUrl + " - IOException : kaka");
+
+        doThrow(new InterruptedException("kaka")).when(mockHttpClient).send(any(),any());
+        tileProviderWithHttpClientMock.download(tileUrl);
+        verifyLogged("Could not download " + tileUrl + " - InterruptedException : kaka");
+    }
+
+    @Test
+    void shouldCatchOOMException() throws IOException, InterruptedException {
+        doThrow(new OutOfMemoryError()).when(mockHttpClient).send(any(),any());
+        tileProviderWithHttpClientMock.download(tileUrl);
+        verifyLogged("DANG! Local memory cache run out of memory");
+        verifyLogged("Pruning memory cache...");
+    }
+
 
     private void assertTileInSecondaryCache(String tileUrl) {
         assertThat(secondaryCache.get(tileUrl)).isNotNull();
@@ -179,5 +203,13 @@ class DownloadingTileProviderTest {
         Awaitility.await().pollDelay(SHORT_TIMEOUT_FOR_VALIDITY_TESTS.plus(Duration.ofMillis(1500))).untilAsserted(
                 () -> assertThat(secondaryCache.keyExpired(tileUrl)).isTrue()
         );
+    }
+
+    private HttpClient generateMockHttpClient() {
+        return spy(HttpClient.newBuilder()
+                .version(HttpClient.Version.HTTP_1_1)
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .connectTimeout(Duration.ofSeconds(20))
+                .build());
     }
 }
