@@ -37,4 +37,13 @@ class ImageUtilsTest {
 
     }
 
+    @Test
+    void shouldCompareImagesWithDifferentSize() throws IOException {
+        File imgFile1 = new File("src/test/resources/tiles/tile.png");
+        File imgFile2 = new File("src/test/resources/tiles/tile-bigger.png");
+        BufferedImage img1 = ImageIO.read(imgFile1);
+        BufferedImage img2 = ImageIO.read(imgFile2);
+
+        assertThat(ImageUtils.imagesEqual(img1,img2)).isFalse();
+    }
 }
