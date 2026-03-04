@@ -159,13 +159,13 @@ class DownloadingTileProviderTest extends BaseTest {
     @Test
     void shouldTestHttpClientExceptions() throws IOException, InterruptedException {
 
-        doThrow(new IOException("kaka")).when(mockHttpClient).send(any(),any());
+        doThrow(new IOException("Error")).when(mockHttpClient).send(any(),any());
         tileProviderWithHttpClientMock.download(tileUrl);
-        verifyLogged("Could not download " + tileUrl + " - IOException : kaka");
+        verifyLogged("Could not download " + tileUrl + " - IOException : Error");
 
-        doThrow(new InterruptedException("kaka")).when(mockHttpClient).send(any(),any());
+        doThrow(new InterruptedException("Interrupted")).when(mockHttpClient).send(any(),any());
         tileProviderWithHttpClientMock.download(tileUrl);
-        verifyLogged("Could not download " + tileUrl + " - InterruptedException : kaka");
+        verifyLogged("Download interrupted for " + tileUrl);
     }
 
     @Test

@@ -80,18 +80,19 @@ public class DownloadingTileProvider implements TileProvider {
                 log.debug("Could not download {} - Http response {}", tileUrl, response.statusCode());
             }
 
-        } catch (Exception e) {
-            log.debug("Could not download {} - {} : {}", tileUrl, e.getClass().getSimpleName() ,e.getMessage());
-            if (e instanceof InterruptedException) {
-                Thread.currentThread().interrupt();
-            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.debug("Download interrupted for {}", tileUrl);
+        } catch (IOException e) {
+            log.debug("Could not download {} - {} : {}", tileUrl, e.getClass().getSimpleName(), e.getMessage());
         } catch (OutOfMemoryError e) {
             log.error("DANG! Local memory cache run out of memory");
             log.error("Pruning memory cache...");
             primaryTileCache.clear();
+        } finally {
+            // tile is not loading anymore
+            tilesLoading.remove(tileUrl);
         }
-        // tile is not loading anymore
-        tilesLoading.remove(tileUrl);
 
     }
 
