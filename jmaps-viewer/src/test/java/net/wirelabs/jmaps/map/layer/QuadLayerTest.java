@@ -1,5 +1,6 @@
 package net.wirelabs.jmaps.map.layer;
 
+import net.wirelabs.jmaps.map.downloader.UrlSet;
 import net.wirelabs.jmaps.model.map.LayerDocument;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,8 +23,8 @@ class QuadLayerTest {
         layerDefinition.setUrl("http://quad-tile-service.net/tiles/{quad}.png");
         Layer quadLayer = new QuadLayer(layerDefinition);
 
-        String finalUrl = quadLayer.createTileUrl(11, 12, 14);
-        assertThat(finalUrl).isEqualTo("http://quad-tile-service.net/tiles/00000000003211.png");
+        UrlSet finalUrl = quadLayer.createTileUrl(11, 12, 14);
+        assertThat(finalUrl.url()).isEqualTo("http://quad-tile-service.net/tiles/00000000003211.png");
     }
 
     @Test
@@ -35,8 +36,8 @@ class QuadLayerTest {
         layerDefinition.setUrl("http://host{quadchar}-quad-tile-service.net/tiles/{quad}.png");
         Layer quadLayer = new QuadLayer(layerDefinition);
 
-        String finalUrl = quadLayer.createTileUrl(18, 12, 12);
-        assertThat(finalUrl).isEqualTo("http://host0-quad-tile-service.net/tiles/000000012210.png");
+        UrlSet finalUrl = quadLayer.createTileUrl(18, 12, 12);
+        assertThat(finalUrl.url()).isEqualTo("http://host0-quad-tile-service.net/tiles/000000012210.png");
 
     }
 
