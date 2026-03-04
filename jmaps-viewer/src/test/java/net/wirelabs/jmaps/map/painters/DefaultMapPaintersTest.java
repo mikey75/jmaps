@@ -41,7 +41,7 @@ class DefaultMapPaintersTest {
         // when
         posPainter.print(graphics, mapViewer, 800, 600);
         // then
-        verify(posPainter).printText(graphics,800,600, "Lon: -180,0000 Lat: 85,0511");
+        verify(posPainter).printText(graphics,800,600, "Lon: -180.0000 Lat: 85.0511");
 
     }
 }
