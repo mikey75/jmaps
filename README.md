@@ -47,8 +47,12 @@ You can enable/disable given layer from the view.
 ![sample5](images/5.png "Sample 5")
 
 # Running example app locally
-Your JAVA_HOME should point to java 17:
-```
-cd jmaps-viewer && mvn clean install && cd ..
-cd jmaps-example && mvn clean package && cd ..
-cd jmaps-example && java -jar target/jmaps-example.jar
+There are two quick-run scripts included:
+
+- runExampleApp.bat for Windows
+- runExampleApp.sh for linux
+
+Edit the java and maven locations and run the script for your OS.
+
+Your JAVA variable in those scripts should point to java 17
+

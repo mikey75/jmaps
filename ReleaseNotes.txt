@@ -1,3 +1,10 @@
+1.4.5
+    - restored ability to disable/enable layer in multilayer maps definitions
+    - added some missed edge case tests
+    - in redis cache test, use random port, not the default - it may collide with real redis on the host
+    - updated quick-run example application scripts, update Readme
+    - some tiny refs and fixes
+
 1.4.4
     - [example app] fixed non-loading gpx files (conflicting schema generated names)
     - [example app] updated Czech geoportal WMTS map source

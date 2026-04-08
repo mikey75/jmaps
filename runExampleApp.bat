@@ -5,10 +5,7 @@
 
 
 @cd jmaps-viewer
-@call %MVN% clean install
+@call %MVN% -DskipTests=true clean install
 @cd ../jmaps-example
-@call %MVN% clean package
+@call %MVN% -DskipTests=true clean package
 @call %JAVA% -jar target/jmaps-example.jar
-
-
-
