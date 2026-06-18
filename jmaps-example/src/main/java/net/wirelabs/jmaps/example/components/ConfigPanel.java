@@ -8,6 +8,7 @@ import net.wirelabs.jmaps.map.cache.db.DBCache;
 import net.wirelabs.jmaps.map.cache.files.DirectoryBasedCache;
 import net.wirelabs.jmaps.map.cache.redis.RedisCache;
 import net.wirelabs.jmaps.map.geo.Coordinate;
+import net.wirelabs.jmaps.map.geo.GeoUtils;
 
 import javax.swing.*;
 import javax.swing.filechooser.*;
@@ -158,8 +159,20 @@ public class ConfigPanel extends TitledPanel {
                     File gpx = fileChooser.getSelectedFile();// user selects a file
                     GPXParser p = new GPXParser();
                     List<Coordinate> gpxCoordinates = p.parseToGeoPosition(gpx);
-                    routePainter.setRoute(gpxCoordinates);
-                    mapViewer.setBestFit(gpxCoordinates);
+                    // if route is out of band - warn and do not display - this is example/test app so change the cache dir first
+                    GeoUtils.getCache().setBaseDir(Path.of(tempDir, "testBoundsCache"));
+                    if (!GeoUtils.isTrackOutOfBand(gpxCoordinates,mapViewer.getCurrentMap().getBaseLayer().getCrs())) {
+                        routePainter.setRoute(gpxCoordinates);
+                        mapViewer.setBestFit(gpxCoordinates);
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                mapViewer,
+                                "Track will not be shown! \nIt contains coordinates outside map projection bounds.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+
 
                 }));
     }

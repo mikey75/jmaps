@@ -32,6 +32,8 @@ public class Defaults {
     public static final Path DEFAULT_TILE_CACHE_DIR = Paths.get(DEFAULT_CACHE_DIR.toString(), "tile-cache");
     // default cache dir for derby DB based cache -> $HOME/.jmaps-cache/tile-cache-db
     public static final Path DEFAULT_TILE_CACHE_DB = Paths.get(DEFAULT_CACHE_DIR.toString(), "tile-cache-db");
+    // default cache dir for epsg.io responses
+    public static final Path DEFAULT_BOUNDS_CACHE = Paths.get(DEFAULT_CACHE_DIR.toString(), "epsg.io");
 
     // default user-agent
     public static final String DEFAULT_USER_AGENT = "JMaps Tiler v.1.0";

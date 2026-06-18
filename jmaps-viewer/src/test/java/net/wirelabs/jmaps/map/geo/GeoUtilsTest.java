@@ -1,5 +1,6 @@
 package net.wirelabs.jmaps.map.geo;
 
+import net.wirelabs.jmaps.map.utils.BaseTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -9,7 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created 6/3/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
-class GeoUtilsTest {
+class GeoUtilsTest extends BaseTest {
 
     String crs1 = "urn:ogc:def:crs:EPSG::1111";
     String crs2 = "urn:ogc:def:crs:ESRI:102421";
@@ -68,5 +69,27 @@ class GeoUtilsTest {
         assertThat(calculatedCenter.getLongitude()).isEqualTo(2.0);
         assertThat(calculatedCenter.getLatitude()).isEqualTo(2.0);
 
+    }
+
+    @Test
+    void shouldCheckBounds()  {
+        List<Coordinate> plCoords = List.of(new Coordinate(22.2139,51.2418)); // polish coords
+        List<Coordinate> czechCoord = List.of(new Coordinate(12.8640,49.9819)); // czech coords
+
+        // Polish  coords on Polish epsg - should return false
+        assertThat(GeoUtils.isTrackOutOfBand(plCoords,"EPSG:2180")).isFalse();
+
+        // Czech coords on Polish epsg - should return true
+        assertThat(GeoUtils.isTrackOutOfBand(czechCoord, "EPSG:2180")).isTrue();
+
+        // Czech and Polish coords on WebMerkator  - both should be false
+        assertThat(GeoUtils.isTrackOutOfBand(czechCoord,"EPSG:3857")).isFalse();
+        assertThat(GeoUtils.isTrackOutOfBand(plCoords,"EPSG:3857")).isFalse();
+
+        // get nonexisting epsg
+        GeoUtils.isTrackOutOfBand(plCoords, "EPSG:0001");
+
+        verifyLogged("epsg.io http call failed. Assuming not out of band");
+        //Assertions.assertThrows(Exception.class, () -> GeoUtils.isTrackOutOfBand(plCoords,"EPSG:0001"));
     }
 }
