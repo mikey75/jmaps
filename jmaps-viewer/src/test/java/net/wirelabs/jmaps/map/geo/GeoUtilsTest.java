@@ -1,8 +1,12 @@
 package net.wirelabs.jmaps.map.geo;
 
+import net.wirelabs.jmaps.MockHttpServer;
 import net.wirelabs.jmaps.map.utils.BaseTest;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -72,7 +76,13 @@ class GeoUtilsTest extends BaseTest {
     }
 
     @Test
-    void shouldCheckBounds()  {
+    void shouldCheckBounds() throws IOException {
+        // setup mock server
+        MockHttpServer server = new MockHttpServer();
+        GeoUtils.setEpsgIoHost("http://localhost:"+server.getPort() +"/");
+        // setup mock cache
+        GeoUtils.getCache().setBaseDir(Path.of(System.getProperty("java.io.tmpdir"), "testCache"));
+
         List<Coordinate> plCoords = List.of(new Coordinate(22.2139,51.2418)); // polish coords
         List<Coordinate> czechCoord = List.of(new Coordinate(12.8640,49.9819)); // czech coords
 
@@ -90,6 +100,10 @@ class GeoUtilsTest extends BaseTest {
         GeoUtils.isTrackOutOfBand(plCoords, "EPSG:0001");
 
         verifyLogged("epsg.io http call failed. Assuming not out of band");
-        //Assertions.assertThrows(Exception.class, () -> GeoUtils.isTrackOutOfBand(plCoords,"EPSG:0001"));
+
+
+        // delete cache
+        FileUtils.deleteDirectory(Path.of(System.getProperty("java.io.tmpdir"), "testCache").toFile());
+        server.stop();
     }
 }

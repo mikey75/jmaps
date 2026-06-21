@@ -2,9 +2,7 @@ package net.wirelabs.jmaps.map.geo;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.cache.BoundsCache;
 
@@ -13,6 +11,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.List;
 
 /**
@@ -23,12 +22,20 @@ import java.util.List;
 public class GeoUtils {
     @Getter
     private static final BoundsCache cache = new BoundsCache();
+    private static final HttpClient client = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_1_1)
+            .followRedirects(HttpClient.Redirect.NORMAL)
+            .connectTimeout(Duration.ofSeconds(5))
+            .build();
 
     public static final double MPI = Math.PI;
     public static final double TWO_PI = 2.0 * MPI;
     public static final double HALF_PI = MPI / 2.0;
     public static final double ONE_DEG_IN_RAD = (MPI / 180.0);
     public static final double ONE_RAD_IN_DEG = (180 / MPI);
+    @Getter
+    @Setter
+    private static String epsgIoHost = "https://epsg.io/";
 
     public static String parseCrsUrn(String urn) {
 
@@ -81,8 +88,8 @@ public class GeoUtils {
 
         if (cache.get(epsgCode +".json").isEmpty()) {
             log.info("Getting bounds from epsg.io");
-            URI uri = URI.create("https://epsg.io/" + epsgCode + ".json");
-            HttpClient client = HttpClient.newHttpClient();
+            URI uri = URI.create(epsgIoHost + epsgCode + ".json");
+
             HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
             HttpResponse<String> response;
 
@@ -112,7 +119,6 @@ public class GeoUtils {
         double maxLon = bbox.get("east_longitude").getAsDouble();
         double minLat = bbox.get("south_latitude").getAsDouble();
         double maxLat = bbox.get("north_latitude").getAsDouble();
-
 
         return coords.stream().anyMatch(coord ->
                 coord.getLongitude() < minLon ||
