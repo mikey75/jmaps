@@ -34,6 +34,8 @@ public class Defaults {
     public static final Path DEFAULT_TILE_CACHE_DB = Paths.get(DEFAULT_CACHE_DIR.toString(), "tile-cache-db");
     // default cache dir for epsg.io responses
     public static final Path DEFAULT_BOUNDS_CACHE = Paths.get(DEFAULT_CACHE_DIR.toString(), "epsg.io");
+    // default bounds checker host
+    public static final String DEFAULT_EPSG_HOST = "https://epsg.io/";
 
     // default user-agent
     public static final String DEFAULT_USER_AGENT = "JMaps Tiler v.1.0";
