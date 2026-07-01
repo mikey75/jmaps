@@ -1,6 +1,7 @@
 1.4.6
     - [Issue #78] added visible map crs info
     - [Issue #7] alternating host name prefixes for slippy maps (openstreetmap et al)
+    - [Issue #21] added route-to-map bounds checker 
 
 1.4.5
     - restored ability to disable/enable layer in multilayer maps definitions
