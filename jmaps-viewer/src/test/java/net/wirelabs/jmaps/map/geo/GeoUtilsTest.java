@@ -1,7 +1,7 @@
 package net.wirelabs.jmaps.map.geo;
 
+import net.wirelabs.jmaps.map.utils.BaseTest;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Created 6/3/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
-class GeoUtilsTest {
+class GeoUtilsTest extends BaseTest {
 
     String crs1 = "urn:ogc:def:crs:EPSG::1111";
     String crs2 = "urn:ogc:def:crs:ESRI:102421";

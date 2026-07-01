@@ -2,11 +2,13 @@ package net.wirelabs.jmaps.example.components;
 
 import lombok.extern.slf4j.Slf4j;
 import net.miginfocom.swing.MigLayout;
+import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
 import net.wirelabs.jmaps.map.cache.BaseCache;
 import net.wirelabs.jmaps.map.cache.db.DBCache;
 import net.wirelabs.jmaps.map.cache.files.DirectoryBasedCache;
 import net.wirelabs.jmaps.map.cache.redis.RedisCache;
+import net.wirelabs.jmaps.map.geo.BoundsChecker;
 import net.wirelabs.jmaps.map.geo.Coordinate;
 
 import javax.swing.*;
@@ -40,6 +42,8 @@ public class ConfigPanel extends TitledPanel {
     private final String tempDir = System.getProperty("java.io.tmpdir");
     private final transient DBCache dbCache = new DBCache(Path.of(tempDir, "testdbcache"), Duration.ofDays(30));
     private final transient DirectoryBasedCache fileCache = new DirectoryBasedCache(Path.of(tempDir, "testfilecache"), Duration.ofDays(30));
+    // bounds checker, with modified cache dir for example app
+    private final BoundsChecker boundsChecker = new BoundsChecker(Defaults.DEFAULT_EPSG_HOST, Path.of(tempDir, "testBoundsCache"));
     private transient RedisCache redisCache;
 
     private JFileChooser fileChooser;
@@ -155,11 +159,22 @@ public class ConfigPanel extends TitledPanel {
 
         btnLoadGPX.addActionListener(e ->
                 invokeFileChooser("GPX tracks", "gpx", () -> {
-                    File gpx = fileChooser.getSelectedFile();// user selects a file
+                    File gpx = fileChooser.getSelectedFile();   // user selects a file
                     GPXParser p = new GPXParser();
                     List<Coordinate> gpxCoordinates = p.parseToGeoPosition(gpx);
-                    routePainter.setRoute(gpxCoordinates);
-                    mapViewer.setBestFit(gpxCoordinates);
+                    // if route is out of band - warn and do not display -
+                    if (!boundsChecker.isTrackOutOfBand(gpxCoordinates,mapViewer.getCurrentMap().getBaseLayer().getCrs())) {
+                        routePainter.setRoute(gpxCoordinates);
+                        mapViewer.setBestFit(gpxCoordinates);
+                    } else {
+                        JOptionPane.showMessageDialog(
+                                mapViewer,
+                                "Track will not be shown! \nIt contains coordinates outside map projection bounds.",
+                                "Error",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                    }
+
 
                 }));
     }

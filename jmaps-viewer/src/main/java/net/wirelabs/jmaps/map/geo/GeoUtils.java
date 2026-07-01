@@ -2,6 +2,7 @@ package net.wirelabs.jmaps.map.geo;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.geom.*;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * Created 5/23/23 by Michał Szwaczko (mikey@wirelabs.net)
  */
-
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GeoUtils {
 
@@ -36,6 +37,7 @@ public class GeoUtils {
     /**
      * Calculate enclosing rectangle such that all coordinate points fit inside it
      * The resulting rectangle is in screen pixels, not world coordinates
+     *
      * @param coordinates list of coordinates (for instance a route, or set of waypoints)
      * @return resulting rectangle
      */
@@ -52,6 +54,7 @@ public class GeoUtils {
 
     /**
      * Calculate the geometric center of set of coordinates - in lat/lon units
+     *
      * @param coordinates set of coordinates
      * @return lat/lon of the center point
      */

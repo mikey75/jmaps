@@ -22,6 +22,9 @@ public class MockHttpServer {
     private static final File VALID_CAPABILITIES_FILE = new File("src/test/resources/wmts/capabilities.xml");
     private static final File INVALID_CAPABILITIES_FILE = new File("src/test/resources/wmts/invalid.xml");
     public static final File TEST_TILE_FILE = new File("src/test/resources/tiles/tile.png");
+    public static final File EPSG_2180_FILE = new File("src/test/resources/epsg/2180.json");
+    public static final File EPSG_3857_FILE = new File("src/test/resources/epsg/3857.json");
+
 
     @Getter
     int port;
@@ -87,6 +90,23 @@ public class MockHttpServer {
                     os.close();
 
                 }
+
+                case "/2180.json" -> {
+                    byte[] content = Files.readAllBytes(EPSG_2180_FILE.toPath());
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HTTP_OK, content.length);  // use byte length, not file.length()
+                    os = exchange.getResponseBody();
+                    os.write(content);
+                    os.close();
+                }
+                case "/3857.json" -> {
+                    byte[] content = Files.readAllBytes(EPSG_3857_FILE.toPath());
+                    exchange.getResponseHeaders().set("Content-Type", "application/json");
+                    exchange.sendResponseHeaders(HTTP_OK, content.length);
+                    os = exchange.getResponseBody();
+                    os.write(content);
+                    os.close();
+                    }
 
                 default -> {
                     exchange.sendResponseHeaders(HTTP_NOT_FOUND, 0);
