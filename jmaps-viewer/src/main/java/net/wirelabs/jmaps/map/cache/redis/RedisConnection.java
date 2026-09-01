@@ -100,7 +100,6 @@ public class RedisConnection implements Closeable {
         try {
             sendCommand("QUIT");
             readResp(); // expect +OK
-        } catch (Exception ignore) {
         } finally {
             socket.close();
         }

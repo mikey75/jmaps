@@ -28,8 +28,7 @@ public class GPXParser {
 
         return parseGpxFile(file).stream()
                 .map(this::trackPointToCoordinate)
-                .collect(Collectors.toList());
-
+                .toList();
     }
 
     private Coordinate trackPointToCoordinate(WptType trackPoint) {

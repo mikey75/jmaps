@@ -151,16 +151,20 @@ class DBCacheTest {
 
     private long getTimestamp(DBCache cache, String key) throws SQLException {
         String timeStampQuery = String.format("select TIMESTAMP from TILECACHE where TILEURL='%s'", key);
-        try (Statement stmt = cache.getConnection().createStatement(); ResultSet rs = stmt.executeQuery(timeStampQuery)) {
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + cache.getBaseDir() + "/cache.db");
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(timeStampQuery)) {
             assertThat(rs.next()).isTrue();
             return rs.getLong(1);
         }
     }
-
     private boolean tileCacheTableExists(DBCache cache) throws SQLException {
-        DatabaseMetaData dbmd = cache.getConnection().getMetaData();
-        try (ResultSet rs = dbmd.getTables(null, null, "TILECACHE", null)) {
-            return rs.next();
+        try (Connection conn = DriverManager.getConnection("jdbc:sqlite:" + cache.getBaseDir() + "/cache.db")) {
+            DatabaseMetaData dbmd = conn.getMetaData();
+            try (ResultSet rs = dbmd.getTables(null, null, "TILECACHE", null)) {
+                return rs.next();
+            }
         }
     }
+
 }

@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 class NewModelCapsTest {
     private File testFile1 = new File("src/test/resources/wmts/capabilities.xml");
     private File testFile2 = new File("src/test/resources/wmts/capabilities-2.xml");
@@ -19,7 +21,11 @@ class NewModelCapsTest {
 
     @Test
     void shouldParse() throws XmlException, IOException {
-        parseCapabilitiesFromFile(testFile2);
+        CapabilitiesDocument.Capabilities capabilities = parseCapabilitiesFromFile(testFile2);
+        // just some basic test of one matrix set. no need to check all if one is parsed ok
+        assertThat(capabilities.getContents().getTileMatrixSetList()).hasSize(15);
+        assertThat(capabilities.getContents().getTileMatrixSetList().get(1).validate()).isTrue();
+        assertThat(capabilities.getContents().getTileMatrixSetList().get(1).getSupportedCRS()).isEqualTo("EPSG:3035");
     }
 
 }

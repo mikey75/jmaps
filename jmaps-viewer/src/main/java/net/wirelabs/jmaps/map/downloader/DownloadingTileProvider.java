@@ -15,11 +15,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.Set;
+import java.util.concurrent.*;
 
 /**
  * Created 5/23/23 by Michał Szwaczko (mikey@wirelabs.net)
@@ -29,11 +26,14 @@ import java.util.concurrent.Executors;
 @Slf4j
 public class DownloadingTileProvider implements TileProvider {
 
-    private final HttpClient httpClient; 
-    private final List<String> tilesLoading = new CopyOnWriteArrayList<>();
+    private final HttpClient httpClient;
+    private final Set<String> tilesLoading = ConcurrentHashMap.newKeySet();
 
     private final MapViewer mapViewer;
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
+
+    private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(5);
+    private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(2);
 
     // local in-memory cache should be local to provider
     @Getter
@@ -41,104 +41,101 @@ public class DownloadingTileProvider implements TileProvider {
 
     public DownloadingTileProvider(MapViewer mapViewer, HttpClient httpClient) {
         this.mapViewer = mapViewer;
+        this.executorService = Executors.newFixedThreadPool(mapViewer.getTilerThreads(), new TileProviderThreadFactory());
         this.httpClient = httpClient;
     }
 
     public DownloadingTileProvider(MapViewer mapViewer) {
 
         this.mapViewer = mapViewer;
-        httpClient = HttpClient.newBuilder()
+        this.executorService = Executors.newFixedThreadPool(mapViewer.getTilerThreads(), new TileProviderThreadFactory());
+        this.httpClient = HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .followRedirects(HttpClient.Redirect.NORMAL)
-                .connectTimeout(Duration.ofSeconds(20))
+                .connectTimeout(CONNECT_TIMEOUT)
                 .build();
     }
 
-    private ExecutorService getExecutorService() {
+    // package private for test
+    void download(String downloadUrl, String cacheUrl) {
+        log.debug("Getting from: {}", downloadUrl);
 
-        if (executorService == null) {
-            executorService = Executors.newFixedThreadPool(mapViewer.getTilerThreads(), new TileProviderThreadFactory());
-        }
-        return executorService;
-    }
-
-    void download(String tileUrl, String cacheUrl) {
-        log.debug("Getting from: {}", tileUrl);
-
-        HttpRequest r = HttpRequest.newBuilder() //Request.nBuilder()
-                .uri(URI.create(tileUrl))
+        HttpRequest tileRequest = HttpRequest.newBuilder()
+                .uri(URI.create(downloadUrl))
                 .header("User-Agent", Defaults.DEFAULT_USER_AGENT)
+                .timeout(REQUEST_TIMEOUT)
                 .build();
 
         try {
 
-            HttpResponse<InputStream> response = httpClient.send(r, HttpResponse.BodyHandlers.ofInputStream());
+            HttpResponse<InputStream> response = httpClient.send(tileRequest, HttpResponse.BodyHandlers.ofInputStream());
 
             if (response.statusCode() == 200) {
                 readAndCacheImage(cacheUrl, response);
             } else {
-                log.debug("Could not download {} - Http response {}", tileUrl, response.statusCode());
+                log.debug("Could not download {} - Http response {}", downloadUrl, response.statusCode());
             }
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            log.debug("Download interrupted for {}", tileUrl);
+            log.debug("Download interrupted for {}", downloadUrl);
         } catch (IOException e) {
-            log.debug("Could not download {} - {} : {}", tileUrl, e.getClass().getSimpleName(), e.getMessage());
-        } catch (OutOfMemoryError e) {
-            log.error("DANG! Local memory cache run out of memory");
-            log.error("Pruning memory cache...");
-            primaryTileCache.clear();
+            log.debug("Could not download {} - {} : {}", downloadUrl, e.getClass().getSimpleName(), e.getMessage());
         } finally {
             // tile is not loading anymore
-            tilesLoading.remove(tileUrl);
+            tilesLoading.remove(downloadUrl);
         }
 
     }
 
-    private void readAndCacheImage(String tileUrl, HttpResponse<InputStream> response) throws IOException {
+    private void readAndCacheImage(String cacheUrl, HttpResponse<InputStream> response) {
 
-            InputStream inputStream = response.body();
-            Optional<BufferedImage> image = Optional.ofNullable(ImageIO.read(inputStream));
-            if (image.isPresent()) {
-                primaryTileCache.put(tileUrl, image.get());
-                if (secondaryCacheEnabled()) {
-                    mapViewer.getSecondaryTileCache().put(tileUrl, image.get());
+        try (InputStream responseBody = response.body()) {
+            BufferedImage image = ImageIO.read(responseBody);
+            if (image != null) {
+                primaryTileCache.put(cacheUrl, image);
+                if (secondaryTileCacheEnabled()) {
+                    mapViewer.getSecondaryTileCache().put(cacheUrl, image);
                 }
-                tilesLoading.remove(tileUrl);
                 mapViewer.repaint();
+            } else {
+                log.error("Image could not be loaded");
             }
+        } catch (IOException e) {
+            log.error("IO Exception: {}", e.getMessage());
+        }
     }
 
     public BufferedImage getTile(String url, String cacheUrl) {
 
         // check local memory cache
-        Optional<BufferedImage> img = Optional.ofNullable(primaryTileCache.get(cacheUrl));
-        if (img.isPresent()) {
-            return img.get();
+        BufferedImage img = primaryTileCache.get(cacheUrl);
+        if (img != null) {
+            return img;
         }
 
-        // now check configured local cache - if the image is there, and it's cache validity is not expired - return it
-        if (secondaryCacheEnabled()) {
-                Optional<BufferedImage> image = Optional.ofNullable(mapViewer.getSecondaryTileCache().get(cacheUrl));
-                if (image.isPresent() && !mapViewer.getSecondaryTileCache().keyExpired(cacheUrl)) {
-                    primaryTileCache.put(cacheUrl, image.get());
-                    return image.get();
+        // now check configured local (secondary) cache
+        // if the image is there, and it's cache validity is not expired - return it
+        if (secondaryTileCacheEnabled()) {
+                BufferedImage image = mapViewer.getSecondaryTileCache().get(cacheUrl);
+                if (image != null && !mapViewer.getSecondaryTileCache().keyExpired(cacheUrl)) {
+                    primaryTileCache.put(cacheUrl, image);
+                    return image;
                 }
-
-
         }
 
-        // else submit tile for download from the web, but only if it's not already submitted
-        if (!tilesLoading.contains(url)) {
-            tilesLoading.add(url);
-            getExecutorService().submit(() -> download(url,cacheUrl));
-        }
-
+        // else schedule tile for download from the web, but only if it's not already submitted
+        scheduleDownload(url, cacheUrl);
         return null;
     }
 
-    private boolean secondaryCacheEnabled() {
+     private void scheduleDownload(String url, String cacheUrl) {
+        if (tilesLoading.add(url)) {
+            executorService.submit(() -> download(url, cacheUrl));
+        }
+    }
+
+    private boolean secondaryTileCacheEnabled() {
         return mapViewer.getSecondaryTileCache() != null;
     }
 }

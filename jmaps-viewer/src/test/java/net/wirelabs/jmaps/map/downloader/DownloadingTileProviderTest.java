@@ -170,14 +170,6 @@ class DownloadingTileProviderTest extends BaseTest {
         verifyLogged("Download interrupted for " + tileUrl);
     }
 
-    @Test
-    void shouldCatchOOMException() throws IOException, InterruptedException {
-        doThrow(new OutOfMemoryError()).when(mockHttpClient).send(any(),any());
-        tileProviderWithHttpClientMock.download(tileUrl,tileUrl);
-        verifyLogged("DANG! Local memory cache run out of memory");
-        verifyLogged("Pruning memory cache...");
-    }
-
 
     private void assertTileInSecondaryCache(String tileUrl) {
         assertThat(secondaryCache.get(tileUrl)).isNotNull();

@@ -43,7 +43,7 @@ public class ConfigPanel extends TitledPanel {
     private final transient DBCache dbCache = new DBCache(Path.of(tempDir, "testdbcache"), Duration.ofDays(30));
     private final transient DirectoryBasedCache fileCache = new DirectoryBasedCache(Path.of(tempDir, "testfilecache"), Duration.ofDays(30));
     // bounds checker, with modified cache dir for example app
-    private final BoundsChecker boundsChecker = new BoundsChecker(Defaults.DEFAULT_EPSG_HOST, Path.of(tempDir, "testBoundsCache"));
+    private final transient BoundsChecker boundsChecker = new BoundsChecker(Defaults.DEFAULT_EPSG_HOST, Path.of(tempDir, "testBoundsCache"));
     private transient RedisCache redisCache;
 
     private JFileChooser fileChooser;
