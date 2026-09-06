@@ -1,8 +1,8 @@
 package net.wirelabs.jmaps.map.cache.db;
 
 import lombok.extern.slf4j.Slf4j;
-import net.wirelabs.jmaps.map.cache.db.DBCache;
 import net.wirelabs.jmaps.map.utils.ImageUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.ThreadUtils;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,12 +19,14 @@ import java.sql.*;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
 import static net.wirelabs.jmaps.TestUtils.cacheCheckExistenceAndExpiration;
 import static net.wirelabs.jmaps.TestUtils.cacheAssertSameData;
 import static net.wirelabs.jmaps.map.Defaults.DEFAULT_CACHE_TIMEOUT;
 import static net.wirelabs.jmaps.map.Defaults.DEFAULT_TILE_CACHE_DB;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 class DBCacheTest {
@@ -60,10 +62,10 @@ class DBCacheTest {
     @Test
     void testDefaultCacheInit() {
 
-        DBCache cache = new DBCache();
-
-        assertThat(cache.getCacheTimeout()).isEqualTo(DEFAULT_CACHE_TIMEOUT);
-        assertThat(cache.getBaseDir()).isEqualTo(DEFAULT_TILE_CACHE_DB);
+        try (DBCache cache = new DBCache()) {
+            assertThat(cache.getCacheTimeout()).isEqualTo(DEFAULT_CACHE_TIMEOUT);
+            assertThat(cache.getBaseDir()).isEqualTo(DEFAULT_TILE_CACHE_DB);
+        }
 
     }
 
@@ -145,8 +147,101 @@ class DBCacheTest {
 
     @Test
     void shouldNotReportKeyExpiredOnNonexistent() {
-        DBCache cache = new DBCache(TEST_TILE_CACHE_DIR, DEFAULT_CACHE_TIMEOUT);
-        assertThat(cache.keyExpired("NONEXISTENT")).isFalse();
+        try(DBCache cache = new DBCache(TEST_TILE_CACHE_DIR, DEFAULT_CACHE_TIMEOUT)) {
+            assertThat(cache.keyExpired("NONEXISTENT")).isFalse();
+        }
+    }
+
+
+    @Test
+    void concurrentGetPutDoesNotDeadlock() throws Exception {
+        Path tempDir = Files.createTempDirectory("dbcache-concurrency-test");
+        try (DBCache cache = new DBCache(tempDir, Duration.ofDays(1))) {
+
+            final int threads = 64;
+            final int opsPerThread = 100;
+            ExecutorService executor = Executors.newFixedThreadPool(threads);
+            CountDownLatch startLatch = new CountDownLatch(1);
+            ConcurrentLinkedQueue<Throwable> errors = new ConcurrentLinkedQueue<>();
+            List<Future<?>> futures = new ArrayList<>();
+
+            for (int t = 0; t < threads; t++) {
+                final int tid = t;
+                futures.add(executor.submit(() -> {
+                    try {
+                        startLatch.await();
+                        for (int i = 0; i < opsPerThread; i++) {
+                            String key = "tile-" + tid + "-" + i;
+                            // small image payload
+                            BufferedImage img = new BufferedImage(2, 2, BufferedImage.TYPE_INT_ARGB);
+                            img.setRGB(0, 0, (tid << 8) | i);
+
+                            // put then get the same key
+                            try {
+                                cache.put(key, img);
+                            } catch (Exception e) {
+                                errors.add(new RuntimeException("put failed for " + key, e));
+                            }
+
+                            BufferedImage read = null;
+                            try {
+                                read = cache.get(key);
+                            } catch (Exception e) {
+                                errors.add(new RuntimeException("get failed for " + key, e));
+                            }
+
+                            if (read == null) {
+                                errors.add(new IllegalStateException("read returned null for key " + key));
+                            }
+
+                            if (i % 10 == 0) {
+                                // exercise timestamp/check path
+                                try {
+                                    cache.keyExpired(key);
+                                } catch (Exception e) {
+                                    errors.add(new RuntimeException("keyExpired failed for " + key, e));
+                                }
+                            }
+                        }
+                    } catch (InterruptedException ie) {
+                        Thread.currentThread().interrupt();
+                        errors.add(ie);
+                    } catch (Throwable tErr) {
+                        errors.add(tErr);
+                    }
+                }));
+            }
+
+            long startTime = System.currentTimeMillis();
+            startLatch.countDown(); // start all workers
+            executor.shutdown();
+            boolean finished = executor.awaitTermination(30, TimeUnit.SECONDS);
+            if (!finished) {
+                errors.add(new IllegalStateException("Executor did not finish within 30s"));
+                // attempt a forced shutdown
+                executor.shutdownNow();
+            }
+
+            // collect task-level exceptions (if any)
+            for (Future<?> f : futures) {
+                try {
+                    f.get(1, TimeUnit.SECONDS);
+                } catch (ExecutionException ee) {
+                    errors.add(ee.getCause());
+                } catch (TimeoutException te) {
+                    // task didn't finish in time; already handled by awaitTermination
+                }
+            }
+
+            long duration = System.currentTimeMillis() - startTime;
+            System.out.println("DBCache concurrency test completed in " + duration + " ms");
+
+            assertTrue(errors.isEmpty(), "Errors occurred during concurrent DB cache test: " + errors);
+
+        } finally {
+            FileUtils.forceDelete(tempDir.toFile());
+        }
+
     }
 
     private long getTimestamp(DBCache cache, String key) throws SQLException {
