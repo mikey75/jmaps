@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.cache.BoundsCache;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -19,6 +20,7 @@ public class BoundsChecker {
     // defaults used when noarg constructor called
     private final BoundsCache cache;
     private final String epsgIoHost;
+    private static final String DOT_JSON = ".json";
 
     public BoundsChecker() {
         this.epsgIoHost = Defaults.DEFAULT_EPSG_HOST;
@@ -41,30 +43,33 @@ public class BoundsChecker {
 
         int epsgCode = Integer.parseInt(epsgString.substring(epsgString.indexOf(':') + 1));
 
-        if (cache.get(epsgCode +".json").isEmpty()) {
-            URI uri = URI.create(epsgIoHost + epsgCode + ".json");
+        if (cache.get(epsgCode + DOT_JSON).isEmpty()) {
+            URI uri = URI.create(epsgIoHost + epsgCode + DOT_JSON);
             log.info("Getting bounds from {}", epsgIoHost);
 
-            HttpRequest request = HttpRequest.newBuilder(uri).GET().build();
+            HttpRequest request = HttpRequest.newBuilder(uri).GET().timeout(Duration.ofSeconds(10)).build();
             HttpResponse<String> response;
 
             try {
                 response = client.send(request, HttpResponse.BodyHandlers.ofString());
-            } catch (Exception e) {
+            } catch (IOException e) {
                 log.warn("Exception while making request to {}", epsgIoHost, e);
                 log.warn("Assuming not out of band");
+                return false;
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
                 return false;
             }
             if (response.statusCode() != 200) {
                 log.warn("{} http call failed. Assuming not out of band", epsgIoHost);
                 return false;
             }
-            cache.put(epsgCode+".json", response.body());
+            cache.put(epsgCode+ DOT_JSON, response.body());
         }
 
 
         log.info("getting bounds from cache");
-        JsonObject root = JsonParser.parseString(cache.get(epsgCode + ".json")).getAsJsonObject();
+        JsonObject root = JsonParser.parseString(cache.get(epsgCode + DOT_JSON)).getAsJsonObject();
         JsonObject bbox = root.getAsJsonObject("bbox");
         if (bbox == null) {
             log.warn("bbox is not specified. Assuming not out of band");

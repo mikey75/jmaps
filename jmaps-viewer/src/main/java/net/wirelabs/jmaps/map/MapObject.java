@@ -6,7 +6,6 @@ import net.wirelabs.jmaps.map.layer.Layer;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
 
 @Getter
 public class MapObject {
@@ -25,8 +24,7 @@ public class MapObject {
 
     public List<Layer> getEnabledLayers() {
         return layers.stream()
-                .filter(l -> !l.isDisabled())
-                .collect(Collectors.toList());
+                .filter(l -> !l.isDisabled()).toList();
     }
 
     public int getMaxZoom() {
