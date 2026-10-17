@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -34,7 +35,6 @@ class DownloadingTileProviderTest extends BaseTest {
     private static final Duration SHORT_TIMEOUT_FOR_VALIDITY_TESTS = Duration.ofSeconds(2);
 
     private final DirectoryBasedCache secondaryCache = new DirectoryBasedCache(TEST_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
-
     private static MockHttpServer testTileServer;
     private static String tileUrl;
     private static String failTileUrl;
@@ -42,7 +42,6 @@ class DownloadingTileProviderTest extends BaseTest {
     private final MapViewer mapViewer = new MapViewer();
     private final DownloadingTileProvider tileProvider = spy(new DownloadingTileProvider(mapViewer));
     private final HttpClient mockHttpClient = generateMockHttpClient();
-    private final DownloadingTileProvider tileProviderWithHttpClientMock = new DownloadingTileProvider(mapViewer, mockHttpClient);
     private InMemoryLRUCache primaryTileCache;
 
     @BeforeAll
@@ -57,6 +56,7 @@ class DownloadingTileProviderTest extends BaseTest {
         primaryTileCache = tileProvider.getPrimaryTileCache();
         mapViewer.setSecondaryTileCache(secondaryCache);
         FileUtils.deleteDirectory(TEST_CACHE_DIR.toFile());
+        tileProvider.setHttpClient(mockHttpClient);
     }
 
     @AfterAll
@@ -84,7 +84,7 @@ class DownloadingTileProviderTest extends BaseTest {
         // assert tile not in caches
         assertThat(primaryTileCache.get(tileUrl)).isNull();
         assertThat(secondaryCache.get(tileUrl)).isNull();
-        verifyLogged("Could not download " + failTileUrl + " - Http response 404");
+        verifyLogged("Could not download " + failTileUrl + " - HTTP 404");
 
     }
 
@@ -162,14 +162,24 @@ class DownloadingTileProviderTest extends BaseTest {
     void shouldTestHttpClientExceptions() throws IOException, InterruptedException {
 
         doThrow(new IOException("Error")).when(mockHttpClient).send(any(),any());
-        tileProviderWithHttpClientMock.download(tileUrl,tileUrl);
-        verifyLogged("Could not download " + tileUrl + " - IOException : Error");
+        tileProvider.download(tileUrl,tileUrl);
+        verifyLogged("Could not download " + tileUrl);
 
         doThrow(new InterruptedException("Interrupted")).when(mockHttpClient).send(any(),any());
-        tileProviderWithHttpClientMock.download(tileUrl,tileUrl);
+        tileProvider.download(tileUrl,tileUrl);
         verifyLogged("Download interrupted for " + tileUrl);
     }
 
+    @Test
+    void shouldReturnFalseForKeyExpiredIfCachingDisabledBySetter() throws IOException {
+
+        secondaryCache.put(tileUrl, ImageIO.read(TEST_TILE_FILE));
+        secondaryCache.setCacheTimeout(Duration.ZERO);
+        verifyLogged("Cache expiration cancelled. Cache will not expire");
+        assertFalse(() -> secondaryCache.keyExpired(tileUrl));
+        assertDownloadCalled(never());
+
+    }
 
     private void assertTileInSecondaryCache(String tileUrl) {
         assertThat(secondaryCache.get(tileUrl)).isNotNull();

@@ -1,6 +1,7 @@
 package net.wirelabs.jmaps.map.cache.files;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.cache.BaseCache;
 import net.wirelabs.jmaps.map.cache.Cache;
@@ -18,11 +19,9 @@ import java.time.Duration;
  */
 @Slf4j
 @Getter
+@NoArgsConstructor
 public class DirectoryBasedCache extends BaseCache implements Cache<String, BufferedImage> {
 
-    public DirectoryBasedCache() {
-        super();
-    }
 
     public DirectoryBasedCache(Path cacheDir, Duration cacheTimeout) {
         super(cacheDir, cacheTimeout);

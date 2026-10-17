@@ -1,6 +1,7 @@
 package net.wirelabs.jmaps.map.downloader;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.Defaults;
 import net.wirelabs.jmaps.map.MapViewer;
@@ -8,8 +9,7 @@ import net.wirelabs.jmaps.map.cache.memory.InMemoryLRUCache;
 
 import javax.imageio.ImageIO;
 import java.awt.image.*;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -25,84 +25,68 @@ import java.util.concurrent.*;
  */
 @Slf4j
 public class DownloadingTileProvider implements TileProvider {
-
-    private final HttpClient httpClient;
+    @Setter
+    private volatile HttpClient httpClient;
     private final Set<String> tilesLoading = ConcurrentHashMap.newKeySet();
 
     private final MapViewer mapViewer;
     private final ExecutorService executorService;
 
-    private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(5);
-    private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(2);
+    private static final Duration REQUEST_TIMEOUT = Duration.ofSeconds(7);
+    private static final Duration CONNECT_TIMEOUT = Duration.ofSeconds(3);
 
     // local in-memory cache should be local to provider
     @Getter
     private final InMemoryLRUCache primaryTileCache = new InMemoryLRUCache();
-
-    public DownloadingTileProvider(MapViewer mapViewer, HttpClient httpClient) {
-        this.mapViewer = mapViewer;
-        this.executorService = Executors.newFixedThreadPool(mapViewer.getTilerThreads(), new TileProviderThreadFactory());
-        this.httpClient = httpClient;
-    }
 
     public DownloadingTileProvider(MapViewer mapViewer) {
 
         this.mapViewer = mapViewer;
         this.executorService = Executors.newFixedThreadPool(mapViewer.getTilerThreads(), new TileProviderThreadFactory());
         this.httpClient = HttpClient.newBuilder()
-                .version(HttpClient.Version.HTTP_1_1)
+                .version(HttpClient.Version.HTTP_2)
                 .followRedirects(HttpClient.Redirect.NORMAL)
                 .connectTimeout(CONNECT_TIMEOUT)
                 .build();
     }
 
-    // package private for test
+    // package private for tests
     void download(String downloadUrl, String cacheUrl) {
         log.debug("Getting from: {}", downloadUrl);
-
-        HttpRequest tileRequest = HttpRequest.newBuilder()
-                .uri(URI.create(downloadUrl))
-                .header("User-Agent", Defaults.DEFAULT_USER_AGENT)
-                .timeout(REQUEST_TIMEOUT)
-                .build();
-
         try {
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(downloadUrl))
+                    .header("User-Agent", Defaults.DEFAULT_USER_AGENT)
+                    .timeout(REQUEST_TIMEOUT)
+                    .build();
 
-            HttpResponse<InputStream> response = httpClient.send(tileRequest, HttpResponse.BodyHandlers.ofInputStream());
+            HttpResponse<byte[]> response =
+                    httpClient.send(request, HttpResponse.BodyHandlers.ofByteArray());
 
-            if (response.statusCode() == 200) {
-                readAndCacheImage(cacheUrl, response);
-            } else {
-                log.debug("Could not download {} - Http response {}", downloadUrl, response.statusCode());
+            if (response.statusCode() != 200) {
+                log.debug("Could not download {} - HTTP {}", downloadUrl, response.statusCode());
+                return;
             }
+
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(response.body()));
+            if (image == null) {
+                log.warn("Response for {} is not a decodable image", downloadUrl);
+                return;
+            }
+
+            primaryTileCache.put(cacheUrl, image);
+            if (secondaryTileCacheEnabled()) {
+                mapViewer.getSecondaryTileCache().put(cacheUrl, image);
+            }
+            mapViewer.repaint(); // only on success
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             log.debug("Download interrupted for {}", downloadUrl);
-        } catch (IOException e) {
-            log.debug("Could not download {} - {} : {}", downloadUrl, e.getClass().getSimpleName(), e.getMessage());
+        } catch (Exception e) {
+            log.debug("Could not download {}", downloadUrl);
         } finally {
-            // tile is not loading anymore
             tilesLoading.remove(downloadUrl);
-        }
-
-    }
-
-    private void readAndCacheImage(String cacheUrl, HttpResponse<InputStream> response) {
-
-        try (InputStream responseBody = response.body()) {
-            BufferedImage image = ImageIO.read(responseBody);
-            if (image != null) {
-                primaryTileCache.put(cacheUrl, image);
-                if (secondaryTileCacheEnabled()) {
-                    mapViewer.getSecondaryTileCache().put(cacheUrl, image);
-                }
-                mapViewer.repaint();
-            } else {
-                log.error("Image could not be loaded");
-            }
-        } catch (IOException e) {
-            log.error("IO Exception: {}", e.getMessage());
         }
     }
 

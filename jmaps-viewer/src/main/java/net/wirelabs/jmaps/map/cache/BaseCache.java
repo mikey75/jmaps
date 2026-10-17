@@ -1,7 +1,6 @@
 package net.wirelabs.jmaps.map.cache;
 
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import net.wirelabs.jmaps.map.Defaults;
 
@@ -9,18 +8,19 @@ import java.nio.file.Path;
 import java.time.Duration;
 
 @Getter
-@Setter
 @Slf4j
 public abstract class BaseCache {
 
     private final Path baseDir;
     private Duration cacheTimeout;
 
-    protected BaseCache() {
+    // default constructor - uses default dir, and default timeout
+    public BaseCache() {
         this(Defaults.DEFAULT_TILE_CACHE_DIR, Defaults.DEFAULT_CACHE_TIMEOUT);
     }
 
-    protected BaseCache(Path baseDir, Duration cacheTimeout) {
+    // custom constructor - settable dir and timeout
+    public BaseCache(Path baseDir, Duration cacheTimeout) {
         this.baseDir = baseDir;
         this.cacheTimeout = cacheTimeout;
         log.info("Secondary Tile Cache: {}, location: {}", getClass().getSimpleName(), getBaseDir());
@@ -30,6 +30,17 @@ public abstract class BaseCache {
             log.info("Cache expiration checking enabled! Tiles will be re-downloaded every: {}", expirationTimeMsg);
         } else {
             log.info("Cache expiration checking disabled. Stored tiles won't ever be re-downloaded");
+        }
+    }
+
+    public void setCacheTimeout(Duration timeout) {
+        String expirationTimeMsg = prepareExpirationMessage(cacheTimeout);
+        if (timeout.isZero()) {
+            log.info("Cache expiration cancelled. Cache will not expire");
+            cacheTimeout = timeout;
+        } else {
+            cacheTimeout = timeout;
+            log.info("Cache expiration re-set: Tiles will be re-downloaded every: {}", expirationTimeMsg);
         }
     }
 
