@@ -22,6 +22,7 @@ public class BoundsChecker {
     private final String epsgIoHost;
     private static final String DOT_JSON = ".json";
 
+    // default when not specifying host or cache dir
     public BoundsChecker() {
         this.epsgIoHost = Defaults.DEFAULT_EPSG_HOST;
         this.cache = new BoundsCache();
@@ -67,8 +68,10 @@ public class BoundsChecker {
             cache.put(epsgCode+ DOT_JSON, response.body());
         }
 
+        return getFromCache(coords, epsgCode);
+    }
 
-        log.info("getting bounds from cache");
+    private boolean getFromCache(List<Coordinate> coords, int epsgCode) {
         JsonObject root = JsonParser.parseString(cache.get(epsgCode + DOT_JSON)).getAsJsonObject();
         JsonObject bbox = root.getAsJsonObject("bbox");
         if (bbox == null) {
